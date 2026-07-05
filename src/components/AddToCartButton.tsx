@@ -7,10 +7,13 @@ export default function AddToCartButton({ productName }: { productName: string }
 
   if (clicked) {
     return (
-      <p className="font-mono text-xs uppercase tracking-[0.15em] text-ink/60">
-        Online checkout is being connected — reach out via the{" "}
-        <a href="/contact" className="text-jade underline underline-offset-2">
-          contact page
+      <p className="font-mono text-xs uppercase tracking-[0.18em] text-shell/60">
+        Online checkout is being reconnected — email{" "}
+        <a
+          href="mailto:lumanai.events@gmail.com"
+          className="text-gold underline underline-offset-2"
+        >
+          lumanai.events@gmail.com
         </a>{" "}
         to order {productName} in the meantime.
       </p>
@@ -21,7 +24,7 @@ export default function AddToCartButton({ productName }: { productName: string }
     <button
       type="button"
       onClick={() => setClicked(true)}
-      className="rounded-full bg-ink px-8 py-3.5 font-mono text-xs uppercase tracking-[0.15em] text-bone transition-colors hover:bg-jade"
+      className="rounded-full bg-gold px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.18em] text-abyss transition-colors hover:bg-shell"
     >
       Add to Cart
     </button>

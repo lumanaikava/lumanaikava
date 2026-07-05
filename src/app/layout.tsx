@@ -14,7 +14,7 @@ const spectral = Spectral({
 const workSans = Work_Sans({
   variable: "--font-work-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const spaceMono = Space_Mono({
@@ -24,9 +24,9 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lumanai Kava — The Future of Alcohol Replacement",
+  title: "Lumanai Kava — Craft Kava Bar & Functional Mocktails",
   description:
-    "Unrivaled alcohol-free social beverages featuring premium traditional kava, not extract. 3,000 years in the making.",
+    "Bold, clean, alcohol-free. Lumanai bartends functional kava cocktails at events across LA and Vegas. All the buzz — none of the booze.",
 };
 
 export default function RootLayout({
@@ -39,7 +39,7 @@ export default function RootLayout({
       lang="en"
       className={`${spectral.variable} ${workSans.variable} ${spaceMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-sand text-ink">
+      <body className="flex min-h-full flex-col bg-ocean text-shell">
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

@@ -6,8 +6,8 @@ type RippleProps = {
 };
 
 /**
- * The concentric rings left in a bowl of kava when it's strained and mixed.
- * Used as the brand's signature mark: hero backdrop, section divider, button hover state.
+ * The concentric rings a shaken kava drink leaves on a coconut-shell bowl.
+ * Used as the brand's signature mark.
  */
 export default function Ripple({
   className = "",

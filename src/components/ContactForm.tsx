@@ -2,73 +2,104 @@
 
 import { useState, type FormEvent } from "react";
 
-export default function ContactForm() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+type FormState = "idle" | "submitting" | "success" | "error";
 
-  function handleSubmit(e: FormEvent) {
+export default function ContactForm() {
+  const [state, setState] = useState<FormState>("idle");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const subject = encodeURIComponent(`Message from ${name || "the website"}`);
-    const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
-    window.location.href = `mailto:hello@lumanai.com?subject=${subject}&body=${body}`;
+    setState("submitting");
+    setErrorMsg(null);
+    const form = e.currentTarget;
+    const data = Object.fromEntries(new FormData(form).entries());
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || "Something went wrong.");
+      }
+      setState("success");
+      form.reset();
+    } catch (err) {
+      setState("error");
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong.");
+    }
+  }
+
+  if (state === "success") {
+    return (
+      <div className="rounded-3xl border border-gold/40 bg-lagoon/40 p-8">
+        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-gold">
+          Message received
+        </p>
+        <h3 className="mt-3 font-display text-2xl italic text-shell">
+          Thanks — we&apos;ll write back soon.
+        </h3>
+      </div>
+    );
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <div>
-        <label
-          htmlFor="name"
-          className="font-mono text-[11px] uppercase tracking-[0.15em] text-ink/50"
-        >
+      <label className="block">
+        <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/50">
           Name
-        </label>
+        </span>
         <input
-          id="name"
+          name="name"
           required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="mt-2 w-full rounded-lg border border-ink/20 bg-white/50 px-4 py-3 text-ink outline-none focus:border-jade"
+          className="mt-2 w-full rounded-xl border border-shell/20 bg-abyss/60 px-4 py-3 text-shell outline-none focus:border-gold"
         />
-      </div>
-      <div>
-        <label
-          htmlFor="email"
-          className="font-mono text-[11px] uppercase tracking-[0.15em] text-ink/50"
-        >
+      </label>
+      <label className="block">
+        <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/50">
           Email
-        </label>
+        </span>
         <input
-          id="email"
+          name="email"
           type="email"
           required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="mt-2 w-full rounded-lg border border-ink/20 bg-white/50 px-4 py-3 text-ink outline-none focus:border-jade"
+          className="mt-2 w-full rounded-xl border border-shell/20 bg-abyss/60 px-4 py-3 text-shell outline-none focus:border-gold"
         />
-      </div>
-      <div>
-        <label
-          htmlFor="message"
-          className="font-mono text-[11px] uppercase tracking-[0.15em] text-ink/50"
-        >
+      </label>
+      <label className="block">
+        <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/50">
           Message
-        </label>
+        </span>
         <textarea
-          id="message"
+          name="message"
           required
           rows={5}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          className="mt-2 w-full rounded-lg border border-ink/20 bg-white/50 px-4 py-3 text-ink outline-none focus:border-jade"
+          className="mt-2 w-full rounded-xl border border-shell/20 bg-abyss/60 px-4 py-3 text-shell outline-none focus:border-gold"
         />
-      </div>
+      </label>
       <button
         type="submit"
-        className="rounded-full bg-ink px-7 py-3.5 font-mono text-xs uppercase tracking-[0.15em] text-bone transition-colors hover:bg-jade"
+        disabled={state === "submitting"}
+        className="rounded-full bg-gold px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.18em] text-abyss hover:bg-shell disabled:opacity-60"
       >
-        Send Message
+        {state === "submitting" ? "Sending..." : "Send Message"}
       </button>
+
+      {state === "error" && (
+        <p className="font-mono text-xs text-orchid">
+          {errorMsg} — or email us at{" "}
+          <a
+            href="mailto:lumanai.events@gmail.com"
+            className="underline underline-offset-2"
+          >
+            lumanai.events@gmail.com
+          </a>
+          .
+        </p>
+      )}
     </form>
   );
 }
