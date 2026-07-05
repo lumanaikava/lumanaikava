@@ -41,7 +41,7 @@ export default function RewardsPage() {
           <p className="mt-6 font-mono text-xs uppercase tracking-[0.28em] text-gold">
             Coconut Rewards
           </p>
-          <h1 className="mt-4 font-display text-5xl italic sm:text-7xl">
+          <h1 className="h-sign mt-4 text-6xl text-shell sm:text-8xl">
             Collect coconuts.
             <span className="block text-orchid">Redeem for pours.</span>
           </h1>
@@ -59,7 +59,7 @@ export default function RewardsPage() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-orchid">
             How to earn
           </p>
-          <h2 className="mt-4 font-display text-3xl italic sm:text-4xl">
+          <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
             Four ways to fill your bowl.
           </h2>
 
@@ -83,7 +83,7 @@ export default function RewardsPage() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
             The ladder
           </p>
-          <h2 className="mt-4 font-display text-3xl italic sm:text-4xl">
+          <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
             What coconuts get you.
           </h2>
 
@@ -116,7 +116,7 @@ export default function RewardsPage() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-orchid">
             The fine print
           </p>
-          <h2 className="mt-4 font-display text-3xl italic sm:text-4xl">
+          <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
             Simple, no gotchas.
           </h2>
           <ul className="mt-8 space-y-4 text-shell/80">

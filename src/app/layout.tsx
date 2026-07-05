@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
-import { Spectral, Work_Sans, Space_Mono } from "next/font/google";
+import { Barlow_Condensed, Spectral, Work_Sans, Space_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+// Bold condensed sans — matches the CRAFT KAVA bar sign.
+const barlowCondensed = Barlow_Condensed({
+  variable: "--font-barlow-condensed",
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800", "900"],
+});
+
+// Italic serif for lyrical accents.
 const spectral = Spectral({
   variable: "--font-spectral",
   subsets: ["latin"],
@@ -24,9 +32,9 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lumanai Kava — Craft Kava Bar & Functional Mocktails",
+  title: "Lumanai Kava — Craft Kava + Functional Mocktail Bar",
   description:
-    "Bold, clean, alcohol-free. Lumanai bartends functional kava cocktails at events across LA and Vegas. All the buzz — none of the booze.",
+    "All the buzz — without the booze. Lumanai bartends craft kava naktails and functional mocktails at events across LA and Vegas.",
 };
 
 export default function RootLayout({
@@ -37,7 +45,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${spectral.variable} ${workSans.variable} ${spaceMono.variable} h-full antialiased`}
+      className={`${barlowCondensed.variable} ${spectral.variable} ${workSans.variable} ${spaceMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-ocean text-shell">
         <Header />

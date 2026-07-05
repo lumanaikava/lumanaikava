@@ -60,7 +60,7 @@ export default function OurCraftPage() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
             Our Craft
           </p>
-          <h1 className="mt-6 font-display text-5xl italic sm:text-7xl">
+          <h1 className="h-sign mt-6 text-6xl text-shell sm:text-8xl">
             Not all kava
             <span className="block text-orchid">is made equal.</span>
           </h1>
@@ -102,7 +102,7 @@ export default function OurCraftPage() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-orchid">
             Spec sheet
           </p>
-          <h2 className="mt-4 font-display text-3xl italic sm:text-4xl">
+          <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
             Everything, on the record.
           </h2>
           <dl className="mt-10 divide-y divide-shell/10 border-y border-shell/10">

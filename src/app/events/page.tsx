@@ -58,9 +58,10 @@ export default function EventsPage() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
             Events · LA · Vegas
           </p>
-          <h1 className="mt-6 max-w-3xl font-display text-5xl leading-[1.02] sm:text-7xl">
+          <h1 className="h-sign mt-6 max-w-3xl text-6xl text-shell sm:text-8xl">
             The bar people
-            <span className="italic text-orchid"> will talk about.</span>
+            <br />
+            <span className="text-orchid">will talk about.</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg text-shell/80">
             A full craft cocktail experience for your event — poured entirely
@@ -95,7 +96,7 @@ export default function EventsPage() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-orchid">
             What's included
           </p>
-          <h2 className="mt-4 max-w-2xl font-display text-4xl italic sm:text-5xl">
+          <h2 className="h-sign mt-4 max-w-2xl text-5xl text-shell sm:text-6xl">
             One package. Everything you need at the bar.
           </h2>
 
@@ -147,7 +148,7 @@ export default function EventsPage() {
             <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
               Book the bar
             </p>
-            <h2 className="mt-4 font-display text-4xl italic sm:text-5xl">
+            <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">
               Tell us about your night.
             </h2>
             <p className="mt-6 text-shell/70">

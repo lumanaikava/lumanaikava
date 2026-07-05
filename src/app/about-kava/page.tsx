@@ -23,7 +23,7 @@ export default function AboutKavaPage() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
             Our Kava
           </p>
-          <h1 className="mt-6 font-display text-5xl italic sm:text-7xl">
+          <h1 className="h-sign mt-6 text-6xl text-shell sm:text-8xl">
             A root. A bowl.
             <span className="block text-orchid">3,000 years of practice.</span>
           </h1>
@@ -41,7 +41,7 @@ export default function AboutKavaPage() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-orchid">
             How it works
           </p>
-          <h2 className="mt-4 font-display text-3xl italic sm:text-4xl">
+          <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
             Same receptors as a drink, none of the fallout.
           </h2>
           <p className="mt-6 text-shell/80">
@@ -59,7 +59,7 @@ export default function AboutKavaPage() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
             About the liver-damage claims
           </p>
-          <h2 className="mt-4 font-display text-3xl italic sm:text-4xl">
+          <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
             Straight answer: not from kava like ours.
           </h2>
           <div className="mt-6 space-y-4 text-shell/80">
@@ -91,7 +91,7 @@ export default function AboutKavaPage() {
             rings={4}
             animated={false}
           />
-          <h2 className="mt-8 font-display text-3xl italic sm:text-4xl">
+          <h2 className="h-sign mt-8 text-4xl text-shell sm:text-5xl">
             Ready to try it?
           </h2>
           <div className="mt-8 flex flex-wrap justify-center gap-3">

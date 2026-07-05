@@ -17,7 +17,7 @@ export default function ContactPage() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
             Contact
           </p>
-          <h1 className="mt-4 font-display text-5xl italic sm:text-6xl">
+          <h1 className="h-sign mt-4 text-5xl text-shell sm:text-7xl">
             Reach out any time.
           </h1>
           <p className="mt-4 max-w-lg text-shell/70">

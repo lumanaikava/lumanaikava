@@ -21,7 +21,7 @@ export default function OurStoryPage() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
             Our Story
           </p>
-          <h1 className="mt-6 font-display text-5xl italic sm:text-7xl">
+          <h1 className="h-sign mt-6 text-6xl text-shell sm:text-8xl">
             Lumana&apos;i.
             <span className="block text-orchid">Samoan for &ldquo;the future.&rdquo;</span>
           </h1>

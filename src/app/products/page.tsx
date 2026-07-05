@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import Ripple from "@/components/Ripple";
@@ -6,7 +7,7 @@ import { products } from "@/lib/products";
 export const metadata: Metadata = {
   title: "Shop — Lumanai Kava",
   description:
-    "Lumanai Premium naktails and Growlers — bottled for one, poured for the table.",
+    "Lumanai Original Naktails and Growlers — bottled for one, poured for the table.",
 };
 
 export default async function ProductsPage({
@@ -25,8 +26,8 @@ export default async function ProductsPage({
       <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
         Shop
       </p>
-      <h1 className="mt-4 font-display text-5xl italic sm:text-6xl">
-        Lumanai Premium &amp; Growlers
+      <h1 className="h-sign mt-4 text-5xl text-shell sm:text-7xl">
+        Lumanai Original Naktails <span className="text-orchid">&amp; Growlers</span>
       </h1>
       <p className="mt-4 max-w-lg text-shell/70">
         Water-extracted, traditional-strength kava — bottled for one or
@@ -36,7 +37,7 @@ export default async function ProductsPage({
       <div className="mt-8 flex flex-wrap gap-3">
         {[
           { label: "All", value: undefined },
-          { label: "Lumanai Premium", value: "premium" },
+          { label: "Original Naktails", value: "premium" },
           { label: "Growlers", value: "growler" },
         ].map((tab) => {
           const active = category === tab.value || (!category && !tab.value);
@@ -61,16 +62,32 @@ export default async function ProductsPage({
           <Link
             key={p.handle}
             href={`/products/${p.handle}`}
-            className="group block rounded-3xl border border-shell/10 bg-lagoon/40 p-7 backdrop-blur transition-colors hover:border-gold"
+            className="group block overflow-hidden rounded-3xl border border-shell/10 bg-lagoon/40 backdrop-blur transition-colors hover:border-gold"
           >
-            <Ripple className="h-8 w-8 text-orchid" rings={3} animated={false} />
-            <h2 className="mt-6 font-display text-2xl italic text-shell">{p.name}</h2>
-            <p className="mt-2 text-sm text-shell/60">{p.notes}</p>
-            <div className="mt-6 flex items-center justify-between">
-              <p className="font-mono text-sm text-gold">{p.priceLabel}</p>
-              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/40">
-                {p.reviewCount} reviews
-              </p>
+            <div className="relative aspect-[4/5] overflow-hidden bg-shell">
+              {p.image ? (
+                <Image
+                  src={p.image}
+                  alt={p.name}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-contain object-bottom p-6 transition-transform duration-500 group-hover:scale-105"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center">
+                  <Ripple className="h-1/2 w-1/2 text-abyss/60" rings={5} animated={false} />
+                </div>
+              )}
+            </div>
+            <div className="p-7">
+              <h2 className="h-sign-med text-2xl text-shell">{p.name}</h2>
+              <p className="mt-2 text-sm text-shell/60">{p.notes}</p>
+              <div className="mt-6 flex items-center justify-between">
+                <p className="font-mono text-sm text-gold">{p.priceLabel}</p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/40">
+                  {p.reviewCount} reviews
+                </p>
+              </div>
             </div>
           </Link>
         ))}

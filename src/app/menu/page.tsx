@@ -28,7 +28,7 @@ export default function MenuPage() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
             {currentMenu.event.location}
           </p>
-          <h1 className="mt-6 font-display text-5xl italic sm:text-7xl">
+          <h1 className="h-sign mt-6 text-6xl text-shell sm:text-8xl">
             {currentMenu.event.title}
           </h1>
           <p className="mt-4 text-shell/70">{currentMenu.event.date}</p>
@@ -47,7 +47,7 @@ export default function MenuPage() {
             <div key={section.title} className={sIdx === 0 ? "" : "mt-16"}>
               <div className="flex items-end justify-between border-b border-shell/20 pb-6">
                 <div>
-                  <h2 className="font-display text-4xl italic text-shell">
+                  <h2 className="h-sign text-5xl text-shell sm:text-6xl">
                     {section.title}
                   </h2>
                   {section.subtitle && (
@@ -63,7 +63,7 @@ export default function MenuPage() {
                 {section.drinks.map((d) => (
                   <li key={d.name} className="py-8">
                     <div className="flex items-baseline justify-between gap-6">
-                      <h3 className="font-display text-2xl italic text-shell">
+                      <h3 className="h-sign-med text-2xl text-shell sm:text-3xl">
                         {d.name}
                       </h3>
                       <Ripple

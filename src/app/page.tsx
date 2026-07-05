@@ -75,11 +75,12 @@ export default function Home() {
 
         <div className="relative mx-auto flex max-w-6xl flex-col justify-end px-6 pb-24 pt-40 sm:pt-48">
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
-            Craft Kava Bar · Los Angeles · Las Vegas
+            Craft Kava + Functional Mocktail Bar · LA · Vegas
           </p>
-          <h1 className="mt-6 max-w-3xl font-display text-5xl leading-[1.02] text-shell sm:text-7xl">
+          <h1 className="h-sign mt-6 max-w-3xl text-shell text-6xl sm:text-8xl">
             All the buzz
-            <span className="italic text-orchid"> — none of the booze.</span>
+            <br />
+            <span className="text-orchid">without the booze.</span>
           </h1>
           <p className="mt-6 max-w-xl text-lg text-shell/80">
             Lumanai bartends functional kava cocktails and zero-proof
@@ -123,7 +124,7 @@ export default function Home() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-orchid">
             What Lumanai does
           </p>
-          <h2 className="mt-4 max-w-2xl font-display text-4xl italic leading-tight sm:text-5xl">
+          <h2 className="h-sign mt-4 max-w-2xl text-shell text-5xl sm:text-6xl">
             A full bar experience. Zero alcohol.
           </h2>
 
@@ -157,8 +158,8 @@ export default function Home() {
               <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
                 {currentMenu.event.title}
               </p>
-              <h2 className="mt-4 font-display text-4xl italic sm:text-5xl">
-                What's pouring right now.
+              <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">
+                What&apos;s pouring right now.
               </h2>
             </div>
             <Link
@@ -207,8 +208,8 @@ export default function Home() {
               <p className="font-mono text-xs uppercase tracking-[0.28em] text-orchid">
                 On the floor
               </p>
-              <h2 className="mt-4 font-display text-4xl italic sm:text-5xl">
-                Nights we've poured.
+              <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">
+                Nights we&apos;ve poured.
               </h2>
             </div>
             <Link
@@ -269,8 +270,10 @@ export default function Home() {
             <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
               Coconut Rewards
             </p>
-            <h2 className="mt-4 font-display text-4xl italic sm:text-5xl">
-              Collect coconuts. Redeem for pours.
+            <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">
+              Collect coconuts.
+              <br />
+              <span className="text-orchid">Redeem for pours.</span>
             </h2>
             <p className="mt-6 max-w-lg text-shell/80">
               Every dollar you spend earns a coconut. Stack them for free
@@ -312,8 +315,10 @@ export default function Home() {
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
             Drink Different
           </p>
-          <h2 className="mt-6 font-display text-4xl italic sm:text-6xl">
-            Your next event, but everyone remembers it.
+          <h2 className="h-sign mt-6 text-5xl text-shell sm:text-7xl">
+            Your next event,
+            <br />
+            <span className="text-orchid">but everyone remembers it.</span>
           </h2>
           <Link
             href="/events#book"

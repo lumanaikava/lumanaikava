@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Ripple from "@/components/Ripple";
@@ -37,16 +38,28 @@ export default async function ProductPage({
       </Link>
 
       <div className="mt-8 grid gap-16 lg:grid-cols-2">
-        <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-3xl border border-shell/10 bg-abyss">
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-amethyst/40 via-transparent to-orchid/40" />
-          <Ripple className="relative h-2/3 w-2/3 text-gold" rings={6} />
+        <div className="relative aspect-square overflow-hidden rounded-3xl border border-shell/10 bg-shell">
+          {product.image ? (
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-contain object-center p-10"
+              priority
+            />
+          ) : (
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-gradient-to-br from-amethyst/40 via-transparent to-orchid/40">
+              <Ripple className="h-2/3 w-2/3 text-gold" rings={6} />
+            </div>
+          )}
         </div>
 
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
-            {product.category === "premium" ? "Lumanai Premium" : "Growler"}
+            {product.category === "premium" ? "Original Naktail" : "Growler"}
           </p>
-          <h1 className="mt-3 font-display text-5xl italic text-shell">
+          <h1 className="h-sign mt-3 text-5xl text-shell sm:text-6xl">
             {product.name}
           </h1>
           <p className="mt-3 font-mono text-sm text-shell/50">{product.notes}</p>
