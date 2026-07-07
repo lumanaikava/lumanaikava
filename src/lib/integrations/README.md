@@ -5,6 +5,16 @@ credentials pasted into `.env.local` (copy `.env.example` first). Nothing
 here will fail silently — if a key is missing, it logs a warning and
 degrades gracefully.
 
+## Current status (2026-07-07)
+
+| Integration | Status |
+| --- | --- |
+| GoHighLevel webhook | ✅ **LIVE** in `.env.local` — verified end-to-end (test lead sent; delete it from the pipeline) |
+| Shopify Storefront | 🟡 Domain set (`lumanai-kava.myshopify.com`) — still needs the Storefront API token (steps in §1) |
+| Twilio SMS alerts | 🟡 Optional — needs SID + Auth Token + From number (steps in §3) |
+| Events calendar | ✅ Site reads `src/lib/calendar.ts` — edit that file to update dates |
+| Canva | 🟡 The Canva connector needs a one-time OAuth authorization in an interactive Claude session before Claude can pull assets directly |
+
 ## 1. Shopify Storefront (products, cart, checkout)
 
 **Where to grab creds**
@@ -17,7 +27,7 @@ degrades gracefully.
 4. **Install app** → copy the **Storefront API access token**
 5. Paste into `.env.local`:
    ```
-   NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN=lumanai.myshopify.com
+   NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN=lumanai-kava.myshopify.com
    NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN=xxxxxx
    ```
 
