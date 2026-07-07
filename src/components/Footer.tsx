@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import Ripple from "./Ripple";
 import { navLinks, footerLinks } from "@/lib/nav";
@@ -15,10 +16,13 @@ export default function Footer() {
       <div className="relative mx-auto max-w-6xl px-6 py-16">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <div className="flex items-center gap-2 font-mono text-sm font-bold tracking-[0.22em]">
-              <Ripple className="h-6 w-6 text-gold" rings={3} animated={false} />
-              LUMANAI
-            </div>
+            <Image
+              src="/lumanai-wordmark.svg"
+              alt="LUMANAI"
+              width={150}
+              height={61}
+              className="h-auto w-[150px]"
+            />
             <p className="mt-4 max-w-xs font-display text-lg italic leading-snug text-shell/80">
               Drink Different. All the buzz — none of the booze.
             </p>

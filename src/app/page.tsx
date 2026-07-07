@@ -42,7 +42,7 @@ const testimonials = [
   },
   {
     quote:
-      "Šavasana Spritz after a long shift, and I sleep like a baby. That's the whole review.",
+      "Adapterol Spritz after a long shift, and I sleep like a baby. That's the whole review.",
     name: "Marcus O.",
     context: "Repeat customer",
   },
@@ -85,7 +85,7 @@ export default function Home() {
           <p className="mt-6 max-w-xl text-lg text-shell/80">
             Lumanai bartends functional kava cocktails and zero-proof
             mocktails at events that want everyone to feel something more —
-            without waking up wishing they hadn't.
+            without waking up wishing they hadn&apos;t.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
@@ -98,7 +98,7 @@ export default function Home() {
               href="/menu"
               className="rounded-full border border-shell/30 px-8 py-4 font-mono text-xs uppercase tracking-[0.18em] text-shell transition-colors hover:border-gold hover:text-gold"
             >
-              See This Week's Menu
+              See This Week&apos;s Menu
             </Link>
           </div>
         </div>

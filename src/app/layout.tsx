@@ -32,9 +32,36 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lumanai Kava — Craft Kava + Functional Mocktail Bar",
+  metadataBase: new URL("https://lumanai.com"),
+  title: {
+    default: "Lumanai Kava — Craft Kava + Functional Mocktail Bar",
+    template: "%s — Lumanai Kava",
+  },
   description:
     "All the buzz — without the booze. Lumanai bartends craft kava naktails and functional mocktails at events across LA and Vegas.",
+  keywords: [
+    "kava",
+    "kava bar",
+    "functional mocktails",
+    "alcohol-free bar",
+    "sober bar catering",
+    "Las Vegas mobile bar",
+    "Los Angeles mobile bar",
+    "naktails",
+  ],
+  openGraph: {
+    title: "Lumanai Kava — Craft Kava + Functional Mocktail Bar",
+    description:
+      "All the buzz — without the booze. Craft kava naktails and functional mocktails, bartended at your event.",
+    url: "https://lumanai.com",
+    siteName: "Lumanai Kava",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@lumanaikava",
+  },
 };
 
 export default function RootLayout({

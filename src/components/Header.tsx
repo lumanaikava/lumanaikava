@@ -1,9 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { navLinks } from "@/lib/nav";
-import Ripple from "./Ripple";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -11,13 +11,15 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-shell/10 bg-abyss/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link
-          href="/"
-          onClick={() => setOpen(false)}
-          className="flex items-center gap-2 font-mono text-sm font-bold tracking-[0.22em] text-shell"
-        >
-          <Ripple className="h-6 w-6 text-orchid" rings={3} animated={false} />
-          LUMANAI
+        <Link href="/" onClick={() => setOpen(false)} aria-label="Lumanai home">
+          <Image
+            src="/lumanai-wordmark.svg"
+            alt="LUMANAI"
+            width={132}
+            height={53}
+            priority
+            className="h-auto w-[120px] sm:w-[132px]"
+          />
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex">

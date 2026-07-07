@@ -1,6 +1,6 @@
 /**
  * Digital menu — edit this file to update what's pouring at the current event.
- * Each edit auto-deploys once you push (or shows immediately in the local dev server).
+ * Changes show immediately in local dev; on the live site they deploy on push.
  *
  * Structure:
  *   - `event` shows above the menu (title + date + location)
@@ -34,54 +34,45 @@ export type Menu = {
 
 export const currentMenu: Menu = {
   event: {
-    title: "Current Pour Menu",
-    date: "Updates before every event",
-    location: "Los Angeles · Las Vegas",
+    title: "Base Menu",
+    date: "Pouring now",
+    location: "Las Vegas · Los Angeles",
     tagline: "Ask your bartender what's new this week.",
   },
   sections: [
     {
-      title: "Naktails",
+      title: "Craft Kava Naktails",
       subtitle: "with kava — the buzz you can feel",
-      priceLabel: "$14",
+      priceLabel: "$15",
       drinks: [
         {
-          name: "Warrior One",
+          name: "Hive Mind",
           ingredients:
-            "Lumanai kava, shilajit, muddled raspberries, handcrafted sugar-free Madagascar vanilla syrup, orange bitters, aquafaba foam",
+            "Lumanai kava · clover honey · fresh ginger · lemon essence",
         },
         {
-          name: "Downward-Facing Grog",
+          name: "Pacific Rim",
           ingredients:
-            "Lumanai kava, manuka honey, organic turmeric and Ceylon cinnamon, fresh ginger and lemon",
-        },
-        {
-          name: "Kava Kolada",
-          ingredients:
-            "Lumanai kava, pineapple juice, fresh-pressed coconut milk, handcrafted sugar-free Madagascar vanilla syrup, vitamin C",
+            "Lumanai kava · pineapple juice · fresh-pressed coconut milk · Madagascar vanilla bean · vitamin C",
         },
       ],
     },
     {
-      title: "Mocktails",
+      title: "Functional Mocktail",
       subtitle: "zero-proof, still functional",
-      priceLabel: "$10",
+      priceLabel: "$13",
       drinks: [
         {
-          name: "Šavasana Spritz",
+          name: "Adapterol Spritz",
           ingredients:
-            "Handcrafted sugar-free lavender hibiscus syrup, pineapple and lemon juice, sparkling mineral water",
-        },
-        {
-          name: "Prana Colada",
-          ingredients:
-            "Pineapple juice, Thai basil, fresh-pressed coconut milk, handcrafted sugar-free Madagascar vanilla syrup, CocoLove coconut water",
+            "Damiana flower · schisandra berry · handcrafted sugar-free syrup · pineapple & lemon juice · Raspberry Rose Poppi",
         },
       ],
     },
   ],
   extras: [
-    { label: "Single Kava Shot", priceLabel: "$6" },
-    { label: "Drink + Kava Shot", priceLabel: "+$4" },
+    { label: "Kava Shot", priceLabel: "$6" },
+    { label: "Shot & Drink Combo", priceLabel: "+$3" },
+    { label: "Add RUSH instant kava to any drink", priceLabel: "+$4" },
   ],
 };

@@ -1,8 +1,10 @@
 import Image from "next/image";
 import type { Metadata } from "next";
 import BookingForm from "@/components/BookingForm";
+import EventsCalendar from "@/components/EventsCalendar";
 import Ripple from "@/components/Ripple";
 import { eventImages } from "@/lib/images";
+import { eventPackages, experienceUpgrades, upgradeBundle } from "@/lib/packages";
 
 export const metadata: Metadata = {
   title: "Book the Bar — Lumanai Kava",
@@ -94,7 +96,7 @@ export default function EventsPage() {
       <section>
         <div className="mx-auto max-w-6xl px-6 py-24">
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-orchid">
-            What's included
+            What&apos;s included
           </p>
           <h2 className="h-sign mt-4 max-w-2xl text-5xl text-shell sm:text-6xl">
             One package. Everything you need at the bar.
@@ -113,6 +115,137 @@ export default function EventsPage() {
                 <p className="mt-3 text-sm text-shell/70">{item.copy}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Packages */}
+      <section className="border-t border-shell/10">
+        <div className="mx-auto max-w-6xl px-6 py-24">
+          <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
+            Packages
+          </p>
+          <h2 className="h-sign mt-4 max-w-2xl text-5xl text-shell sm:text-6xl">
+            Pick your experience.
+          </h2>
+          <p className="mt-4 max-w-xl text-shell/60">
+            Pricing reflects events within the Las Vegas metro area. Final
+            pricing may vary with guest count, duration, and customization.
+          </p>
+
+          <div className="mt-14 grid gap-6 lg:grid-cols-2">
+            {eventPackages.map((pkg) => (
+              <div
+                key={pkg.number}
+                className={`flex flex-col rounded-3xl border p-8 backdrop-blur ${
+                  pkg.highlight
+                    ? "border-gold/50 bg-violet/40"
+                    : "border-shell/10 bg-lagoon/40"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <p className="font-display text-4xl italic text-shell/30">
+                    {pkg.number}.
+                  </p>
+                  {pkg.highlight && (
+                    <p className="rounded-full border border-gold/50 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-gold">
+                      Signature experience
+                    </p>
+                  )}
+                </div>
+                <h3 className="h-sign-med mt-3 text-2xl text-shell">
+                  {pkg.name}
+                </h3>
+                <ul className="mt-5 space-y-2.5">
+                  {pkg.features.map((f) => (
+                    <li key={f} className="flex gap-3 text-sm text-shell/75">
+                      <span
+                        className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-orchid"
+                        aria-hidden
+                      />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <dl className="mt-auto space-y-1 pt-7">
+                  {pkg.tiers.map((t) => (
+                    <div
+                      key={t.guests}
+                      className="flex items-baseline justify-between border-t border-shell/10 py-2"
+                    >
+                      <dt className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/50">
+                        {t.guests}
+                      </dt>
+                      <dd className="font-mono text-lg text-gold">{t.price}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Experience upgrades */}
+      <section className="border-t border-shell/10 bg-abyss/60">
+        <div className="mx-auto max-w-6xl px-6 py-24">
+          <p className="font-mono text-xs uppercase tracking-[0.28em] text-orchid">
+            Experience upgrades
+          </p>
+          <h2 className="h-sign mt-4 max-w-2xl text-5xl text-shell sm:text-6xl">
+            Tune the bar to your crowd.
+          </h2>
+
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {experienceUpgrades.map((u) => (
+              <div
+                key={u.name}
+                className="rounded-3xl border border-shell/10 bg-lagoon/40 p-7"
+              >
+                <div className="flex items-baseline justify-between gap-3">
+                  <h3 className="h-sign-med text-lg text-shell">{u.name}</h3>
+                  <p className="font-display text-2xl italic text-gold">
+                    {u.price}
+                  </p>
+                </div>
+                <ul className="mt-5 space-y-4">
+                  {u.items.map((item) => (
+                    <li key={item.name}>
+                      <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-orchid">
+                        {item.name}
+                      </p>
+                      <p className="mt-1 text-sm text-shell/70">{item.copy}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 flex flex-col items-center justify-between gap-4 rounded-3xl border border-gold/40 bg-violet/30 px-8 py-6 sm:flex-row">
+            <p className="h-sign-med text-xl text-shell">{upgradeBundle.name}</p>
+            <p className="font-display text-3xl italic text-gold">
+              {upgradeBundle.price}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Upcoming events calendar */}
+      <section id="calendar" className="border-t border-shell/10">
+        <div className="mx-auto max-w-4xl px-6 py-24">
+          <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
+            Find the booth
+          </p>
+          <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">
+            Upcoming events.
+          </h2>
+          <p className="mt-4 max-w-xl text-shell/60">
+            Try the full craft kava &amp; functional mocktail bar before you
+            book it. Come say bula.
+          </p>
+          <div className="mt-12">
+            <EventsCalendar />
           </div>
         </div>
       </section>
