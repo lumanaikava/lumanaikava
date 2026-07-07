@@ -28,23 +28,19 @@ export default function FindUsPage() {
           className="object-cover object-center opacity-35"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-abyss/70 via-abyss/70 to-abyss" />
-        <div className="relative mx-auto max-w-6xl px-6 pb-16 pt-36 sm:pt-44">
+        <div className="relative mx-auto max-w-6xl px-6 pb-10 pt-16 sm:pt-20">
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
             Find the bar · Las Vegas
           </p>
-          <h1 className="h-sign mt-5 max-w-3xl text-6xl text-shell sm:text-8xl">
+          <h1 className="h-sign mt-4 max-w-3xl text-5xl text-shell sm:text-6xl">
             Come say <span className="text-orchid">bula.</span>
           </h1>
-          <p className="mt-5 max-w-xl text-lg text-shell/80">
-            Two standing markets every weekend, plus wherever the full bar
-            travels next. First round of questions is always free.
-          </p>
         </div>
       </section>
 
       {/* Weekly residencies */}
       <section className="border-y border-shell/10 bg-abyss/70">
-        <div className="mx-auto grid max-w-6xl gap-6 px-6 py-14 md:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl gap-6 px-6 py-8 md:grid-cols-2">
           {weeklyResidencies.map((r) => (
             <div
               key={r.title}
@@ -71,14 +67,14 @@ export default function FindUsPage() {
 
       {/* Rolling calendar */}
       <section>
-        <div className="mx-auto max-w-4xl px-6 py-20">
+        <div className="mx-auto max-w-4xl px-6 py-10">
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-orchid">
             Next four weeks
           </p>
           <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">
             Upcoming appearances.
           </h2>
-          <div className="mt-10">
+          <div className="mt-8">
             <EventsCalendar />
           </div>
         </div>

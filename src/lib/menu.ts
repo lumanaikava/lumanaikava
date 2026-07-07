@@ -1,78 +1,82 @@
 /**
  * Digital menu — edit this file to update what's pouring at the current event.
- * Changes show immediately in local dev; on the live site they deploy on push.
+ * The /menu page reproduces the Canva "Base Menu" design 1:1 from this data.
  *
- * Structure:
- *   - `event` shows above the menu (title + date + location)
- *   - `sections` are grouped drinks (e.g. Naktails, Mocktails)
- *   - `extras` are small add-ons that show at the bottom
+ * To change a drink: name, ingredients, `image` (put the photo in
+ * public/images/drinks/), and `accent` (the name's display color).
  */
 
 export type MenuDrink = {
   name: string;
   ingredients: string;
-  note?: string;
+  image?: string;
+  /** Display color for the drink name, from the Canva menu. */
+  accent?: string;
 };
 
 export type MenuSection = {
   title: string;
-  subtitle?: string;
-  priceLabel: string;
+  price: string;
   drinks: MenuDrink[];
 };
 
 export type Menu = {
   event: {
     title: string;
-    date: string;
     location: string;
-    tagline?: string;
   };
   sections: MenuSection[];
-  extras: { label: string; priceLabel: string }[];
+  extras: { label: string; price: string; accent?: string }[];
+  addOn?: { label: string; highlight: string; price: string };
 };
 
 export const currentMenu: Menu = {
   event: {
     title: "Base Menu",
-    date: "Pouring now",
     location: "Las Vegas, NV",
-    tagline: "Ask your bartender what's new this week.",
   },
   sections: [
     {
       title: "Craft Kava Naktails",
-      subtitle: "with kava — the buzz you can feel",
-      priceLabel: "$15",
+      price: "15",
       drinks: [
         {
           name: "Hive Mind",
           ingredients:
-            "Lumanai kava · clover honey · fresh ginger · lemon essence",
+            "LUMANAI KAVA · Clover Honey · Fresh Ginger · Lemon Essence",
+          image: "/images/drinks/hive-mind.png",
+          accent: "#e8871f",
         },
         {
           name: "Pacific Rim",
           ingredients:
-            "Lumanai kava · pineapple juice · fresh-pressed coconut milk · Madagascar vanilla bean · vitamin C",
+            "LUMANAI KAVA · Pineapple Juice · Fresh-Pressed Coconut Milk · Madagascar Vanilla Bean · Vitamin C",
+          image: "/images/drinks/pacific-rim.png",
+          accent: "#8aa32b",
         },
       ],
     },
     {
       title: "Functional Mocktail",
-      subtitle: "zero-proof, still functional",
-      priceLabel: "$13",
+      price: "13",
       drinks: [
         {
           name: "Adapterol Spritz",
           ingredients:
-            "Damiana flower · schisandra berry · handcrafted sugar-free syrup · pineapple & lemon juice · Raspberry Rose Poppi",
+            "Damiana Flower · Schisandra Berry · Handcrafted Sugar-Free Syrup · Pineapple & Lemon Juice · Raspberry Rose Poppi",
+          image: "/images/drinks/adapterol-spritz.png",
+          accent: "#a93343",
         },
       ],
     },
   ],
   extras: [
-    { label: "Kava Shot", priceLabel: "$6" },
-    { label: "Shot & Drink Combo", priceLabel: "+$3" },
-    { label: "Add RUSH instant kava to any drink", priceLabel: "+$4" },
+    { label: "Kava Shot", price: "6", accent: "#185c7c" },
+    { label: "Shot & Drink Combo", price: "+3", accent: "#6b3a9c" },
   ],
+  addOn: {
+    label: "+ Add",
+    highlight: "RUSH Instant Kava",
+    price: "+4",
+  },
 };

@@ -4,9 +4,19 @@ import Link from "next/link";
 import { ingredients, categoryLabels, type Ingredient } from "@/lib/ingredients";
 
 export const metadata: Metadata = {
-  title: "Ingredients — Lumanai Kava",
+  title: "Ingredients",
   description:
-    "Every functional ingredient behind the Lumanai bar — noble kava, adaptogens, nootropics, minerals, and clean botanicals — and exactly what each one is doing in your glass.",
+    "Every functional ingredient behind the Lumanai bar — noble kava, adaptogens, nootropics, minerals, and clean botanicals.",
+};
+
+// Real botanical photography from the brand's Canva deck, per category.
+const categoryPhotos: Partial<Record<Ingredient["category"], string>> = {
+  kava: "/images/botanicals/kava-root.webp",
+  adaptogen: "/images/botanicals/schisandra.webp",
+  nootropic: "/images/botanicals/lions-mane.webp",
+  botanical: "/images/botanicals/damiana.webp",
+  sweetener: "/images/botanicals/kanna.webp",
+  mineral: "/images/botanicals/reishi.webp",
 };
 
 const orderedCategories: Ingredient["category"][] = [
@@ -21,134 +31,97 @@ const orderedCategories: Ingredient["category"][] = [
 export default function IngredientsPage() {
   return (
     <>
-      {/* Hero — signature roots pattern, straight off the bar sign */}
-      <section className="relative overflow-hidden">
-        <div
-          className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-30"
-          style={{ backgroundImage: "url(/images/roots-hero.webp)" }}
-          aria-hidden
-        />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-abyss/40 via-transparent to-ocean" />
-        <div className="pointer-events-none absolute -right-32 top-16 h-[420px] w-[420px] rounded-full bg-orchid/25 blur-3xl" />
-        <div className="pointer-events-none absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-amethyst/30 blur-3xl" />
-        <div className="relative mx-auto max-w-5xl px-6 pb-16 pt-32 text-center">
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
-            Our ingredients · Our purpose
-          </p>
-          <h1 className="h-sign mt-6 text-6xl text-shell sm:text-8xl">
-            Every drink,
-            <br />
-            <span className="text-orchid">on the record.</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-xl text-lg text-shell/80">
-            Nothing in a Lumanai glass is decoration. Every botanical, root,
-            berry, and mineral is here for a reason — and here&apos;s exactly
-            what each one is doing while you sip.
-          </p>
+      {/* Slim header */}
+      <section className="border-b border-shell/10">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-end justify-between gap-4 px-6 pb-8 pt-12">
+          <div>
+            <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
+              Our ingredients · Our purpose
+            </p>
+            <h1 className="h-sign mt-3 text-5xl text-shell sm:text-6xl">
+              Every drink, <span className="text-orchid">on the record.</span>
+            </h1>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {["All natural", "Gluten-free", "3rd party tested", "Sugar-free"].map(
+              (tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full border border-shell/20 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-shell/75"
+                >
+                  {tag}
+                </span>
+              )
+            )}
+          </div>
         </div>
       </section>
 
-      {/* Ingredients grouped by category */}
-      <section className="border-t border-shell/10">
-        <div className="mx-auto max-w-6xl px-6 py-20">
+      {/* Category cards: real photo + ingredient rows */}
+      <section>
+        <div className="mx-auto grid max-w-6xl gap-5 px-6 py-10 md:grid-cols-2">
           {orderedCategories.map((cat) => {
             const rows = ingredients.filter((i) => i.category === cat);
             if (!rows.length) return null;
+            const photo = categoryPhotos[cat];
             return (
-              <div key={cat} className="mt-16 first:mt-0">
-                <div className="flex items-end justify-between border-b border-shell/15 pb-4">
-                  <h2 className="h-sign-med text-3xl text-gold sm:text-4xl">
-                    {categoryLabels[cat]}
-                  </h2>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-shell/50">
-                    {rows.length} {rows.length === 1 ? "ingredient" : "ingredients"}
-                  </p>
-                </div>
-
-                <div className="mt-8 grid gap-4 md:grid-cols-2">
+              <div
+                key={cat}
+                className="overflow-hidden rounded-3xl border border-shell/10 bg-lagoon/30"
+              >
+                {photo && (
+                  <div className="relative h-36 sm:h-44">
+                    <Image
+                      src={photo}
+                      alt={categoryLabels[cat]}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-abyss/90 via-abyss/20 to-transparent" />
+                    <h2 className="h-sign absolute bottom-3 left-5 text-3xl text-shell">
+                      {categoryLabels[cat]}
+                    </h2>
+                  </div>
+                )}
+                <ul className="divide-y divide-shell/10 px-5">
                   {rows.map((ing) => (
-                    <div
-                      key={ing.slug}
-                      className="rounded-2xl border border-shell/10 bg-lagoon/40 p-6 backdrop-blur"
-                    >
-                      <div className="flex items-start gap-5">
-                        <Image
-                          src={`/images/ingredients/${ing.slug}.png`}
-                          alt=""
-                          width={56}
-                          height={56}
-                          className="mt-1 h-14 w-14 shrink-0 opacity-90"
-                          aria-hidden
-                        />
-                        <div>
-                          <h3 className="h-sign-med text-2xl text-shell">
-                            {ing.name}
-                          </h3>
-                          <p className="mt-2 text-sm leading-relaxed text-shell/70">
-                            {ing.claim}
-                          </p>
-                        </div>
+                    <li key={ing.slug} className="flex items-center gap-4 py-3.5">
+                      <Image
+                        src={`/images/ingredients/${ing.slug}.png`}
+                        alt=""
+                        width={40}
+                        height={40}
+                        className="h-10 w-10 shrink-0 opacity-90"
+                        aria-hidden
+                      />
+                      <div>
+                        <h3 className="h-sign-med text-lg text-shell">
+                          {ing.name}
+                        </h3>
+                        <p className="text-xs leading-relaxed text-shell/65">
+                          {ing.claim}
+                        </p>
                       </div>
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
             );
           })}
         </div>
       </section>
 
-      {/* Purity strip */}
-      <section className="border-y border-shell/10 bg-abyss">
-        <div className="mx-auto max-w-6xl px-6 py-16">
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
-            The clean-list
-          </p>
-          <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
-            Nothing sketchy behind the bar.
-          </h2>
-          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              "All natural",
-              "Gluten-free",
-              "3rd party tested",
-              "Sugar-free syrups",
-              "No solvents",
-              "No CO₂ extraction",
-              "Reverse-osmosis water",
-              "Veggie-washed produce",
-            ].map((tag) => (
-              <li
-                key={tag}
-                className="rounded-full border border-shell/15 px-5 py-3 text-center font-mono text-[11px] uppercase tracking-[0.18em] text-shell/80"
-              >
-                {tag}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
       {/* CTA */}
-      <section>
-        <div className="mx-auto max-w-4xl px-6 py-20 text-center">
-          <h2 className="h-sign text-4xl text-shell sm:text-5xl">
-            Ready to taste it?
-          </h2>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link
-              href="/menu"
-              className="rounded-full bg-gold px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-abyss hover:bg-shell"
-            >
-              See The Menu
-            </Link>
-            <Link
-              href="/events#book"
-              className="rounded-full border border-shell/30 px-8 py-4 font-mono text-xs uppercase tracking-[0.18em] text-shell hover:border-gold hover:text-gold"
-            >
-              Book the Bar
-            </Link>
-          </div>
+      <section className="border-t border-shell/10 bg-abyss">
+        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-5 px-6 py-10">
+          <p className="h-sign text-2xl text-shell">Ready to taste it?</p>
+          <Link
+            href="/menu"
+            className="rounded-full bg-gold px-7 py-3 font-mono text-xs font-bold uppercase tracking-[0.16em] text-abyss hover:bg-shell"
+          >
+            See the Menu
+          </Link>
         </div>
       </section>
     </>

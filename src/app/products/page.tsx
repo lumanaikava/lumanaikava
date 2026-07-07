@@ -39,22 +39,18 @@ export default async function ProductsPage({
   const showFeatured = !category && featured;
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20">
+    <section className="mx-auto max-w-6xl px-6 py-10">
       <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
         Shop
       </p>
-      <h1 className="h-sign mt-4 text-5xl text-shell sm:text-7xl">
+      <h1 className="h-sign mt-3 text-4xl text-shell sm:text-5xl">
         Lumanai Original Naktails <span className="text-orchid">&amp; Growlers</span>
       </h1>
-      <p className="mt-4 max-w-lg text-shell/70">
-        Water-extracted, traditional-strength kava — bottled for one or
-        poured for the table.
-      </p>
 
       {showFeatured && (
         <Link
           href={`/products/${featured.handle}`}
-          className="group relative mt-12 block overflow-hidden rounded-3xl border border-gold/40 bg-abyss transition-colors hover:border-gold"
+          className="group relative mt-8 block overflow-hidden rounded-3xl border border-gold/40 bg-abyss transition-colors hover:border-gold"
         >
           <div
             className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-25"

@@ -1,35 +1,21 @@
 import type { Metadata } from "next";
-import { Anton, Spectral, Work_Sans, Space_Mono } from "next/font/google";
+import { Anton, Work_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-// Heavy block display face — the exact family used on the real
-// CRAFT KAVA bar sign and Canva brand kit ("CRAFT KAVA", "LUMANAI").
+// The brand's two typefaces, exactly as in the Canva kit:
+// Anton for display (bar sign, menus), Work Sans for everything else.
 const anton = Anton({
   variable: "--font-anton",
   subsets: ["latin"],
   weight: "400",
 });
 
-// Italic serif for lyrical accents.
-const spectral = Spectral({
-  variable: "--font-spectral",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
-});
-
 const workSans = Work_Sans({
   variable: "--font-work-sans",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-});
-
-const spaceMono = Space_Mono({
-  variable: "--font-space-mono",
-  subsets: ["latin"],
-  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -97,7 +83,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${anton.variable} ${spectral.variable} ${workSans.variable} ${spaceMono.variable} h-full antialiased`}
+      className={`${anton.variable} ${workSans.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-ocean text-shell">
         <a href="#main" className="skip-link">

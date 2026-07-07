@@ -31,11 +31,13 @@
   --color-gold: var(--gold);
   --color-teal: var(--teal);
 
-  /* Anton — the exact display face used on the real bar sign. */
+  /* Two brand faces only, per the Canva kit: Anton + Work Sans.
+     --font-display and --font-mono stay defined so existing utility
+     classes keep working, but they now resolve to the brand faces. */
   --font-sign: var(--font-anton);
-  --font-display: var(--font-spectral);
+  --font-display: var(--font-work-sans);
   --font-body: var(--font-work-sans);
-  --font-mono: var(--font-space-mono);
+  --font-mono: var(--font-work-sans);
 }
 
 /* Bold sign headline — Anton, the exact face on the real bar signage.

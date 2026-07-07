@@ -1,126 +1,131 @@
 import Image from "next/image";
 import type { Metadata } from "next";
-import Ripple from "@/components/Ripple";
 import { currentMenu } from "@/lib/menu";
-import { eventImages } from "@/lib/images";
 
 export const metadata: Metadata = {
-  title: "Menu — Lumanai Kava",
+  title: "Menu",
   description:
-    "The Lumanai craft kava bar's current menu of naktails and functional mocktails. Updated event to event.",
+    "The Lumanai craft kava bar's current menu — naktails, functional mocktails, kava shots.",
 };
 
+/**
+ * Reproduces the Canva "Base Menu" design: a white menu card framed by the
+ * signature roots pattern, teal Anton headings, colored drink names.
+ */
 export default function MenuPage() {
   return (
-    <>
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <Image
-          src={eventImages.menuOnBar}
-          alt="Lumanai printed menu on the bar"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center opacity-30"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-abyss/60 via-abyss/80 to-abyss" />
-        <div className="relative mx-auto max-w-4xl px-6 pb-16 pt-40 text-center sm:pt-48">
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
-            {currentMenu.event.location}
-          </p>
-          <h1 className="h-sign mt-6 text-6xl text-shell sm:text-8xl">
-            {currentMenu.event.title}
+    <section
+      className="relative bg-cover bg-center py-8 sm:py-12"
+      style={{ backgroundImage: "url(/images/roots-hero.webp)" }}
+    >
+      <div className="absolute inset-0 bg-abyss/30" aria-hidden />
+
+      <div className="relative mx-auto max-w-2xl px-4">
+        {/* The white card */}
+        <div className="rounded-md bg-white px-6 py-10 text-center shadow-2xl sm:px-12">
+          {/* Naktails */}
+          <h1 className="h-sign text-4xl text-teal sm:text-5xl">
+            {currentMenu.sections[0].title}{" "}
+            <sup className="text-2xl sm:text-3xl">
+              {currentMenu.sections[0].price}
+            </sup>
           </h1>
-          <p className="mt-4 text-shell/70">{currentMenu.event.date}</p>
-          {currentMenu.event.tagline && (
-            <p className="mt-3 font-display text-lg italic text-shell/60">
-              {currentMenu.event.tagline}
-            </p>
-          )}
-        </div>
-      </section>
 
-      {/* Menu body */}
-      <section className="pb-24">
-        <div className="mx-auto max-w-3xl px-6">
-          {currentMenu.sections.map((section, sIdx) => (
-            <div key={section.title} className={sIdx === 0 ? "" : "mt-16"}>
-              <div className="flex items-end justify-between border-b border-shell/20 pb-6">
-                <div>
-                  <h2 className="h-sign text-5xl text-shell sm:text-6xl">
-                    {section.title}
-                  </h2>
-                  {section.subtitle && (
-                    <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.22em] text-orchid">
-                      {section.subtitle}
-                    </p>
-                  )}
-                </div>
-                <p className="font-mono text-2xl text-gold">{section.priceLabel}</p>
+          <div className="mt-8 grid gap-8 sm:grid-cols-2">
+            {currentMenu.sections[0].drinks.map((d) => (
+              <div key={d.name}>
+                {d.image && (
+                  <Image
+                    src={d.image}
+                    alt={d.name}
+                    width={280}
+                    height={340}
+                    className="mx-auto h-44 w-auto object-contain sm:h-52"
+                  />
+                )}
+                <h2
+                  className="h-sign mt-3 text-3xl"
+                  style={{ color: d.accent ?? "#185c7c" }}
+                >
+                  {d.name}
+                </h2>
+                <p className="mx-auto mt-2 max-w-[300px] text-sm font-semibold leading-relaxed text-abyss">
+                  {d.ingredients}
+                </p>
               </div>
+            ))}
+          </div>
 
-              <ul className="divide-y divide-shell/10">
-                {section.drinks.map((d) => (
-                  <li key={d.name} className="py-8">
-                    <div className="flex items-baseline justify-between gap-6">
-                      <h3 className="h-sign-med text-2xl text-shell sm:text-3xl">
-                        {d.name}
-                      </h3>
-                      <Ripple
-                        className="h-6 w-6 shrink-0 text-orchid/60"
-                        rings={3}
-                        animated={false}
-                      />
-                    </div>
-                    <p className="mt-3 text-shell/70">{d.ingredients}</p>
-                    {d.note && (
-                      <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.18em] text-gold/80">
-                        {d.note}
-                      </p>
-                    )}
-                  </li>
-                ))}
-              </ul>
+          <hr className="mx-auto mt-10 border-teal/40" />
+
+          {/* Mocktail */}
+          <h2 className="h-sign mt-8 text-4xl text-teal sm:text-5xl">
+            {currentMenu.sections[1].title}{" "}
+            <sup className="text-2xl sm:text-3xl">
+              {currentMenu.sections[1].price}
+            </sup>
+          </h2>
+
+          {currentMenu.sections[1].drinks.map((d) => (
+            <div key={d.name} className="mt-6">
+              {d.image && (
+                <Image
+                  src={d.image}
+                  alt={d.name}
+                  width={280}
+                  height={340}
+                  className="mx-auto h-44 w-auto object-contain sm:h-52"
+                />
+              )}
+              <h3
+                className="h-sign mt-3 text-3xl"
+                style={{ color: d.accent ?? "#185c7c" }}
+              >
+                {d.name}
+              </h3>
+              <p className="mx-auto mt-2 max-w-[420px] text-sm font-semibold leading-relaxed text-abyss">
+                {d.ingredients}
+              </p>
             </div>
           ))}
 
-          {currentMenu.extras.length > 0 && (
-            <div className="mt-16 rounded-3xl border border-shell/10 bg-lagoon/40 p-8">
-              <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-gold">
-                Add-ons
+          <hr className="mx-auto mt-10 border-teal/40" />
+
+          {/* Shots + combo */}
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
+            {currentMenu.extras.map((x) => (
+              <p
+                key={x.label}
+                className="h-sign text-2xl sm:text-3xl"
+                style={{ color: x.accent ?? "#185c7c" }}
+              >
+                {x.label} <span className="text-abyss">{x.price}</span>
               </p>
-              <ul className="mt-4 space-y-3">
-                {currentMenu.extras.map((x) => (
-                  <li
-                    key={x.label}
-                    className="flex items-center justify-between font-display text-lg italic text-shell"
-                  >
-                    <span>{x.label}</span>
-                    <span className="font-mono text-base text-gold">
-                      {x.priceLabel}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            ))}
+          </div>
+
+          {currentMenu.addOn && (
+            <p className="h-sign-med mt-6 text-lg text-teal">
+              {currentMenu.addOn.label}{" "}
+              <span className="underline underline-offset-4">
+                {currentMenu.addOn.highlight}
+              </span>{" "}
+              to any drink! <span className="text-abyss">{currentMenu.addOn.price}</span>
+            </p>
           )}
         </div>
-      </section>
 
-      {/* CTA */}
-      <section className="border-t border-shell/10 bg-abyss">
-        <div className="mx-auto max-w-4xl px-6 py-20 text-center">
-          <p className="font-display text-2xl italic text-shell">
-            Want this menu — or a whole new one — at your event?
-          </p>
-          <a
-            href="/events#book"
-            className="mt-8 inline-block rounded-full bg-gold px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-abyss hover:bg-shell"
-          >
-            Book the Bar
-          </a>
+        {/* Wordmark on the roots border, like the printed menu */}
+        <div className="mt-8 flex justify-center pb-4">
+          <Image
+            src="/lumanai-wordmark.svg"
+            alt="LUMANAI"
+            width={220}
+            height={89}
+            className="h-auto w-[180px] sm:w-[220px]"
+          />
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

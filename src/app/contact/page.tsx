@@ -13,7 +13,7 @@ export default function ContactPage() {
           rings={5}
           animated={false}
         />
-        <div className="relative mx-auto max-w-5xl px-6 py-24">
+        <div className="relative mx-auto max-w-5xl px-6 py-12">
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
             Contact
           </p>
@@ -28,7 +28,7 @@ export default function ContactPage() {
             . Anything else, this form works great.
           </p>
 
-          <div className="mt-14 grid gap-16 lg:grid-cols-[1fr_1.2fr]">
+          <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_1.2fr]">
             <div className="space-y-8">
               <div>
                 <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-shell/50">

@@ -51,7 +51,7 @@ export default function FaqPage() {
     <>
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute -right-40 top-16 h-96 w-96 rounded-full bg-orchid/20 blur-3xl" />
-        <div className="relative mx-auto max-w-3xl px-6 py-24">
+        <div className="relative mx-auto max-w-3xl px-6 py-12">
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
             FAQ
           </p>
@@ -59,7 +59,7 @@ export default function FaqPage() {
             Questions, answered straight.
           </h1>
 
-          <div className="mt-14 divide-y divide-shell/10 border-t border-shell/10">
+          <div className="mt-8 divide-y divide-shell/10 border-t border-shell/10">
             {faqs.map((item) => (
               <details key={item.q} className="group py-6">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-6 font-display text-lg italic text-shell">
@@ -76,7 +76,7 @@ export default function FaqPage() {
       </section>
 
       <section className="border-t border-shell/10 bg-abyss">
-        <div className="mx-auto max-w-3xl px-6 py-16 text-center">
+        <div className="mx-auto max-w-3xl px-6 py-10 text-center">
           <p className="font-display text-2xl italic text-shell">
             Something we didn&apos;t cover?
           </p>

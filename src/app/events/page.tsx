@@ -32,17 +32,13 @@ export default function EventsPage() {
           className="object-cover object-center opacity-40"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-abyss/70 via-abyss/70 to-ocean" />
-        <div className="relative mx-auto max-w-6xl px-6 pb-14 pt-32 sm:pt-40">
+        <div className="relative mx-auto max-w-6xl px-6 pb-10 pt-16 sm:pt-20">
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
             Events · Las Vegas
           </p>
-          <h1 className="h-sign mt-5 max-w-3xl text-6xl text-shell sm:text-7xl">
+          <h1 className="h-sign mt-4 max-w-3xl text-5xl text-shell sm:text-6xl">
             Build your <span className="text-orchid">own event.</span>
           </h1>
-          <p className="mt-4 max-w-xl text-shell/80">
-            Three taps to a real number — pick the experience, the headcount,
-            and how far you want to take it.
-          </p>
         </div>
       </section>
 
@@ -61,7 +57,7 @@ export default function EventsPage() {
       </section>
 
       {/* The builder (includes the booking form) */}
-      <section className="py-16">
+      <section className="py-10">
         <EventBuilder />
       </section>
 

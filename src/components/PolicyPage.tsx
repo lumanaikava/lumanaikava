@@ -1,6 +1,6 @@
 export default function PolicyPage({ title }: { title: string }) {
   return (
-    <section className="mx-auto max-w-2xl px-6 py-24">
+    <section className="mx-auto max-w-2xl px-6 py-12">
       <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
         Policy
       </p>
