@@ -34,7 +34,7 @@ const faqs = [
   },
   {
     q: "Do you cater weddings and private events?",
-    a: "That's most of what we do. We bring the full craft bar to LA and Vegas events — private, corporate, weddings, retreats, market booths. Reach out via the events page for a quote.",
+    a: "That's most of what we do. We bring the full craft bar to Las Vegas events — private, corporate, weddings, retreats, market booths. Reach out via the events page for a quote.",
   },
   {
     q: "How do coconut rewards work?",

@@ -27,7 +27,7 @@ export default function Footer() {
               Drink Different. All the buzz — none of the booze.
             </p>
             <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.18em] text-shell/40">
-              Booking · Los Angeles · Las Vegas
+              Booking · Las Vegas, NV
             </p>
           </div>
 
@@ -99,7 +99,24 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-3 border-t border-shell/10 pt-6 text-xs text-shell/50 sm:flex-row sm:items-center sm:justify-between">
+        {/* Partnerships — logo slots swap in when the files arrive. */}
+        <div className="mt-16 border-t border-shell/10 pt-8">
+          <p className="text-center font-mono text-[11px] uppercase tracking-[0.28em] text-shell/40">
+            In partnership with
+          </p>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
+            {["Etho Wellness Club", "Discoflow", "Sweat Equity"].map((name) => (
+              <span
+                key={name}
+                className="h-sign-med text-xl tracking-wide text-shell/60 transition-colors hover:text-gold"
+              >
+                {name}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-12 flex flex-col gap-3 border-t border-shell/10 pt-6 text-xs text-shell/50 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Lumanai Kava · Terra Incognita LLC</p>
           <p>1% of every order supports the South Pacific Islander Organization.</p>
         </div>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import Ripple from "@/components/Ripple";
 import { ingredients, categoryLabels, type Ingredient } from "@/lib/ingredients";
 
 export const metadata: Metadata = {
@@ -21,8 +21,14 @@ const orderedCategories: Ingredient["category"][] = [
 export default function IngredientsPage() {
   return (
     <>
-      {/* Hero */}
+      {/* Hero — signature roots pattern, straight off the bar sign */}
       <section className="relative overflow-hidden">
+        <div
+          className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-30"
+          style={{ backgroundImage: "url(/images/roots-hero.webp)" }}
+          aria-hidden
+        />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-abyss/40 via-transparent to-ocean" />
         <div className="pointer-events-none absolute -right-32 top-16 h-[420px] w-[420px] rounded-full bg-orchid/25 blur-3xl" />
         <div className="pointer-events-none absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-amethyst/30 blur-3xl" />
         <div className="relative mx-auto max-w-5xl px-6 pb-16 pt-32 text-center">
@@ -65,11 +71,14 @@ export default function IngredientsPage() {
                       key={ing.slug}
                       className="rounded-2xl border border-shell/10 bg-lagoon/40 p-6 backdrop-blur"
                     >
-                      <div className="flex items-start gap-4">
-                        <Ripple
-                          className="mt-1 h-8 w-8 shrink-0 text-orchid/70"
-                          rings={3}
-                          animated={false}
+                      <div className="flex items-start gap-5">
+                        <Image
+                          src={`/images/ingredients/${ing.slug}.png`}
+                          alt=""
+                          width={56}
+                          height={56}
+                          className="mt-1 h-14 w-14 shrink-0 opacity-90"
+                          aria-hidden
                         />
                         <div>
                           <h3 className="h-sign-med text-2xl text-shell">

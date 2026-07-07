@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
-export default function BookingForm() {
+export default function BookingForm({ prefill }: { prefill?: string }) {
   const [state, setState] = useState<FormState>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -61,7 +61,7 @@ export default function BookingForm() {
         <Field label="Event date" name="date" type="date" />
       </div>
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="City" name="city" placeholder="Los Angeles, Vegas..." />
+        <Field label="City" name="city" placeholder="Las Vegas, Summerlin, Henderson..." />
         <Field label="Guest count" name="guests" type="number" min="1" />
       </div>
       <label className="block">
@@ -71,7 +71,8 @@ export default function BookingForm() {
         <textarea
           name="message"
           required
-          rows={5}
+          rows={prefill ? 8 : 5}
+          defaultValue={prefill}
           className="mt-2 w-full rounded-xl border border-shell/20 bg-abyss/60 px-4 py-3 text-shell outline-none placeholder:text-shell/30 focus:border-gold"
           placeholder="Venue, vibe, whether we're the only bar or one of a few..."
         />

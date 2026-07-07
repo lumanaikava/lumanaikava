@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     template: "%s — Lumanai Kava",
   },
   description:
-    "All the buzz — without the booze. Lumanai bartends craft kava naktails and functional mocktails at events across LA and Vegas.",
+    "All the buzz — without the booze. Lumanai bartends craft kava naktails and functional mocktails at events across Las Vegas.",
   keywords: [
     "kava",
     "kava bar",
@@ -47,7 +47,6 @@ export const metadata: Metadata = {
     "alcohol-free bar",
     "sober bar catering",
     "Las Vegas mobile bar",
-    "Los Angeles mobile bar",
     "naktails",
   ],
   openGraph: {
@@ -73,7 +72,7 @@ const businessJsonLd = {
   "@type": "FoodEstablishment",
   name: "Lumanai Kava",
   description:
-    "Craft kava + functional mocktail bar. Alcohol-free social beverages bartended at events across Las Vegas and Los Angeles.",
+    "Craft kava + functional mocktail bar. Alcohol-free social beverages bartended at events across Las Vegas.",
   url: "https://lumanai.com",
   telephone: "+17026260858",
   email: "lumanai.events@gmail.com",
@@ -86,7 +85,7 @@ const businessJsonLd = {
     postalCode: "89030",
     addressCountry: "US",
   },
-  areaServed: ["Las Vegas", "Los Angeles"],
+  areaServed: ["Las Vegas"],
   sameAs: ["https://www.instagram.com/lumanaikava"],
 };
 

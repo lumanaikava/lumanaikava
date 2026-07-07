@@ -7,6 +7,8 @@
 export type PackageTier = {
   guests: string;
   price: string;
+  /** Numeric price for the interactive builder's math. */
+  amount: number;
 };
 
 export type EventPackage = {
@@ -30,9 +32,9 @@ export const eventPackages: EventPackage[] = [
       "Complimentary bottle of LUMANAI kava for each guest",
     ],
     tiers: [
-      { guests: "10–30 guests", price: "$2,750" },
-      { guests: "31–40 guests", price: "$3,550" },
-      { guests: "41–50 guests", price: "$4,500" },
+      { guests: "10–30 guests", price: "$2,750", amount: 2750 },
+      { guests: "31–40 guests", price: "$3,550", amount: 3550 },
+      { guests: "41–50 guests", price: "$4,500", amount: 4500 },
     ],
   },
   {
@@ -45,9 +47,9 @@ export const eventPackages: EventPackage[] = [
       "Elevated bar presentation & garnishes",
     ],
     tiers: [
-      { guests: "10–30 guests", price: "$1,250" },
-      { guests: "31–60 guests", price: "$2,250" },
-      { guests: "61–100 guests", price: "$3,500" },
+      { guests: "10–30 guests", price: "$1,250", amount: 1250 },
+      { guests: "31–60 guests", price: "$2,250", amount: 2250 },
+      { guests: "61–100 guests", price: "$3,500", amount: 3500 },
     ],
   },
   {
@@ -59,9 +61,9 @@ export const eventPackages: EventPackage[] = [
       "Additional drinks available for purchase",
     ],
     tiers: [
-      { guests: "10–30 guests", price: "$750" },
-      { guests: "31–60 guests", price: "$1,250" },
-      { guests: "61–100 guests", price: "$1,500" },
+      { guests: "10–30 guests", price: "$750", amount: 750 },
+      { guests: "31–60 guests", price: "$1,250", amount: 1250 },
+      { guests: "61–100 guests", price: "$1,500", amount: 1500 },
     ],
   },
   {
@@ -71,13 +73,15 @@ export const eventPackages: EventPackage[] = [
       "All drinks available for purchase",
       "We just show up!",
     ],
-    tiers: [{ guests: "Any size", price: "Free to host" }],
+    tiers: [{ guests: "Any size", price: "Free to host", amount: 0 }],
   },
 ];
 
 export type ExperienceUpgrade = {
   name: string;
   price: string;
+  /** Numeric price for the interactive builder's math. */
+  amount: number;
   items: { name: string; copy: string }[];
 };
 
@@ -85,6 +89,7 @@ export const experienceUpgrades: ExperienceUpgrade[] = [
   {
     name: "Ancient Plant Medicine",
     price: "$300",
+    amount: 300,
     items: [
       {
         name: "Kratom Leaf",
@@ -99,6 +104,7 @@ export const experienceUpgrades: ExperienceUpgrade[] = [
   {
     name: "Medicinal Mushroom",
     price: "$150",
+    amount: 150,
     items: [
       {
         name: "Lion's Mane",
@@ -113,6 +119,7 @@ export const experienceUpgrades: ExperienceUpgrade[] = [
   {
     name: "Athletic Performance",
     price: "$125",
+    amount: 125,
     items: [
       {
         name: "Grass-Fed Whey Protein",
@@ -131,6 +138,7 @@ export const experienceUpgrades: ExperienceUpgrade[] = [
   {
     name: "Biohacker Optimization",
     price: "$125",
+    amount: 125,
     items: [
       {
         name: "Shilajit",
@@ -148,4 +156,4 @@ export const experienceUpgrades: ExperienceUpgrade[] = [
   },
 ];
 
-export const upgradeBundle = { name: "Complete Upgrade Bundle", price: "$500" };
+export const upgradeBundle = { name: "Complete Upgrade Bundle", price: "$500", amount: 500 };

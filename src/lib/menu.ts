@@ -36,7 +36,7 @@ export const currentMenu: Menu = {
   event: {
     title: "Base Menu",
     date: "Pouring now",
-    location: "Las Vegas · Los Angeles",
+    location: "Las Vegas, NV",
     tagline: "Ask your bartender what's new this week.",
   },
   sections: [
