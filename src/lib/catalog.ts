@@ -30,6 +30,14 @@ function inferCategory(title: string): CatalogProduct["category"] {
   return "premium";
 }
 
+/** First sentence, capped at a word boundary with an ellipsis. */
+function blurb(text: string, max = 90): string {
+  const first = text.split(".")[0] ?? "";
+  if (first.length <= max) return first;
+  const cut = first.slice(0, max);
+  return `${cut.slice(0, cut.lastIndexOf(" "))}…`;
+}
+
 function fromShopify(p: ShopifyProduct): CatalogProduct {
   const firstAvailable =
     p.variants.edges.find((v) => v.node.availableForSale)?.node ??
@@ -37,7 +45,7 @@ function fromShopify(p: ShopifyProduct): CatalogProduct {
   return {
     handle: p.handle,
     name: p.title,
-    notes: p.description.split(".")[0]?.slice(0, 90) ?? "",
+    notes: blurb(p.description),
     description: p.description,
     priceLabel: formatPrice(
       p.priceRange.minVariantPrice.amount,

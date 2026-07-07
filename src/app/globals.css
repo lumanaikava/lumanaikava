@@ -48,10 +48,50 @@
   text-transform: uppercase;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Anchor targets (#book, #calendar) stop below the sticky header. */
+[id] {
+  scroll-margin-top: 88px;
+}
+
 html,
 body {
   background: var(--ocean);
   color: var(--shell);
+}
+
+/* Visible keyboard focus everywhere, invisible for mouse users. */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 100;
+}
+.skip-link:focus-visible {
+  left: 16px;
+  top: 16px;
+  background: var(--gold);
+  color: var(--abyss);
+  padding: 10px 18px;
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
 }
 
 body {

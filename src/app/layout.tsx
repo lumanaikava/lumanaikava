@@ -57,11 +57,36 @@ export const metadata: Metadata = {
     siteName: "Lumanai Kava",
     locale: "en_US",
     type: "website",
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "The Lumanai craft kava bar at an event" }],
   },
   twitter: {
     card: "summary_large_image",
     site: "@lumanaikava",
+    images: ["/og.jpg"],
   },
+};
+
+// LocalBusiness schema so Google understands the event-bar business.
+const businessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FoodEstablishment",
+  name: "Lumanai Kava",
+  description:
+    "Craft kava + functional mocktail bar. Alcohol-free social beverages bartended at events across Las Vegas and Los Angeles.",
+  url: "https://lumanai.com",
+  telephone: "+17026260858",
+  email: "lumanai.events@gmail.com",
+  servesCuisine: "Kava, non-alcoholic cocktails",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "1370 W Cheyenne Ave",
+    addressLocality: "North Las Vegas",
+    addressRegion: "NV",
+    postalCode: "89030",
+    addressCountry: "US",
+  },
+  areaServed: ["Las Vegas", "Los Angeles"],
+  sameAs: ["https://www.instagram.com/lumanaikava"],
 };
 
 export default function RootLayout({
@@ -75,9 +100,18 @@ export default function RootLayout({
       className={`${barlowCondensed.variable} ${spectral.variable} ${workSans.variable} ${spaceMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-ocean text-shell">
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
         <Header />
-        <main className="flex-1">{children}</main>
+        <main id="main" className="flex-1">
+          {children}
+        </main>
         <Footer />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(businessJsonLd) }}
+        />
       </body>
     </html>
   );
