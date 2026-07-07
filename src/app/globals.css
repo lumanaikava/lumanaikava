@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  /* Bold + ethereal navy → purple → magenta palette,
-     color-picked from the reference image and the booth fabric. */
+  /* Navy → purple → magenta palette, color-picked directly from the
+     real Canva brand sign (BARSIGN): the background swirl gradient runs
+     navy-teal (#0f1c2a → #185878) into purple-magenta (#402c51 → #603868). */
   --abyss: #05102a;
   --ocean: #0b1e4a;
   --lagoon: #17285a;
@@ -11,7 +12,10 @@
   --orchid: #c63a8e;
   --shell: #f4ecdc;
   --coconut: #e8d5a6;
-  --gold: #e8b45a;
+  /* Exact champagne-gold sampled from the sign's accent text (#ede2b4). */
+  --gold: #ede2b4;
+  /* Exact teal sampled from the LUMANAI logo mark itself (#185c7c). */
+  --teal: #185c7c;
   --mist: rgba(244, 236, 220, 0.08);
 }
 
@@ -25,24 +29,25 @@
   --color-shell: var(--shell);
   --color-coconut: var(--coconut);
   --color-gold: var(--gold);
+  --color-teal: var(--teal);
 
-  --font-sign: var(--font-barlow-condensed);
+  /* Anton — the exact display face used on the real bar sign. */
+  --font-sign: var(--font-anton);
   --font-display: var(--font-spectral);
   --font-body: var(--font-work-sans);
   --font-mono: var(--font-space-mono);
 }
 
-/* Bold sign headline — matches the CRAFT KAVA bar signage. */
+/* Bold sign headline — Anton, the exact face on the real bar signage.
+   Anton only ships one (already-black) weight, so no font-weight overrides. */
 .h-sign {
   font-family: var(--font-sign);
-  font-weight: 900;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   line-height: 0.92;
   text-transform: uppercase;
 }
 .h-sign-med {
   font-family: var(--font-sign);
-  font-weight: 700;
   letter-spacing: 0.01em;
   line-height: 1;
   text-transform: uppercase;
@@ -99,7 +104,8 @@ body {
   background-image:
     radial-gradient(1200px 800px at 85% -10%, rgba(198, 58, 142, 0.22), transparent 60%),
     radial-gradient(900px 700px at -10% 30%, rgba(107, 58, 156, 0.28), transparent 60%),
-    radial-gradient(1000px 900px at 50% 110%, rgba(232, 180, 90, 0.10), transparent 60%);
+    radial-gradient(900px 700px at 0% 45%, rgba(24, 92, 124, 0.22), transparent 60%),
+    radial-gradient(1000px 900px at 50% 110%, rgba(237, 226, 180, 0.08), transparent 60%);
   background-attachment: fixed;
 }
 
@@ -141,7 +147,7 @@ body {
 
 /* Painted underline for links inside long-form copy. */
 .prose-link {
-  background-image: linear-gradient(transparent 62%, rgba(232, 180, 90, 0.4) 62%);
+  background-image: linear-gradient(transparent 62%, rgba(237, 226, 180, 0.45) 62%);
   background-repeat: no-repeat;
   background-size: 100% 100%;
   transition: background-size 200ms ease;
