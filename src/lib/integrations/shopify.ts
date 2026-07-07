@@ -1,12 +1,13 @@
 /**
- * Shopify Storefront API client — thin fetch wrapper.
+ * Shopify Storefront API client — LIVE.
  *
- * When your NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN is filled in,
- * you can start swapping the static products in src/lib/products.ts
- * for live queries here.
+ * Products on /products come straight from the lumanai-kava.myshopify.com
+ * catalog (Headless sales channel). Checkout happens on Shopify via a
+ * Storefront-API cart. If the env vars are missing or Shopify is down,
+ * pages fall back to the static list in src/lib/products.ts.
  */
 
-const API_VERSION = "2024-10";
+const API_VERSION = "2026-01";
 
 export function shopifyConfig() {
   const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
@@ -31,6 +32,9 @@ export async function shopifyFetch<T>(
       "X-Shopify-Storefront-Access-Token": token!,
     },
     body: JSON.stringify({ query, variables }),
+    // Revalidate the catalog every minute so price/stock edits in the
+    // Shopify admin show up without a redeploy.
+    next: { revalidate: 60 },
   });
   if (!res.ok) throw new Error(`Shopify ${res.status}`);
   const json = (await res.json()) as { data: T; errors?: unknown };
@@ -38,39 +42,138 @@ export async function shopifyFetch<T>(
   return json.data;
 }
 
-/**
- * Example: fetch a product by handle. Wire this into
- * src/app/products/[handle]/page.tsx when Shopify is live.
- */
-export const PRODUCT_BY_HANDLE_QUERY = /* GraphQL */ `
-  query ProductByHandle($handle: String!) {
-    product(handle: $handle) {
-      id
-      title
-      description
-      priceRange {
-        minVariantPrice {
-          amount
-          currencyCode
-        }
+/* ── Types ─────────────────────────────────────────────────── */
+
+export type ShopifyProduct = {
+  id: string;
+  title: string;
+  handle: string;
+  description: string;
+  availableForSale: boolean;
+  featuredImage: { url: string; altText: string | null } | null;
+  priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
+  variants: {
+    edges: {
+      node: {
+        id: string;
+        title: string;
+        availableForSale: boolean;
+        price: { amount: string; currencyCode: string };
+      };
+    }[];
+  };
+};
+
+export function formatPrice(amount: string, currencyCode = "USD"): string {
+  const n = Number(amount);
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currencyCode,
+    minimumFractionDigits: n % 1 === 0 ? 0 : 2,
+  }).format(n);
+}
+
+/* ── Queries ───────────────────────────────────────────────── */
+
+const PRODUCT_FIELDS = /* GraphQL */ `
+  fragment ProductFields on Product {
+    id
+    title
+    handle
+    description
+    availableForSale
+    featuredImage {
+      url
+      altText
+    }
+    priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
       }
-      featuredImage {
-        url
-        altText
-      }
-      variants(first: 5) {
-        edges {
-          node {
-            id
-            title
-            availableForSale
-            price {
-              amount
-              currencyCode
-            }
+    }
+    variants(first: 10) {
+      edges {
+        node {
+          id
+          title
+          availableForSale
+          price {
+            amount
+            currencyCode
           }
         }
       }
     }
   }
 `;
+
+export async function getAllProducts(): Promise<ShopifyProduct[]> {
+  const data = await shopifyFetch<{
+    products: { edges: { node: ShopifyProduct }[] };
+  }>(/* GraphQL */ `
+    ${PRODUCT_FIELDS}
+    query AllProducts {
+      products(first: 50, sortKey: BEST_SELLING) {
+        edges {
+          node {
+            ...ProductFields
+          }
+        }
+      }
+    }
+  `);
+  return data.products.edges.map((e) => e.node);
+}
+
+export async function getProductByHandle(
+  handle: string
+): Promise<ShopifyProduct | null> {
+  const data = await shopifyFetch<{ product: ShopifyProduct | null }>(
+    /* GraphQL */ `
+      ${PRODUCT_FIELDS}
+      query ProductByHandle($handle: String!) {
+        product(handle: $handle) {
+          ...ProductFields
+        }
+      }
+    `,
+    { handle }
+  );
+  return data.product;
+}
+
+/**
+ * Create a Shopify cart with one line item and return the hosted
+ * checkout URL. The buyer finishes payment on Shopify's checkout,
+ * so we never touch card data.
+ */
+export async function createCheckout(
+  variantId: string,
+  quantity = 1
+): Promise<string> {
+  const data = await shopifyFetch<{
+    cartCreate: {
+      cart: { checkoutUrl: string } | null;
+      userErrors: { message: string }[];
+    };
+  }>(
+    /* GraphQL */ `
+      mutation CartCreate($lines: [CartLineInput!]!) {
+        cartCreate(input: { lines: $lines }) {
+          cart {
+            checkoutUrl
+          }
+          userErrors {
+            message
+          }
+        }
+      }
+    `,
+    { lines: [{ merchandiseId: variantId, quantity }] }
+  );
+  const err = data.cartCreate.userErrors[0]?.message;
+  if (err) throw new Error(err);
+  if (!data.cartCreate.cart) throw new Error("Cart creation failed");
+  return data.cartCreate.cart.checkoutUrl;
+}

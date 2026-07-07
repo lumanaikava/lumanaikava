@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
-import { products } from "@/lib/products";
+import { getCatalog } from "@/lib/catalog";
 
 const base = "https://lumanai.com";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     "",
     "/events",
@@ -22,7 +22,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: path === "" ? 1 : path === "/events" ? 0.9 : 0.7,
   }));
 
-  const productRoutes = products.map((p) => ({
+  const { items } = await getCatalog();
+  const productRoutes = items.map((p) => ({
     url: `${base}/products/${p.handle}`,
     changeFrequency: "weekly" as const,
     priority: 0.6,

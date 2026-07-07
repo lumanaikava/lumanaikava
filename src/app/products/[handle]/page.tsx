@@ -2,12 +2,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Ripple from "@/components/Ripple";
-import AddToCartButton from "@/components/AddToCartButton";
-import { products, getProduct } from "@/lib/products";
+import BuyNowButton from "@/components/BuyNowButton";
+import { getCatalogProduct } from "@/lib/catalog";
 
-export function generateStaticParams() {
-  return products.map((p) => ({ handle: p.handle }));
-}
+// Fetched from Shopify with 60s revalidation; falls back to static data.
+export const dynamic = "force-dynamic";
+
+const categoryLabel = {
+  premium: "Original Naktail",
+  growler: "Growler",
+  rush: "Instant Kava",
+} as const;
 
 export async function generateMetadata({
   params,
@@ -15,7 +20,7 @@ export async function generateMetadata({
   params: Promise<{ handle: string }>;
 }) {
   const { handle } = await params;
-  const product = getProduct(handle);
+  const product = await getCatalogProduct(handle);
   return { title: product ? `${product.name} — Lumanai Kava` : "Lumanai Kava" };
 }
 
@@ -25,7 +30,7 @@ export default async function ProductPage({
   params: Promise<{ handle: string }>;
 }) {
   const { handle } = await params;
-  const product = getProduct(handle);
+  const product = await getCatalogProduct(handle);
   if (!product) notFound();
 
   return (
@@ -42,7 +47,7 @@ export default async function ProductPage({
           {product.image ? (
             <Image
               src={product.image}
-              alt={product.name}
+              alt={product.imageAlt ?? product.name}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-contain object-center p-10"
@@ -57,17 +62,24 @@ export default async function ProductPage({
 
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
-            {product.category === "premium" ? "Original Naktail" : "Growler"}
+            {categoryLabel[product.category]}
           </p>
           <h1 className="h-sign mt-3 text-5xl text-shell sm:text-6xl">
             {product.name}
           </h1>
-          <p className="mt-3 font-mono text-sm text-shell/50">{product.notes}</p>
-          <p className="mt-6 max-w-md text-shell/70">{product.description}</p>
+          {product.description && (
+            <p className="mt-6 max-w-md whitespace-pre-line text-shell/70">
+              {product.description}
+            </p>
+          )}
           <p className="mt-8 font-mono text-2xl text-gold">{product.priceLabel}</p>
 
           <div className="mt-8">
-            <AddToCartButton productName={product.name} />
+            <BuyNowButton
+              variantId={product.variantId}
+              available={product.available && product.live}
+              productName={product.name}
+            />
           </div>
 
           <dl className="mt-14 grid grid-cols-2 gap-6 border-t border-shell/10 pt-8 text-sm">
@@ -85,17 +97,17 @@ export default async function ProductPage({
             </div>
             <div>
               <dt className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/40">
-                Reviews
+                Impact
               </dt>
-              <dd className="mt-1 text-shell/80">{product.reviewCount} reviews</dd>
+              <dd className="mt-1 text-shell/80">
+                1% to South Pacific Islander Org.
+              </dd>
             </div>
             <div>
               <dt className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/40">
                 Coconuts earned
               </dt>
-              <dd className="mt-1 text-shell/80">
-                {product.price} coconuts per bottle
-              </dd>
+              <dd className="mt-1 text-shell/80">1 per $1 spent</dd>
             </div>
           </dl>
         </div>

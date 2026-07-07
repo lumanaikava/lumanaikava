@@ -10,7 +10,7 @@ degrades gracefully.
 | Integration | Status |
 | --- | --- |
 | GoHighLevel webhook | ✅ **LIVE** in `.env.local` — verified end-to-end (test lead sent; delete it from the pipeline) |
-| Shopify Storefront | 🟡 Domain set (`lumanai-kava.myshopify.com`) — still needs the Storefront API token (steps in §1) |
+| Shopify Storefront | ✅ **LIVE** — Headless-channel token in `.env.local`; /products reads the live catalog, Buy Now opens hosted Shopify checkout |
 | Twilio SMS alerts | 🟡 Optional — needs SID + Auth Token + From number (steps in §3) |
 | Events calendar | ✅ Site reads `src/lib/calendar.ts` — edit that file to update dates |
 | Canva | 🟡 The Canva connector needs a one-time OAuth authorization in an interactive Claude session before Claude can pull assets directly |
