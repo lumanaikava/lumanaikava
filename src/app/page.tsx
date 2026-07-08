@@ -94,7 +94,7 @@ export default function Home() {
           <div className="mt-10 flex flex-col items-center gap-5 text-center">
             <h2 className="h-sign text-4xl text-shell sm:text-5xl">
               Your next event,{" "}
-              <span className="text-orchid">but everyone remembers it.</span>
+              <span className="text-coconut">but everyone remembers it.</span>
             </h2>
             <Link
               href="/events"

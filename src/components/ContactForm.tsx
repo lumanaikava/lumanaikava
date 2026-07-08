@@ -89,7 +89,7 @@ export default function ContactForm() {
       </button>
 
       {state === "error" && (
-        <p className="font-mono text-xs text-orchid">
+        <p className="font-mono text-xs text-coconut">
           {errorMsg} — or email us at{" "}
           <a
             href="mailto:lumanai.events@gmail.com"

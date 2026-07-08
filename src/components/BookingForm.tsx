@@ -91,7 +91,7 @@ export default function BookingForm({ prefill }: { prefill?: string }) {
       </button>
 
       {state === "error" && (
-        <p className="font-mono text-xs text-orchid">
+        <p className="font-mono text-xs text-coconut">
           {errorMsg} — or email us directly at{" "}
           <a
             href="mailto:lumanai.events@gmail.com"

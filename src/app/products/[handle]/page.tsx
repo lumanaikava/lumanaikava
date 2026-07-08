@@ -54,7 +54,7 @@ export default async function ProductPage({
               priority
             />
           ) : (
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-gradient-to-br from-amethyst/40 via-transparent to-orchid/40">
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-gradient-to-br from-amethyst/40 via-transparent to-amethyst/40">
               <Ripple className="h-2/3 w-2/3 text-gold" rings={6} />
             </div>
           )}

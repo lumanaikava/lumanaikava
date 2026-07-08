@@ -37,7 +37,7 @@ export default function RewardsPage() {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute -right-32 top-16 h-96 w-96 rounded-full bg-orchid/25 blur-3xl" />
+        <div className="pointer-events-none absolute -right-32 top-16 h-96 w-96 rounded-full bg-amethyst/25 blur-3xl" />
         <div className="pointer-events-none absolute -left-40 bottom-0 h-96 w-96 rounded-full bg-amethyst/30 blur-3xl" />
         <div className="relative mx-auto max-w-4xl px-6 pb-16 pt-32 text-center">
           <CoconutMark className="mx-auto h-16 w-16 text-coconut" />
@@ -46,7 +46,7 @@ export default function RewardsPage() {
           </p>
           <h1 className="h-sign mt-4 text-6xl text-shell sm:text-8xl">
             Collect coconuts.
-            <span className="block text-orchid">Redeem for pours.</span>
+            <span className="block text-coconut">Redeem for pours.</span>
           </h1>
           <p className="mt-6 text-lg text-shell/70">
             Every dollar and every event earns you coconuts. Stack them up and
@@ -59,7 +59,7 @@ export default function RewardsPage() {
       {/* Earn */}
       <section className="border-t border-shell/10">
         <div className="mx-auto max-w-4xl px-6 py-20">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-orchid">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-coconut">
             How to earn
           </p>
           <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
@@ -114,7 +114,7 @@ export default function RewardsPage() {
       {/* Rules */}
       <section className="border-t border-shell/10">
         <div className="mx-auto max-w-3xl px-6 py-20">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-orchid">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-coconut">
             The fine print
           </p>
           <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">

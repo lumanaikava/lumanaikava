@@ -101,7 +101,7 @@ function IslandSvg({ id, ridge }: { id: string; ridge: string }) {
         <linearGradient id={`${id}-rim`} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="#ede2b4" stopOpacity="0" />
           <stop offset="55%" stopColor="#ede2b4" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="#e9a7d0" stopOpacity="0.9" />
+          <stop offset="100%" stopColor="#ede2b4" stopOpacity="0.9" />
         </linearGradient>
         <linearGradient id={`${id}-haze`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#185c7c" stopOpacity="0" />
@@ -215,7 +215,7 @@ export default function Archipelago({
           className="h-auto w-[60vw] max-w-[420px]"
         />
         <h1 className="h-sign mt-6 text-2xl text-shell sm:text-4xl">
-          All the buzz <span className="text-orchid">without the booze</span>
+          All the buzz <span className="text-coconut">without the booze</span>
         </h1>
         <div className="mt-7 flex flex-wrap justify-center gap-3">
           <Link
@@ -269,7 +269,7 @@ export default function Archipelago({
               key={e.label + e.date}
               className="text-[10px] font-medium uppercase tracking-[0.2em] text-shell/75"
             >
-              <span className="text-orchid">{e.date}</span> · {e.label}
+              <span className="text-coconut">{e.date}</span> · {e.label}
             </p>
           ))}
           <Link
@@ -292,7 +292,7 @@ export default function Archipelago({
               marginLeft: "-60vmax",
               marginTop: "-60vmax",
               background:
-                "radial-gradient(circle, rgba(237,226,180,0.9) 0%, rgba(198,58,142,0.85) 35%, rgba(5,16,42,1) 70%)",
+                "radial-gradient(circle, rgba(237,226,180,0.9) 0%, rgba(107,58,156,0.9) 35%, rgba(5,16,42,1) 70%)",
             }}
           />
         </div>

@@ -148,7 +148,7 @@ export default function EventBuilder() {
                   className="flex items-center gap-2 text-xs text-shell/65"
                 >
                   <span
-                    className="h-1 w-1 rounded-full bg-orchid"
+                    className="h-1 w-1 rounded-full bg-gold"
                     aria-hidden
                   />
                   {f}
@@ -202,7 +202,7 @@ export default function EventBuilder() {
                     aria-pressed={active}
                     className={`rounded-2xl border p-4 text-left transition-all ${
                       active
-                        ? "border-orchid bg-violet/40"
+                        ? "border-gold bg-violet/40"
                         : "border-shell/15 bg-lagoon/30 hover:border-shell/40"
                     }`}
                   >
@@ -211,7 +211,7 @@ export default function EventBuilder() {
                         {u.name}
                       </span>
                       <span
-                        className={`font-mono text-xs ${active ? "text-orchid" : "text-gold"}`}
+                        className={`font-mono text-xs ${active ? "text-coconut" : "text-gold"}`}
                       >
                         {active ? "Added ✓" : `+${u.price}`}
                       </span>

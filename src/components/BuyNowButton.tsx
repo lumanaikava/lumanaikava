@@ -99,7 +99,7 @@ export default function BuyNowButton({
         Secure checkout via Shopify
       </p>
       {state === "error" && (
-        <p className="mt-3 text-sm text-orchid">
+        <p className="mt-3 text-sm text-coconut">
           Checkout hiccuped — try again, or order via{" "}
           <a href="/contact" className="underline underline-offset-2">
             the contact page

@@ -33,7 +33,7 @@ export default function FindUsPage() {
             Find the bar · Las Vegas
           </p>
           <h1 className="h-sign mt-4 max-w-3xl text-5xl text-shell sm:text-6xl">
-            Come say <span className="text-orchid">bula.</span>
+            Come say <span className="text-coconut">bula.</span>
           </h1>
         </div>
       </section>
@@ -70,7 +70,7 @@ export default function FindUsPage() {
       {/* Rolling calendar */}
       <section>
         <div className="mx-auto max-w-4xl px-6 py-10">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-orchid">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-coconut">
             Next four weeks
           </p>
           <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">

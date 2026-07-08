@@ -47,7 +47,7 @@ export default async function ProductsPage({
       </p>
       <h1 className="h-sign mt-3 text-4xl text-shell sm:text-5xl">
         Lumanai Original Naktails{" "}
-        <span className="text-orchid">&amp; Growlers</span>
+        <span className="text-coconut">&amp; Growlers</span>
       </h1>
 
       {showFeatured && (

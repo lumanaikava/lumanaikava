@@ -25,7 +25,7 @@ export default function AboutKavaPage() {
           </p>
           <h1 className="h-sign mt-6 text-6xl text-shell sm:text-8xl">
             A root. A bowl.
-            <span className="block text-orchid">3,000 years of practice.</span>
+            <span className="block text-coconut">3,000 years of practice.</span>
           </h1>
           <p className="mt-6 text-lg text-shell/80">
             Kava is a pepper-family plant whose root has been prepared as a
@@ -38,7 +38,7 @@ export default function AboutKavaPage() {
 
       <section className="border-t border-shell/10">
         <div className="mx-auto max-w-3xl px-6 py-20">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-orchid">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-coconut">
             How it works
           </p>
           <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
@@ -87,7 +87,7 @@ export default function AboutKavaPage() {
       <section className="border-t border-shell/10">
         <div className="mx-auto max-w-3xl px-6 py-20 text-center">
           <Ripple
-            className="mx-auto h-16 w-16 text-orchid/70"
+            className="mx-auto h-16 w-16 text-coconut/70"
             rings={4}
             animated={false}
           />

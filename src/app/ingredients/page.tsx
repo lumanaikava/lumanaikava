@@ -43,7 +43,7 @@ export default function IngredientsPage() {
               Our ingredients · Our purpose
             </p>
             <h1 className="h-sign mt-3 text-5xl text-shell sm:text-6xl">
-              Every drink, <span className="text-orchid">on the record.</span>
+              Every drink, <span className="text-coconut">on the record.</span>
             </h1>
           </div>
           <div className="flex flex-wrap gap-2">

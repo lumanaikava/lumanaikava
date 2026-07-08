@@ -128,7 +128,7 @@ body {
 }
 
 ::selection {
-  background: var(--orchid);
+  background: var(--amethyst);
   color: var(--shell);
 }
 

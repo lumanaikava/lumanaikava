@@ -37,7 +37,7 @@ export default function EventsCalendar() {
             className="grid grid-cols-[72px_1fr] items-center gap-6 py-5 sm:grid-cols-[88px_1fr_auto]"
           >
             <div className="text-center">
-              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-orchid">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-coconut">
                 {d.weekday}
               </p>
               <p className="h-sign text-3xl text-shell">{d.day}</p>

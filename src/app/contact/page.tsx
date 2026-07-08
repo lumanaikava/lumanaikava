@@ -9,7 +9,7 @@ export default function ContactPage() {
     <>
       <section className="relative overflow-hidden">
         <Ripple
-          className="pointer-events-none absolute -right-20 top-24 h-96 w-96 text-orchid/20"
+          className="pointer-events-none absolute -right-20 top-24 h-96 w-96 text-coconut/20"
           rings={5}
           animated={false}
         />

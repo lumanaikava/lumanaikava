@@ -62,7 +62,7 @@ export default function OurCraftPage() {
           </p>
           <h1 className="h-sign mt-6 text-6xl text-shell sm:text-8xl">
             Not all kava
-            <span className="block text-orchid">is made equal.</span>
+            <span className="block text-coconut">is made equal.</span>
           </h1>
           <p className="mt-6 text-lg text-shell/80">
             Most brands buy an extract, cut it into a syrup, and slap a label on
@@ -82,7 +82,7 @@ export default function OurCraftPage() {
               >
                 <div className="flex items-center gap-4">
                   <Ripple
-                    className="h-9 w-9 text-orchid"
+                    className="h-9 w-9 text-coconut"
                     rings={3}
                     animated={false}
                   />
@@ -101,7 +101,7 @@ export default function OurCraftPage() {
       {/* Spec sheet */}
       <section className="border-t border-shell/10 bg-abyss">
         <div className="mx-auto max-w-4xl px-6 py-24">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-orchid">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-coconut">
             Spec sheet
           </p>
           <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">

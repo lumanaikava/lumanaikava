@@ -23,7 +23,7 @@ export default function OurStoryPage() {
           </p>
           <h1 className="h-sign mt-6 text-6xl text-shell sm:text-8xl">
             Lumana&apos;i.
-            <span className="block text-orchid">
+            <span className="block text-coconut">
               Samoan for &ldquo;the future.&rdquo;
             </span>
           </h1>

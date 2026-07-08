@@ -50,7 +50,7 @@ export default function FaqPage() {
   return (
     <>
       <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute -right-40 top-16 h-96 w-96 rounded-full bg-orchid/20 blur-3xl" />
+        <div className="pointer-events-none absolute -right-40 top-16 h-96 w-96 rounded-full bg-amethyst/20 blur-3xl" />
         <div className="relative mx-auto max-w-3xl px-6 py-12">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
             FAQ
@@ -64,7 +64,7 @@ export default function FaqPage() {
               <details key={item.q} className="group py-6">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-lg text-shell">
                   {item.q}
-                  <span className="shrink-0 font-mono text-orchid transition-transform group-open:rotate-45">
+                  <span className="shrink-0 font-mono text-coconut transition-transform group-open:rotate-45">
                     +
                   </span>
                 </summary>

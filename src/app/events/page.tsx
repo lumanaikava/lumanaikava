@@ -38,7 +38,7 @@ export default function EventsPage() {
             Events · Las Vegas
           </p>
           <h1 className="h-sign mt-4 max-w-3xl text-5xl text-shell sm:text-6xl">
-            Build your <span className="text-orchid">own event.</span>
+            Build your <span className="text-coconut">own event.</span>
           </h1>
         </div>
       </section>
@@ -66,7 +66,7 @@ export default function EventsPage() {
       <section className="border-t border-shell/10">
         <div className="mx-auto max-w-6xl px-6 py-12">
           <h2 className="h-sign text-4xl text-shell sm:text-5xl">
-            Meet your <span className="text-orchid">bartenders.</span>
+            Meet your <span className="text-coconut">bartenders.</span>
           </h2>
           <div className="mt-8 grid gap-6 md:grid-cols-2">
             {team.map((t) => (

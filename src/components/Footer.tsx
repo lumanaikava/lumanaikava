@@ -11,7 +11,7 @@ export default function Footer() {
         rings={4}
         animated={false}
       />
-      <div className="pointer-events-none absolute -left-40 top-1/3 h-96 w-96 rounded-full bg-orchid/20 blur-3xl" />
+      <div className="pointer-events-none absolute -left-40 top-1/3 h-96 w-96 rounded-full bg-amethyst/20 blur-3xl" />
 
       <div className="relative mx-auto max-w-6xl px-6 py-16">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
