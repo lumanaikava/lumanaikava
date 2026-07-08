@@ -21,6 +21,8 @@ type IslandDef = {
   /** Relative width on the horizon row. */
   width: string;
   delay: string;
+  /** Fogged teaser island — anchors to the waitlist instead of sailing. */
+  uncharted?: boolean;
 };
 
 const islands: IslandDef[] = [
@@ -30,7 +32,7 @@ const islands: IslandDef[] = [
     tagline: "Build your event",
     ridge:
       "M0 100 C22 96 38 62 62 48 C74 41 84 44 96 36 C112 25 134 52 154 68 C170 81 186 94 200 100 Z",
-    width: "lg:w-[19%]",
+    width: "lg:w-[17%]",
     delay: "0s",
   },
   {
@@ -39,7 +41,7 @@ const islands: IslandDef[] = [
     tagline: "What's pouring",
     ridge:
       "M0 100 C26 92 44 74 66 66 C86 59 112 62 132 70 C156 79 180 92 200 100 Z",
-    width: "lg:w-[15%]",
+    width: "lg:w-[13%]",
     delay: "1.4s",
   },
   {
@@ -48,7 +50,7 @@ const islands: IslandDef[] = [
     tagline: "Shop RUSH + bottles",
     ridge:
       "M0 100 C18 94 30 70 48 58 C60 50 70 54 80 46 C94 34 104 40 116 50 C138 68 172 90 200 100 Z",
-    width: "lg:w-[17%]",
+    width: "lg:w-[15%]",
     delay: "0.8s",
   },
   {
@@ -57,7 +59,7 @@ const islands: IslandDef[] = [
     tagline: "Find us this weekend",
     ridge:
       "M0 100 C30 94 52 80 74 74 C94 69 118 72 140 66 C162 60 184 88 200 100 Z",
-    width: "lg:w-[15%]",
+    width: "lg:w-[13%]",
     delay: "2.2s",
   },
   {
@@ -66,7 +68,7 @@ const islands: IslandDef[] = [
     tagline: "What's inside",
     ridge:
       "M0 100 C20 90 34 58 52 40 C62 30 72 34 80 28 C88 22 96 26 104 34 C124 54 160 86 200 100 Z",
-    width: "lg:w-[18%]",
+    width: "lg:w-[16%]",
     delay: "1.1s",
   },
   {
@@ -75,8 +77,18 @@ const islands: IslandDef[] = [
     tagline: "Earn coconuts",
     ridge:
       "M0 100 C28 95 48 82 70 76 C92 70 116 74 138 80 C160 86 182 95 200 100 Z",
-    width: "lg:w-[14%]",
+    width: "lg:w-[12%]",
     delay: "2.8s",
+  },
+  {
+    href: "#waitlist",
+    name: "The Lounge",
+    tagline: "Las Vegas · soon",
+    ridge:
+      "M0 100 C24 96 40 78 60 70 C80 62 100 66 120 62 C144 57 172 88 200 100 Z",
+    width: "lg:w-[12%]",
+    delay: "3.4s",
+    uncharted: true,
   },
 ];
 
@@ -240,21 +252,30 @@ export default function Archipelago({
             <a
               key={isl.href}
               href={isl.href}
-              onClick={(e) => sail(e, isl.href)}
+              onClick={isl.uncharted ? undefined : (e) => sail(e, isl.href)}
               className={`island-link group relative block w-full ${isl.width}`}
             >
               <div className="island-bob" style={{ animationDelay: isl.delay }}>
-                <div className="island-body relative">
+                <div
+                  className={`island-body relative ${isl.uncharted ? "opacity-50 blur-[1.5px] transition-all group-hover:opacity-80 group-hover:blur-[0.5px]" : ""}`}
+                >
                   <IslandSvg id={`isl${i}`} ridge={isl.ridge} />
                 </div>
               </div>
               <p className="island-label -mt-3 text-center transition-colors">
-                <span className="h-sign-med block text-base text-shell/90 lg:text-lg">
+                <span
+                  className={`h-sign-med block text-base lg:text-lg ${isl.uncharted ? "text-shell/50" : "text-shell/90"}`}
+                >
                   {isl.name}
                 </span>
                 <span className="mt-0.5 hidden text-[10px] font-medium uppercase tracking-[0.2em] text-shell/45 sm:block">
                   {isl.tagline}
                 </span>
+                {isl.uncharted && (
+                  <span className="mt-1 inline-block rounded-full border border-gold/40 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-gold">
+                    Uncharted
+                  </span>
+                )}
               </p>
             </a>
           ))}

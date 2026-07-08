@@ -12,6 +12,8 @@ export type MenuDrink = {
   image?: string;
   /** Display color for the drink name, from the Canva menu. */
   accent?: string;
+  /** Soft effect labels — the functional stack, made visible. Never medical. */
+  effects?: string[];
 };
 
 export type MenuSection = {
@@ -46,6 +48,7 @@ export const currentMenu: Menu = {
             "LUMANAI KAVA · Clover Honey · Fresh Ginger · Lemon Essence",
           image: "/images/drinks/hive-mind.png",
           accent: "#e8871f",
+          effects: ["Social", "Uplifted"],
         },
         {
           name: "Pacific Rim",
@@ -53,6 +56,7 @@ export const currentMenu: Menu = {
             "LUMANAI KAVA · Pineapple Juice · Fresh-Pressed Coconut Milk · Madagascar Vanilla Bean · Vitamin C",
           image: "/images/drinks/pacific-rim.png",
           accent: "#8aa32b",
+          effects: ["Social", "Easygoing"],
         },
       ],
     },
@@ -66,6 +70,7 @@ export const currentMenu: Menu = {
             "Damiana Flower · Schisandra Berry · Handcrafted Sugar-Free Syrup · Pineapple & Lemon Juice · Raspberry Rose Poppi",
           image: "/images/drinks/adapterol-spritz.png",
           accent: "#a93343",
+          effects: ["Calm", "Unwind"],
         },
       ],
     },

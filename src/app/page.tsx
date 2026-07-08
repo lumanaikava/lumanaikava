@@ -21,6 +21,23 @@ export default function Home() {
       {/* Everything important in one viewport: logo, slogan, islands, dates */}
       <Archipelago nextEvents={nextEvents} />
 
+      {/* The word we own — dictionary entry */}
+      <section className="border-b border-shell/10 bg-abyss/60">
+        <div className="mx-auto max-w-3xl px-6 py-14 text-center">
+          <p className="h-sign text-5xl text-shell sm:text-6xl">
+            nak·tail
+          </p>
+          <p className="mt-2 text-sm tracking-[0.2em] text-shell/50">
+            /ˈnak-tāl/ · noun
+          </p>
+          <p className="mx-auto mt-4 max-w-xl text-lg text-shell/85">
+            A craft cocktail built on kava instead of alcohol — shaken with
+            adaptogens, botanicals, and real bar technique. Invented behind
+            our bar. Only pours in Las Vegas.
+          </p>
+        </div>
+      </section>
+
       {/* Pouring now — one tight band */}
       <section className="border-b border-shell/10">
         <div className="mx-auto max-w-6xl px-6 py-12">
@@ -60,6 +77,18 @@ export default function Home() {
                     <span className="font-mono text-xs text-gold">
                       ${d.price}
                     </span>
+                    {d.effects && (
+                      <span className="mt-1 flex gap-1.5">
+                        {d.effects.map((fx) => (
+                          <span
+                            key={fx}
+                            className="rounded-full border border-shell/25 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-shell/60"
+                          >
+                            {fx}
+                          </span>
+                        ))}
+                      </span>
+                    )}
                   </span>
                 </Link>
               ))}

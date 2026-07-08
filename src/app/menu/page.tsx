@@ -52,6 +52,18 @@ export default function MenuPage() {
                 <p className="mx-auto mt-2 max-w-[300px] text-sm font-semibold leading-relaxed text-abyss">
                   {d.ingredients}
                 </p>
+                {d.effects && (
+                  <p className="mt-2 flex justify-center gap-2">
+                    {d.effects.map((fx) => (
+                      <span
+                        key={fx}
+                        className="rounded-full border border-teal/40 px-3 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-teal"
+                      >
+                        {fx}
+                      </span>
+                    ))}
+                  </p>
+                )}
               </div>
             ))}
           </div>
@@ -86,6 +98,18 @@ export default function MenuPage() {
               <p className="mx-auto mt-2 max-w-[420px] text-sm font-semibold leading-relaxed text-abyss">
                 {d.ingredients}
               </p>
+              {d.effects && (
+                <p className="mt-2 flex justify-center gap-2">
+                  {d.effects.map((fx) => (
+                    <span
+                      key={fx}
+                      className="rounded-full border border-teal/40 px-3 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-teal"
+                    >
+                      {fx}
+                    </span>
+                  ))}
+                </p>
+              )}
             </div>
           ))}
 
