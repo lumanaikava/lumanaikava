@@ -37,7 +37,7 @@ export default async function ProductPage({
     <section className="mx-auto max-w-6xl px-6 py-20">
       <Link
         href="/products"
-        className="font-mono text-xs uppercase tracking-[0.18em] text-shell/50 hover:text-gold"
+        className="font-mono text-xs uppercase tracking-[0.2em] text-shell/50 hover:text-gold"
       >
         ← All Products
       </Link>
@@ -61,7 +61,7 @@ export default async function ProductPage({
         </div>
 
         <div>
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
             {categoryLabel[product.category]}
           </p>
           <h1 className="h-sign mt-3 text-5xl text-shell sm:text-6xl">
@@ -72,7 +72,9 @@ export default async function ProductPage({
               {product.description}
             </p>
           )}
-          <p className="mt-8 font-mono text-2xl text-gold">{product.priceLabel}</p>
+          <p className="mt-8 font-mono text-2xl text-gold">
+            {product.priceLabel}
+          </p>
 
           <div className="mt-8">
             <BuyNowButton
@@ -84,19 +86,23 @@ export default async function ProductPage({
 
           <dl className="mt-14 grid grid-cols-2 gap-6 border-t border-shell/10 pt-8 text-sm">
             <div>
-              <dt className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/40">
+              <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/40">
                 Source
               </dt>
-              <dd className="mt-1 text-shell/80">Fiji &amp; Vanuatu cultivars</dd>
+              <dd className="mt-1 text-shell/80">
+                Fiji &amp; Vanuatu cultivars
+              </dd>
             </div>
             <div>
-              <dt className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/40">
+              <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/40">
                 Extraction
               </dt>
-              <dd className="mt-1 text-shell/80">Water only — no solvents, no CO₂</dd>
+              <dd className="mt-1 text-shell/80">
+                Water only — no solvents, no CO₂
+              </dd>
             </div>
             <div>
-              <dt className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/40">
+              <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/40">
                 Impact
               </dt>
               <dd className="mt-1 text-shell/80">
@@ -104,7 +110,7 @@ export default async function ProductPage({
               </dd>
             </div>
             <div>
-              <dt className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/40">
+              <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/40">
                 Coconuts earned
               </dt>
               <dd className="mt-1 text-shell/80">1 per $1 spent</dd>

@@ -37,28 +37,28 @@ export default function EventsCalendar() {
             className="grid grid-cols-[72px_1fr] items-center gap-6 py-5 sm:grid-cols-[88px_1fr_auto]"
           >
             <div className="text-center">
-              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-orchid">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-orchid">
                 {d.weekday}
               </p>
               <p className="h-sign text-3xl text-shell">{d.day}</p>
-              <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/50">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
                 {d.month}
               </p>
             </div>
             <div>
               <h3
-                className={`font-display text-xl italic ${isPrivate ? "text-shell/60" : "text-shell"}`}
+                className={`text-xl  ${isPrivate ? "text-shell/60" : "text-shell"}`}
               >
                 {e.title}
               </h3>
-              <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.18em] text-shell/50">
+              <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
                 {kindLabel[e.kind]}
                 {e.location ? ` · ${e.location}` : ""}
                 {e.time ? ` · ${e.time}` : ""}
               </p>
             </div>
             {!isPrivate && (
-              <p className="hidden font-mono text-[11px] uppercase tracking-[0.18em] text-gold sm:block">
+              <p className="hidden font-mono text-[11px] uppercase tracking-[0.2em] text-gold sm:block">
                 Come say bula →
               </p>
             )}

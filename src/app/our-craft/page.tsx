@@ -57,7 +57,7 @@ export default function OurCraftPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-abyss/70 via-abyss/70 to-abyss" />
         <div className="relative mx-auto max-w-4xl px-6 pb-16 pt-40 text-center sm:pt-48">
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
             Our Craft
           </p>
           <h1 className="h-sign mt-6 text-6xl text-shell sm:text-8xl">
@@ -65,8 +65,8 @@ export default function OurCraftPage() {
             <span className="block text-orchid">is made equal.</span>
           </h1>
           <p className="mt-6 text-lg text-shell/80">
-            Most brands buy an extract, cut it into a syrup, and slap a label
-            on it. We don&apos;t. Everything at Lumanai starts from the root.
+            Most brands buy an extract, cut it into a syrup, and slap a label on
+            it. We don&apos;t. Everything at Lumanai starts from the root.
           </p>
         </div>
       </section>
@@ -81,14 +81,16 @@ export default function OurCraftPage() {
                 className="rounded-3xl border border-shell/10 bg-lagoon/40 p-8 backdrop-blur"
               >
                 <div className="flex items-center gap-4">
-                  <Ripple className="h-9 w-9 text-orchid" rings={3} animated={false} />
-                  <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-gold">
+                  <Ripple
+                    className="h-9 w-9 text-orchid"
+                    rings={3}
+                    animated={false}
+                  />
+                  <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
                     0{i + 1} · {p.kicker}
                   </span>
                 </div>
-                <h3 className="mt-6 font-display text-2xl italic text-shell">
-                  {p.title}
-                </h3>
+                <h3 className="mt-6 text-2xl text-shell">{p.title}</h3>
                 <p className="mt-4 text-shell/70">{p.copy}</p>
               </div>
             ))}
@@ -99,7 +101,7 @@ export default function OurCraftPage() {
       {/* Spec sheet */}
       <section className="border-t border-shell/10 bg-abyss">
         <div className="mx-auto max-w-4xl px-6 py-24">
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-orchid">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-orchid">
             Spec sheet
           </p>
           <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
@@ -111,7 +113,7 @@ export default function OurCraftPage() {
                 key={s.label}
                 className="grid gap-2 py-5 sm:grid-cols-[1fr_2fr] sm:gap-6"
               >
-                <dt className="font-mono text-[11px] uppercase tracking-[0.22em] text-shell/50">
+                <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
                   {s.label}
                 </dt>
                 <dd className="text-shell">{s.value}</dd>
@@ -124,7 +126,7 @@ export default function OurCraftPage() {
       {/* Bottom line */}
       <section className="border-t border-shell/10">
         <div className="mx-auto max-w-3xl px-6 py-20 text-center">
-          <p className="font-display text-3xl italic text-shell sm:text-4xl">
+          <p className="text-3xl text-shell sm:text-4xl">
             A difference you can taste, a potency you can feel.
           </p>
         </div>

@@ -10,7 +10,7 @@ export default function NotFound() {
         animated={false}
       />
       <div className="relative mx-auto max-w-3xl px-6 py-40 text-center">
-        <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
           404
         </p>
         <h1 className="h-sign mt-6 text-6xl text-shell sm:text-8xl">
@@ -22,13 +22,13 @@ export default function NotFound() {
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Link
             href="/"
-            className="rounded-full bg-gold px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-abyss hover:bg-shell"
+            className="rounded-full bg-gold px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss hover:bg-shell"
           >
             Back Home
           </Link>
           <Link
             href="/menu"
-            className="rounded-full border border-shell/30 px-8 py-4 font-mono text-xs uppercase tracking-[0.18em] text-shell hover:border-gold hover:text-gold"
+            className="rounded-full border border-shell/30 px-8 py-4 font-mono text-xs uppercase tracking-[0.2em] text-shell hover:border-gold hover:text-gold"
           >
             See the Menu
           </Link>

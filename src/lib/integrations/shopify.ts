@@ -17,12 +17,12 @@ export function shopifyConfig() {
 
 export async function shopifyFetch<T>(
   query: string,
-  variables?: Record<string, unknown>
+  variables?: Record<string, unknown>,
 ): Promise<T> {
   const { domain, token, configured } = shopifyConfig();
   if (!configured) {
     throw new Error(
-      "Shopify Storefront not configured. Fill in NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN and NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN in .env.local."
+      "Shopify Storefront not configured. Fill in NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN and NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN in .env.local.",
     );
   }
   const res = await fetch(`https://${domain}/api/${API_VERSION}/graphql.json`, {
@@ -127,7 +127,7 @@ export async function getAllProducts(): Promise<ShopifyProduct[]> {
 }
 
 export async function getProductByHandle(
-  handle: string
+  handle: string,
 ): Promise<ShopifyProduct | null> {
   const data = await shopifyFetch<{ product: ShopifyProduct | null }>(
     /* GraphQL */ `
@@ -138,7 +138,7 @@ export async function getProductByHandle(
         }
       }
     `,
-    { handle }
+    { handle },
   );
   return data.product;
 }
@@ -150,7 +150,7 @@ export async function getProductByHandle(
  */
 export async function createCheckout(
   variantId: string,
-  quantity = 1
+  quantity = 1,
 ): Promise<string> {
   const data = await shopifyFetch<{
     cartCreate: {
@@ -170,7 +170,7 @@ export async function createCheckout(
         }
       }
     `,
-    { lines: [{ merchandiseId: variantId, quantity }] }
+    { lines: [{ merchandiseId: variantId, quantity }] },
   );
   const err = data.cartCreate.userErrors[0]?.message;
   if (err) throw new Error(err);

@@ -58,7 +58,7 @@ export default function EventBuilder() {
                 : [...upgrades]
                     .map(
                       (i) =>
-                        `${experienceUpgrades[i].name} (${experienceUpgrades[i].price})`
+                        `${experienceUpgrades[i].name} (${experienceUpgrades[i].price})`,
                     )
                     .join(", ")
             }`,
@@ -84,7 +84,7 @@ export default function EventBuilder() {
     setPrefill(summary);
     // Let React paint the prefilled form before scrolling to it.
     requestAnimationFrame(() =>
-      bookRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+      bookRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
     );
   }
 
@@ -95,7 +95,7 @@ export default function EventBuilder() {
         <div className="space-y-10">
           {/* 01 · Experience */}
           <fieldset>
-            <legend className="font-mono text-[11px] uppercase tracking-[0.24em] text-gold">
+            <legend className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
               01 · Pick your experience
             </legend>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -147,7 +147,10 @@ export default function EventBuilder() {
                   key={f}
                   className="flex items-center gap-2 text-xs text-shell/65"
                 >
-                  <span className="h-1 w-1 rounded-full bg-orchid" aria-hidden />
+                  <span
+                    className="h-1 w-1 rounded-full bg-orchid"
+                    aria-hidden
+                  />
                   {f}
                 </li>
               ))}
@@ -156,7 +159,7 @@ export default function EventBuilder() {
 
           {/* 02 · Guests */}
           <fieldset>
-            <legend className="font-mono text-[11px] uppercase tracking-[0.24em] text-gold">
+            <legend className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
               02 · How many guests?
             </legend>
             <div className="mt-4 flex flex-wrap gap-3">
@@ -168,7 +171,7 @@ export default function EventBuilder() {
                     type="button"
                     onClick={() => setTierIdx(i)}
                     aria-pressed={active}
-                    className={`rounded-full border px-6 py-3 font-mono text-xs uppercase tracking-[0.16em] transition-all ${
+                    className={`rounded-full border px-6 py-3 font-mono text-xs uppercase tracking-[0.2em] transition-all ${
                       active
                         ? "border-gold bg-gold text-abyss"
                         : "border-shell/20 text-shell/75 hover:border-gold hover:text-gold"
@@ -184,7 +187,7 @@ export default function EventBuilder() {
 
           {/* 03 · Upgrades */}
           <fieldset>
-            <legend className="font-mono text-[11px] uppercase tracking-[0.24em] text-gold">
+            <legend className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
               03 · Tune the bar to your crowd{" "}
               <span className="text-shell/40">(optional)</span>
             </legend>
@@ -221,7 +224,7 @@ export default function EventBuilder() {
               })}
             </div>
             <p
-              className={`mt-3 font-mono text-[11px] uppercase tracking-[0.18em] ${
+              className={`mt-3 font-mono text-[11px] uppercase tracking-[0.2em] ${
                 allUpgrades ? "text-gold" : "text-shell/40"
               }`}
             >
@@ -241,7 +244,7 @@ export default function EventBuilder() {
               aria-hidden
             />
             <div className="relative">
-              <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-gold">
+              <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
                 Your event
               </p>
               <h3 className="h-sign-med mt-3 text-2xl text-shell">
@@ -276,13 +279,13 @@ export default function EventBuilder() {
                 <p className="h-sign text-4xl text-gold">{money(total)}</p>
               </div>
               <p className="mt-3 text-xs text-shell/45">
-                Las Vegas metro pricing. Final quote may vary with duration
-                and customization.
+                Las Vegas metro pricing. Final quote may vary with duration and
+                customization.
               </p>
               <button
                 type="button"
                 onClick={lockItIn}
-                className="mt-6 w-full rounded-full bg-gold px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-abyss transition-colors hover:bg-shell"
+                className="mt-6 w-full rounded-full bg-gold px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss transition-colors hover:bg-shell"
               >
                 Lock It In → Get a Real Quote
               </button>
@@ -292,10 +295,14 @@ export default function EventBuilder() {
       </div>
 
       {/* Booking form, prefilled by the builder */}
-      <div ref={bookRef} id="book" className="border-t border-shell/10 bg-abyss">
+      <div
+        ref={bookRef}
+        id="book"
+        className="border-t border-shell/10 bg-abyss"
+      >
         <div className="mx-auto grid max-w-6xl gap-14 px-6 py-20 lg:grid-cols-[1fr_1.3fr]">
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
               Almost there
             </p>
             <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">
@@ -326,7 +333,10 @@ export default function EventBuilder() {
               </p>
             </div>
           </div>
-          <BookingForm key={prefill ?? "blank"} prefill={prefill ?? undefined} />
+          <BookingForm
+            key={prefill ?? "blank"}
+            prefill={prefill ?? undefined}
+          />
         </div>
       </div>
     </>

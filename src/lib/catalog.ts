@@ -4,9 +4,16 @@
  * If Shopify is unreachable (or env vars are missing), the shop still works.
  */
 
-import { getAllProducts, getProductByHandle, formatPrice } from "@/lib/integrations/shopify";
+import {
+  getAllProducts,
+  getProductByHandle,
+  formatPrice,
+} from "@/lib/integrations/shopify";
 import type { ShopifyProduct } from "@/lib/integrations/shopify";
-import { products as staticProducts, getProduct as getStaticProduct } from "@/lib/products";
+import {
+  products as staticProducts,
+  getProduct as getStaticProduct,
+} from "@/lib/products";
 
 export type CatalogProduct = {
   handle: string;
@@ -49,7 +56,7 @@ function fromShopify(p: ShopifyProduct): CatalogProduct {
     description: p.description,
     priceLabel: formatPrice(
       p.priceRange.minVariantPrice.amount,
-      p.priceRange.minVariantPrice.currencyCode
+      p.priceRange.minVariantPrice.currencyCode,
     ),
     category: inferCategory(p.title),
     image: p.featuredImage?.url,
@@ -75,7 +82,10 @@ function fromStatic(p: (typeof staticProducts)[number]): CatalogProduct {
   };
 }
 
-export async function getCatalog(): Promise<{ items: CatalogProduct[]; live: boolean }> {
+export async function getCatalog(): Promise<{
+  items: CatalogProduct[];
+  live: boolean;
+}> {
   try {
     const live = await getAllProducts();
     if (live.length > 0) return { items: live.map(fromShopify), live: true };
@@ -85,7 +95,9 @@ export async function getCatalog(): Promise<{ items: CatalogProduct[]; live: boo
   return { items: staticProducts.map(fromStatic), live: false };
 }
 
-export async function getCatalogProduct(handle: string): Promise<CatalogProduct | null> {
+export async function getCatalogProduct(
+  handle: string,
+): Promise<CatalogProduct | null> {
   try {
     const live = await getProductByHandle(handle);
     if (live) return fromShopify(live);

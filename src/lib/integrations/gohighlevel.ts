@@ -20,7 +20,9 @@ export type BookingPayload = {
 export async function forwardBookingToGhl(payload: BookingPayload) {
   const url = process.env.GHL_BOOKING_WEBHOOK_URL;
   if (!url) {
-    console.warn("[GHL] GHL_BOOKING_WEBHOOK_URL not set — booking not forwarded.");
+    console.warn(
+      "[GHL] GHL_BOOKING_WEBHOOK_URL not set — booking not forwarded.",
+    );
     return { skipped: true as const };
   }
 

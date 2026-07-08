@@ -69,10 +69,7 @@ export const eventPackages: EventPackage[] = [
   {
     number: "04",
     name: "Paid Craft Kava Bar",
-    features: [
-      "All drinks available for purchase",
-      "We just show up!",
-    ],
+    features: ["All drinks available for purchase", "We just show up!"],
     tiers: [{ guests: "Any size", price: "Free to host", amount: 0 }],
   },
 ];
@@ -156,4 +153,8 @@ export const experienceUpgrades: ExperienceUpgrade[] = [
   },
 ];
 
-export const upgradeBundle = { name: "Complete Upgrade Bundle", price: "$500", amount: 500 };
+export const upgradeBundle = {
+  name: "Complete Upgrade Bundle",
+  price: "$500",
+  amount: 500,
+};

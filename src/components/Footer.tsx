@@ -23,16 +23,16 @@ export default function Footer() {
               height={61}
               className="h-auto w-[150px]"
             />
-            <p className="mt-4 max-w-xs font-display text-lg italic leading-snug text-shell/80">
+            <p className="mt-4 max-w-xs text-lg leading-snug text-shell/80">
               Drink Different. All the buzz — none of the booze.
             </p>
-            <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.18em] text-shell/40">
+            <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.2em] text-shell/40">
               Booking · Las Vegas, NV
             </p>
           </div>
 
           <div>
-            <h3 className="font-mono text-[11px] uppercase tracking-[0.22em] text-shell/50">
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
               Explore
             </h3>
             <ul className="mt-4 space-y-3">
@@ -50,7 +50,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="font-mono text-[11px] uppercase tracking-[0.22em] text-shell/50">
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
               More
             </h3>
             <ul className="mt-4 space-y-3">
@@ -68,7 +68,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="font-mono text-[11px] uppercase tracking-[0.22em] text-shell/50">
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
               Reach us
             </h3>
             <ul className="mt-4 space-y-3 text-sm text-shell/80">
@@ -81,7 +81,10 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="tel:+17026260858" className="transition-colors hover:text-gold">
+                <a
+                  href="tel:+17026260858"
+                  className="transition-colors hover:text-gold"
+                >
                   (702) 626-0858
                 </a>
               </li>
@@ -101,7 +104,7 @@ export default function Footer() {
 
         {/* Partnerships — logo slots swap in when the files arrive. */}
         <div className="mt-16 border-t border-shell/10 pt-8">
-          <p className="text-center font-mono text-[11px] uppercase tracking-[0.28em] text-shell/40">
+          <p className="text-center font-mono text-[11px] uppercase tracking-[0.2em] text-shell/40">
             In partnership with
           </p>
           <div className="mt-5 flex flex-wrap items-center justify-center gap-x-12 gap-y-4">
@@ -118,7 +121,9 @@ export default function Footer() {
 
         <div className="mt-12 flex flex-col gap-3 border-t border-shell/10 pt-6 text-xs text-shell/50 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Lumanai Kava · Terra Incognita LLC</p>
-          <p>1% of every order supports the South Pacific Islander Organization.</p>
+          <p>
+            1% of every order supports the South Pacific Islander Organization.
+          </p>
         </div>
       </div>
     </footer>

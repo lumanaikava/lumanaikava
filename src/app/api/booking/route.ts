@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { forwardBookingToGhl, type BookingPayload } from "@/lib/integrations/gohighlevel";
+import {
+  forwardBookingToGhl,
+  type BookingPayload,
+} from "@/lib/integrations/gohighlevel";
 import { sendAlertSms } from "@/lib/integrations/twilio";
 
 export const runtime = "nodejs";
@@ -15,7 +18,7 @@ export async function POST(req: Request) {
   if (!payload?.name || !payload?.email || !payload?.message) {
     return NextResponse.json(
       { error: "Missing required fields." },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -28,7 +31,7 @@ export async function POST(req: Request) {
 
   try {
     await sendAlertSms(
-      `New Lumanai booking · ${payload.name} · ${payload.city ?? "no city"} · ${payload.date ?? "no date"}`
+      `New Lumanai booking · ${payload.name} · ${payload.city ?? "no city"} · ${payload.date ?? "no date"}`,
     );
   } catch (err) {
     console.error("[booking] SMS alert failed:", err);

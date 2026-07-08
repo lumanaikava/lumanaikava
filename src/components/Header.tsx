@@ -27,7 +27,7 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="font-mono text-[11px] uppercase tracking-[0.16em] text-shell/70 transition-colors hover:text-gold"
+              className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/70 transition-colors hover:text-gold"
             >
               {link.label}
             </Link>
@@ -37,13 +37,13 @@ export default function Header() {
         <div className="hidden items-center gap-3 lg:flex">
           <Link
             href="/contact"
-            className="font-mono text-[11px] uppercase tracking-[0.16em] text-shell/70 transition-colors hover:text-gold"
+            className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/70 transition-colors hover:text-gold"
           >
             Contact
           </Link>
           <Link
             href="/events#book"
-            className="rounded-full bg-gold px-5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-abyss transition-colors hover:bg-shell"
+            className="rounded-full bg-gold px-5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-abyss transition-colors hover:bg-shell"
           >
             Book the Bar
           </Link>
@@ -72,7 +72,7 @@ export default function Header() {
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="border-b border-shell/10 py-3 font-mono text-xs uppercase tracking-[0.16em] text-shell/80 hover:text-gold"
+              className="border-b border-shell/10 py-3 font-mono text-xs uppercase tracking-[0.2em] text-shell/80 hover:text-gold"
             >
               {link.label}
             </Link>
@@ -80,7 +80,7 @@ export default function Header() {
           <Link
             href="/events#book"
             onClick={() => setOpen(false)}
-            className="mt-4 rounded-full bg-gold px-5 py-3 text-center font-mono text-xs font-bold uppercase tracking-[0.16em] text-abyss"
+            className="mt-4 rounded-full bg-gold px-5 py-3 text-center font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss"
           >
             Book the Bar
           </Link>

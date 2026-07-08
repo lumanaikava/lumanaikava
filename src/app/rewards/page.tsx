@@ -19,7 +19,10 @@ const redeem = [
   { threshold: 60, reward: "Free naktail on the house" },
   { threshold: 120, reward: "Free growler with your next order" },
   { threshold: 250, reward: "10% off your next private booking" },
-  { threshold: 500, reward: "Priority booking + a signature drink named after you" },
+  {
+    threshold: 500,
+    reward: "Priority booking + a signature drink named after you",
+  },
 ];
 
 const rules = [
@@ -38,7 +41,7 @@ export default function RewardsPage() {
         <div className="pointer-events-none absolute -left-40 bottom-0 h-96 w-96 rounded-full bg-amethyst/30 blur-3xl" />
         <div className="relative mx-auto max-w-4xl px-6 pb-16 pt-32 text-center">
           <CoconutMark className="mx-auto h-16 w-16 text-coconut" />
-          <p className="mt-6 font-mono text-xs uppercase tracking-[0.28em] text-gold">
+          <p className="mt-6 font-mono text-xs uppercase tracking-[0.2em] text-gold">
             Coconut Rewards
           </p>
           <h1 className="h-sign mt-4 text-6xl text-shell sm:text-8xl">
@@ -46,9 +49,9 @@ export default function RewardsPage() {
             <span className="block text-orchid">Redeem for pours.</span>
           </h1>
           <p className="mt-6 text-lg text-shell/70">
-            Every dollar and every event earns you coconuts. Stack them up
-            and turn them into free shots, drinks, growlers, and — for the
-            most loyal — private bartending credit.
+            Every dollar and every event earns you coconuts. Stack them up and
+            turn them into free shots, drinks, growlers, and — for the most
+            loyal — private bartending credit.
           </p>
         </div>
       </section>
@@ -56,7 +59,7 @@ export default function RewardsPage() {
       {/* Earn */}
       <section className="border-t border-shell/10">
         <div className="mx-auto max-w-4xl px-6 py-20">
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-orchid">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-orchid">
             How to earn
           </p>
           <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
@@ -80,7 +83,7 @@ export default function RewardsPage() {
       {/* Redeem ladder */}
       <section className="border-t border-shell/10 bg-abyss">
         <div className="mx-auto max-w-4xl px-6 py-20">
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
             The ladder
           </p>
           <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
@@ -97,12 +100,10 @@ export default function RewardsPage() {
                   <CoconutMark className="h-8 w-8 text-coconut" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-gold">
+                  <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
                     Tier {i + 1} · {r.threshold} coconuts
                   </p>
-                  <p className="mt-1 font-display text-xl italic text-shell">
-                    {r.reward}
-                  </p>
+                  <p className="mt-1 text-xl text-shell">{r.reward}</p>
                 </div>
               </li>
             ))}
@@ -113,7 +114,7 @@ export default function RewardsPage() {
       {/* Rules */}
       <section className="border-t border-shell/10">
         <div className="mx-auto max-w-3xl px-6 py-20">
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-orchid">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-orchid">
             The fine print
           </p>
           <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
@@ -133,9 +134,7 @@ export default function RewardsPage() {
       {/* CTA */}
       <section className="border-t border-shell/10 bg-abyss">
         <div className="mx-auto max-w-3xl px-6 py-20 text-center">
-          <h2 className="font-display text-3xl italic sm:text-4xl">
-            Start collecting.
-          </h2>
+          <h2 className="text-3xl sm:text-4xl">Start collecting.</h2>
           <p className="mt-3 text-shell/70">
             Your coconut balance links to your email at checkout. First order
             gets you 5 coconuts on the house.
@@ -143,13 +142,13 @@ export default function RewardsPage() {
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
               href="/products"
-              className="rounded-full bg-gold px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-abyss hover:bg-shell"
+              className="rounded-full bg-gold px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss hover:bg-shell"
             >
               Shop &amp; Earn
             </Link>
             <Link
               href="/events#book"
-              className="rounded-full border border-shell/30 px-8 py-4 font-mono text-xs uppercase tracking-[0.18em] text-shell hover:border-gold hover:text-gold"
+              className="rounded-full border border-shell/30 px-8 py-4 font-mono text-xs uppercase tracking-[0.2em] text-shell hover:border-gold hover:text-gold"
             >
               Book &amp; Earn
             </Link>
@@ -163,7 +162,14 @@ export default function RewardsPage() {
 function CoconutMark({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 100 100" className={className} aria-hidden="true">
-      <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" strokeWidth="2" />
+      <circle
+        cx="50"
+        cy="50"
+        r="42"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
       <path
         d="M20 50 Q35 20 50 50 T80 50"
         fill="none"

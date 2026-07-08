@@ -36,10 +36,10 @@ export default function ContactForm() {
   if (state === "success") {
     return (
       <div className="rounded-3xl border border-gold/40 bg-lagoon/40 p-8">
-        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-gold">
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
           Message received
         </p>
-        <h3 className="mt-3 font-display text-2xl italic text-shell">
+        <h3 className="mt-3 text-2xl text-shell">
           Thanks — we&apos;ll write back soon.
         </h3>
       </div>
@@ -49,7 +49,7 @@ export default function ContactForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <label className="block">
-        <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/50">
+        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
           Name
         </span>
         <input
@@ -59,7 +59,7 @@ export default function ContactForm() {
         />
       </label>
       <label className="block">
-        <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/50">
+        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
           Email
         </span>
         <input
@@ -70,7 +70,7 @@ export default function ContactForm() {
         />
       </label>
       <label className="block">
-        <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/50">
+        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
           Message
         </span>
         <textarea
@@ -83,7 +83,7 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={state === "submitting"}
-        className="rounded-full bg-gold px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.18em] text-abyss hover:bg-shell disabled:opacity-60"
+        className="rounded-full bg-gold px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss hover:bg-shell disabled:opacity-60"
       >
         {state === "submitting" ? "Sending..." : "Send Message"}
       </button>

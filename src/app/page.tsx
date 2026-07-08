@@ -30,16 +30,14 @@ export default function Home() {
             </h2>
             <Link
               href="/menu"
-              className="font-mono text-[11px] uppercase tracking-[0.18em] text-gold hover:text-shell"
+              className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold hover:text-shell"
             >
               Full menu →
             </Link>
           </div>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             {currentMenu.sections
-              .flatMap((s) =>
-                s.drinks.map((d) => ({ ...d, price: s.price }))
-              )
+              .flatMap((s) => s.drinks.map((d) => ({ ...d, price: s.price })))
               .map((d) => (
                 <Link
                   key={d.name}
@@ -100,7 +98,7 @@ export default function Home() {
             </h2>
             <Link
               href="/events"
-              className="rounded-full bg-gold px-9 py-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-abyss transition-colors hover:bg-shell"
+              className="rounded-full bg-gold px-9 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss transition-colors hover:bg-shell"
             >
               Build Your Event
             </Link>

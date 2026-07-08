@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     console.error("[checkout] cart creation failed:", err);
     return NextResponse.json(
       { error: "Checkout is unavailable right now — try again in a minute." },
-      { status: 502 }
+      { status: 502 },
     );
   }
 }

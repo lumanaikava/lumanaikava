@@ -42,14 +42,23 @@ const residencies = [
 export const oneOffEvents: CalendarEvent[] = [
   { date: "2026-07-11", title: "Heartspace BLVD", kind: "bar" },
   { date: "2026-07-15", title: "Etho Founders Night", kind: "bar" },
-  { date: "2026-08-07", title: "First Friday", location: "Arts District, Las Vegas", time: "5–11pm", kind: "special" },
+  {
+    date: "2026-08-07",
+    title: "First Friday",
+    location: "Arts District, Las Vegas",
+    time: "5–11pm",
+    kind: "special",
+  },
 ];
 
 function toISODate(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-function generateResidencyDates(now: Date, weeksAhead: number): CalendarEvent[] {
+function generateResidencyDates(
+  now: Date,
+  weeksAhead: number,
+): CalendarEvent[] {
   const out: CalendarEvent[] = [];
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   for (const r of residencies) {
@@ -71,17 +80,24 @@ function generateResidencyDates(now: Date, weeksAhead: number): CalendarEvent[] 
 }
 
 /** Events from today forward, soonest first: residencies + one-offs merged. */
-export function upcomingEvents(now = new Date(), weeksAhead = 4): CalendarEvent[] {
+export function upcomingEvents(
+  now = new Date(),
+  weeksAhead = 4,
+): CalendarEvent[] {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const oneOffs = oneOffEvents.filter(
-    (e) => new Date(`${e.date}T23:59:59`) >= today
+    (e) => new Date(`${e.date}T23:59:59`) >= today,
   );
   return [...generateResidencyDates(now, weeksAhead), ...oneOffs].sort((a, b) =>
-    a.date.localeCompare(b.date)
+    a.date.localeCompare(b.date),
   );
 }
 
-export function formatEventDate(iso: string): { weekday: string; month: string; day: string } {
+export function formatEventDate(iso: string): {
+  weekday: string;
+  month: string;
+  day: string;
+} {
   const d = new Date(`${iso}T12:00:00`);
   return {
     weekday: d.toLocaleDateString("en-US", { weekday: "short" }),

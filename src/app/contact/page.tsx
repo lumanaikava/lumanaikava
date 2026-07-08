@@ -14,7 +14,7 @@ export default function ContactPage() {
           animated={false}
         />
         <div className="relative mx-auto max-w-5xl px-6 py-12">
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
             Contact
           </p>
           <h1 className="h-sign mt-4 text-5xl text-shell sm:text-7xl">
@@ -22,7 +22,10 @@ export default function ContactPage() {
           </h1>
           <p className="mt-4 max-w-lg text-shell/70">
             Booking questions land fastest through the{" "}
-            <a href="/events#book" className="prose-link text-shell hover:text-gold">
+            <a
+              href="/events#book"
+              className="prose-link text-shell hover:text-gold"
+            >
               events page
             </a>
             . Anything else, this form works great.
@@ -31,29 +34,29 @@ export default function ContactPage() {
           <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_1.2fr]">
             <div className="space-y-8">
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-shell/50">
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
                   Email
                 </p>
                 <a
                   href="mailto:lumanai.events@gmail.com"
-                  className="mt-1 block font-display text-2xl italic text-shell hover:text-gold"
+                  className="mt-1 block text-2xl text-shell hover:text-gold"
                 >
                   lumanai.events@gmail.com
                 </a>
               </div>
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-shell/50">
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
                   Phone / Text
                 </p>
                 <a
                   href="tel:+17026260858"
-                  className="mt-1 block font-display text-2xl italic text-shell hover:text-gold"
+                  className="mt-1 block text-2xl text-shell hover:text-gold"
                 >
                   (702) 626-0858
                 </a>
               </div>
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-shell/50">
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
                   Mailing address
                 </p>
                 <p className="mt-1 text-shell/80">
@@ -63,7 +66,7 @@ export default function ContactPage() {
                 </p>
               </div>
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-shell/50">
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
                   Social
                 </p>
                 <a

@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import EventBuilder from "@/components/EventBuilder";
 import { eventImages } from "@/lib/images";
+import { team } from "@/lib/team";
 
 export const metadata: Metadata = {
   title: "Build Your Event",
@@ -33,7 +34,7 @@ export default function EventsPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-abyss/70 via-abyss/70 to-ocean" />
         <div className="relative mx-auto max-w-6xl px-6 pb-10 pt-16 sm:pt-20">
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
             Events · Las Vegas
           </p>
           <h1 className="h-sign mt-4 max-w-3xl text-5xl text-shell sm:text-6xl">
@@ -61,15 +62,51 @@ export default function EventsPage() {
         <EventBuilder />
       </section>
 
+      {/* Meet your bartenders */}
+      <section className="border-t border-shell/10">
+        <div className="mx-auto max-w-6xl px-6 py-12">
+          <h2 className="h-sign text-4xl text-shell sm:text-5xl">
+            Meet your <span className="text-orchid">bartenders.</span>
+          </h2>
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            {team.map((t) => (
+              <div
+                key={t.name}
+                className="flex gap-6 overflow-hidden rounded-3xl border border-shell/10 bg-lagoon/30"
+              >
+                <div className="relative w-36 shrink-0 sm:w-44">
+                  <Image
+                    src={t.photo}
+                    alt={`${t.name} behind the Lumanai bar`}
+                    fill
+                    sizes="176px"
+                    className="object-cover"
+                  />
+                </div>
+                <div className="py-6 pr-6">
+                  <h3 className="h-sign text-3xl text-shell">{t.name}</h3>
+                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+                    {t.role}
+                  </p>
+                  <p className="mt-3 text-sm leading-relaxed text-shell/70">
+                    {t.bio}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Cross-link to public appearances */}
       <section className="border-t border-shell/10">
-        <div className="mx-auto max-w-4xl px-6 py-14 text-center">
-          <p className="font-display text-xl italic text-shell/80">
+        <div className="mx-auto max-w-4xl px-6 py-10 text-center">
+          <p className="text-lg font-medium text-shell/80">
             Want to taste it before you book it?
           </p>
           <Link
             href="/find-us"
-            className="prose-link mt-2 inline-block font-mono text-xs uppercase tracking-[0.2em] text-gold"
+            className="prose-link mt-2 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-gold"
           >
             Find the bar at a market this weekend →
           </Link>

@@ -8,7 +8,11 @@ type Props = {
   productName: string;
 };
 
-export default function BuyNowButton({ variantId, available, productName }: Props) {
+export default function BuyNowButton({
+  variantId,
+  available,
+  productName,
+}: Props) {
   const [state, setState] = useState<"idle" | "loading" | "error">("idle");
   const [qty, setQty] = useState(1);
 
@@ -18,13 +22,16 @@ export default function BuyNowButton({ variantId, available, productName }: Prop
         <button
           type="button"
           disabled
-          className="cursor-not-allowed rounded-full border border-shell/20 px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.18em] text-shell/40"
+          className="cursor-not-allowed rounded-full border border-shell/20 px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-shell/40"
         >
           Sold Out
         </button>
         <p className="mt-3 text-sm text-shell/60">
           Fresh batches drop often — catch us at an{" "}
-          <a href="/events#calendar" className="prose-link text-shell hover:text-gold">
+          <a
+            href="/events#calendar"
+            className="prose-link text-shell hover:text-gold"
+          >
             upcoming event
           </a>{" "}
           or follow{" "}
@@ -63,7 +70,7 @@ export default function BuyNowButton({ variantId, available, productName }: Prop
     <div>
       <div className="flex flex-wrap items-center gap-4">
         <label className="flex items-center gap-3 rounded-full border border-shell/20 px-4 py-2.5">
-          <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/50">
+          <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
             Qty
           </span>
           <select
@@ -83,12 +90,12 @@ export default function BuyNowButton({ variantId, available, productName }: Prop
           type="button"
           onClick={buy}
           disabled={state === "loading"}
-          className="rounded-full bg-gold px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.18em] text-abyss transition-colors hover:bg-shell disabled:opacity-60"
+          className="rounded-full bg-gold px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss transition-colors hover:bg-shell disabled:opacity-60"
         >
           {state === "loading" ? "Opening checkout..." : "Buy Now"}
         </button>
       </div>
-      <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.18em] text-shell/40">
+      <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-shell/40">
         Secure checkout via Shopify
       </p>
       {state === "error" && (

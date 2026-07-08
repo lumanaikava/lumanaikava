@@ -36,15 +36,15 @@ export default function BookingForm({ prefill }: { prefill?: string }) {
   if (state === "success") {
     return (
       <div className="rounded-3xl border border-gold/40 bg-lagoon/40 p-8">
-        <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-gold">
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
           Request received
         </p>
-        <h3 className="mt-3 font-display text-2xl italic text-shell">
+        <h3 className="mt-3 text-2xl text-shell">
           Thanks — we&apos;ll be in touch within 24 hours.
         </h3>
         <p className="mt-3 text-shell/70">
-          If it&apos;s urgent, text (702) 626-0858 and we&apos;ll get right
-          back to you.
+          If it&apos;s urgent, text (702) 626-0858 and we&apos;ll get right back
+          to you.
         </p>
       </div>
     );
@@ -61,11 +61,15 @@ export default function BookingForm({ prefill }: { prefill?: string }) {
         <Field label="Event date" name="date" type="date" />
       </div>
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="City" name="city" placeholder="Las Vegas, Summerlin, Henderson..." />
+        <Field
+          label="City"
+          name="city"
+          placeholder="Las Vegas, Summerlin, Henderson..."
+        />
         <Field label="Guest count" name="guests" type="number" min="1" />
       </div>
       <label className="block">
-        <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/50">
+        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
           Tell us about the event
         </span>
         <textarea
@@ -81,7 +85,7 @@ export default function BookingForm({ prefill }: { prefill?: string }) {
       <button
         type="submit"
         disabled={state === "submitting"}
-        className="rounded-full bg-gold px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.18em] text-abyss transition-colors hover:bg-shell disabled:opacity-60"
+        className="rounded-full bg-gold px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss transition-colors hover:bg-shell disabled:opacity-60"
       >
         {state === "submitting" ? "Sending..." : "Request a Quote"}
       </button>
@@ -114,7 +118,7 @@ function Field({
 } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <label className="block">
-      <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-shell/50">
+      <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
         {label}
       </span>
       <input

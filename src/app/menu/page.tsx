@@ -110,7 +110,8 @@ export default function MenuPage() {
               <span className="underline underline-offset-4">
                 {currentMenu.addOn.highlight}
               </span>{" "}
-              to any drink! <span className="text-abyss">{currentMenu.addOn.price}</span>
+              to any drink!{" "}
+              <span className="text-abyss">{currentMenu.addOn.price}</span>
             </p>
           )}
         </div>

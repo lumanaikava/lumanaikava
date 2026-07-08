@@ -25,7 +25,7 @@ export async function sendAlertSms(body: string) {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: new URLSearchParams({ From: from, To: to, Body: body }).toString(),
-    }
+    },
   );
 
   if (!res.ok) {

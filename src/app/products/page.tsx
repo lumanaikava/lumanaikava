@@ -30,7 +30,9 @@ export default async function ProductsPage({
 
   // RUSH instant kava is the featured hero product; everything else grids below.
   const featured = items.find((p) => p.category === "rush");
-  const rest = featured ? items.filter((p) => p.handle !== featured.handle) : items;
+  const rest = featured
+    ? items.filter((p) => p.handle !== featured.handle)
+    : items;
 
   const filtered =
     category === "premium" || category === "growler" || category === "rush"
@@ -40,11 +42,12 @@ export default async function ProductsPage({
 
   return (
     <section className="mx-auto max-w-6xl px-6 py-10">
-      <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
+      <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
         Shop
       </p>
       <h1 className="h-sign mt-3 text-4xl text-shell sm:text-5xl">
-        Lumanai Original Naktails <span className="text-orchid">&amp; Growlers</span>
+        Lumanai Original Naktails{" "}
+        <span className="text-orchid">&amp; Growlers</span>
       </h1>
 
       {showFeatured && (
@@ -69,7 +72,11 @@ export default async function ProductsPage({
                   className="object-contain object-center p-8 transition-transform duration-700 group-hover:scale-105"
                 />
               ) : (
-                <Ripple className="h-1/2 w-1/2 text-abyss/60" rings={5} animated={false} />
+                <Ripple
+                  className="h-1/2 w-1/2 text-abyss/60"
+                  rings={5}
+                  animated={false}
+                />
               )}
             </div>
             <div>
@@ -84,7 +91,7 @@ export default async function ProductsPage({
                 strength without the brew time.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-6">
-                <span className="rounded-full bg-gold px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-abyss transition-colors group-hover:bg-shell">
+                <span className="rounded-full bg-gold px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss transition-colors group-hover:bg-shell">
                   Shop RUSH
                 </span>
                 <span className="font-mono text-2xl text-gold">
@@ -103,7 +110,7 @@ export default async function ProductsPage({
             <Link
               key={tab.label}
               href={tab.value ? `/products?category=${tab.value}` : "/products"}
-              className={`rounded-full border px-5 py-2 font-mono text-xs uppercase tracking-[0.18em] transition-colors ${
+              className={`rounded-full border px-5 py-2 font-mono text-xs uppercase tracking-[0.2em] transition-colors ${
                 active
                   ? "border-gold bg-gold text-abyss"
                   : "border-shell/20 text-shell/70 hover:border-gold hover:text-gold"
@@ -133,18 +140,24 @@ export default async function ProductsPage({
                 />
               ) : (
                 <div className="flex h-full items-center justify-center">
-                  <Ripple className="h-1/2 w-1/2 text-abyss/60" rings={5} animated={false} />
+                  <Ripple
+                    className="h-1/2 w-1/2 text-abyss/60"
+                    rings={5}
+                    animated={false}
+                  />
                 </div>
               )}
               {!p.available && (
-                <p className="absolute left-4 top-4 rounded-full bg-abyss/85 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-shell">
+                <p className="absolute left-4 top-4 rounded-full bg-abyss/85 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-shell">
                   Sold out
                 </p>
               )}
             </div>
             <div className="p-7">
               <h2 className="h-sign-med text-2xl text-shell">{p.name}</h2>
-              {p.notes && <p className="mt-2 text-sm text-shell/60">{p.notes}</p>}
+              {p.notes && (
+                <p className="mt-2 text-sm text-shell/60">{p.notes}</p>
+              )}
               <p className="mt-6 font-mono text-sm text-gold">{p.priceLabel}</p>
             </div>
           </Link>
@@ -154,7 +167,10 @@ export default async function ProductsPage({
       {filtered.length === 0 && (
         <p className="mt-16 text-shell/60">
           Nothing in this category right now — check{" "}
-          <Link href="/products" className="prose-link text-shell hover:text-gold">
+          <Link
+            href="/products"
+            className="prose-link text-shell hover:text-gold"
+          >
             the full shop
           </Link>
           .

@@ -68,7 +68,8 @@ export const products: Product[] = [
     priceLabel: "From $35.00",
     reviewCount: 5,
     notes: "Raspberry · blood orange · cardamom",
-    description: "The Raspberry Orange Spice batch, poured by the growler for the group.",
+    description:
+      "The Raspberry Orange Spice batch, poured by the growler for the group.",
   },
   {
     handle: "the-kolada-growler",
@@ -88,7 +89,8 @@ export const products: Product[] = [
     priceLabel: "From $35.00",
     reviewCount: 7,
     notes: "Fresh ginger · raw honey · lemon",
-    description: "The Ginger Honey Lemon batch, poured by the growler for the group.",
+    description:
+      "The Ginger Honey Lemon batch, poured by the growler for the group.",
   },
 ];
 

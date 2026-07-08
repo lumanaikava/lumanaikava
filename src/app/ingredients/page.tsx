@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ingredients, categoryLabels, type Ingredient } from "@/lib/ingredients";
+import {
+  ingredients,
+  categoryLabels,
+  type Ingredient,
+} from "@/lib/ingredients";
 
 export const metadata: Metadata = {
   title: "Ingredients",
@@ -35,7 +39,7 @@ export default function IngredientsPage() {
       <section className="border-b border-shell/10">
         <div className="mx-auto flex max-w-6xl flex-wrap items-end justify-between gap-4 px-6 pb-8 pt-12">
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
+            <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
               Our ingredients · Our purpose
             </p>
             <h1 className="h-sign mt-3 text-5xl text-shell sm:text-6xl">
@@ -43,16 +47,19 @@ export default function IngredientsPage() {
             </h1>
           </div>
           <div className="flex flex-wrap gap-2">
-            {["All natural", "Gluten-free", "3rd party tested", "Sugar-free"].map(
-              (tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full border border-shell/20 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-shell/75"
-                >
-                  {tag}
-                </span>
-              )
-            )}
+            {[
+              "All natural",
+              "Gluten-free",
+              "3rd party tested",
+              "Sugar-free",
+            ].map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full border border-shell/20 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-shell/75"
+              >
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
       </section>
@@ -86,7 +93,10 @@ export default function IngredientsPage() {
                 )}
                 <ul className="divide-y divide-shell/10 px-5">
                   {rows.map((ing) => (
-                    <li key={ing.slug} className="flex items-center gap-4 py-3.5">
+                    <li
+                      key={ing.slug}
+                      className="flex items-center gap-4 py-3.5"
+                    >
                       <Image
                         src={`/images/ingredients/${ing.slug}.png`}
                         alt=""
@@ -118,7 +128,7 @@ export default function IngredientsPage() {
           <p className="h-sign text-2xl text-shell">Ready to taste it?</p>
           <Link
             href="/menu"
-            className="rounded-full bg-gold px-7 py-3 font-mono text-xs font-bold uppercase tracking-[0.16em] text-abyss hover:bg-shell"
+            className="rounded-full bg-gold px-7 py-3 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss hover:bg-shell"
           >
             See the Menu
           </Link>

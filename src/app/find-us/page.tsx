@@ -29,7 +29,7 @@ export default function FindUsPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-abyss/70 via-abyss/70 to-abyss" />
         <div className="relative mx-auto max-w-6xl px-6 pb-10 pt-16 sm:pt-20">
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-gold">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
             Find the bar · Las Vegas
           </p>
           <h1 className="h-sign mt-4 max-w-3xl text-5xl text-shell sm:text-6xl">
@@ -52,10 +52,12 @@ export default function FindUsPage() {
                 aria-hidden
               />
               <div className="relative">
-                <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-gold">
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
                   {r.day}
                 </p>
-                <h2 className="h-sign-med mt-3 text-3xl text-shell">{r.title}</h2>
+                <h2 className="h-sign-med mt-3 text-3xl text-shell">
+                  {r.title}
+                </h2>
                 <p className="mt-3 font-mono text-sm text-shell/70">
                   {r.location} · {r.time}
                 </p>
@@ -68,7 +70,7 @@ export default function FindUsPage() {
       {/* Rolling calendar */}
       <section>
         <div className="mx-auto max-w-4xl px-6 py-10">
-          <p className="font-mono text-xs uppercase tracking-[0.28em] text-orchid">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-orchid">
             Next four weeks
           </p>
           <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">
@@ -83,12 +85,12 @@ export default function FindUsPage() {
       {/* CTA */}
       <section className="border-t border-shell/10 bg-abyss">
         <div className="mx-auto max-w-4xl px-6 py-16 text-center">
-          <p className="font-display text-2xl italic text-shell">
+          <p className="text-2xl text-shell">
             Want the bar to appear at your event next?
           </p>
           <Link
             href="/events"
-            className="mt-6 inline-block rounded-full bg-gold px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.18em] text-abyss hover:bg-shell"
+            className="mt-6 inline-block rounded-full bg-gold px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss hover:bg-shell"
           >
             Build Your Event
           </Link>

@@ -6,7 +6,8 @@
 export type Ingredient = {
   slug: string;
   name: string;
-  category: "kava" | "adaptogen" | "nootropic" | "mineral" | "botanical" | "sweetener";
+  category:
+    "kava" | "adaptogen" | "nootropic" | "mineral" | "botanical" | "sweetener";
   claim: string;
 };
 
@@ -80,7 +81,8 @@ export const ingredients: Ingredient[] = [
     slug: "goji-berry",
     name: "Goji Berry",
     category: "botanical",
-    claim: "Provides antioxidant-rich support for sustained energy and vitality.",
+    claim:
+      "Provides antioxidant-rich support for sustained energy and vitality.",
   },
   {
     slug: "damiana-leaf",
