@@ -1,21 +1,16 @@
 import type { Metadata } from "next";
-import { Anton, Work_Sans } from "next/font/google";
+import { Barlow_Semi_Condensed } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-// The brand's two typefaces, exactly as in the Canva kit:
-// Anton for display (bar sign, menus), Work Sans for everything else.
-const anton = Anton({
-  variable: "--font-anton",
+// The brand typeface — Barlow Semi Condensed for everything, display
+// through body. Heavy weights carry the bar-sign headlines; lighter
+// weights handle copy.
+const barlow = Barlow_Semi_Condensed({
+  variable: "--font-barlow",
   subsets: ["latin"],
-  weight: "400",
-});
-
-const workSans = Work_Sans({
-  variable: "--font-work-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -90,7 +85,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${anton.variable} ${workSans.variable} h-full antialiased`}
+      className={`${barlow.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-ocean text-shell">
         <a href="#main" className="skip-link">

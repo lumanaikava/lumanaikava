@@ -31,25 +31,27 @@
   --color-gold: var(--gold);
   --color-teal: var(--teal);
 
-  /* Two brand faces only, per the Canva kit: Anton + Work Sans.
-     --font-display and --font-mono stay defined so existing utility
-     classes keep working, but they now resolve to the brand faces. */
-  --font-sign: var(--font-anton);
-  --font-display: var(--font-work-sans);
-  --font-body: var(--font-work-sans);
-  --font-mono: var(--font-work-sans);
+  /* One brand typeface everywhere: Barlow Semi Condensed. The legacy
+     --font-* names all resolve to it so existing utility classes keep
+     working. */
+  --font-sign: var(--font-barlow);
+  --font-display: var(--font-barlow);
+  --font-body: var(--font-barlow);
+  --font-mono: var(--font-barlow);
 }
 
-/* Bold sign headline — Anton, the exact face on the real bar signage.
-   Anton only ships one (already-black) weight, so no font-weight overrides. */
+/* Bold sign headline — Barlow Semi Condensed at its heaviest weight,
+   matching the CRAFT KAVA bar signage. */
 .h-sign {
   font-family: var(--font-sign);
+  font-weight: 800;
   letter-spacing: 0;
   line-height: 0.92;
   text-transform: uppercase;
 }
 .h-sign-med {
   font-family: var(--font-sign);
+  font-weight: 700;
   letter-spacing: 0.01em;
   line-height: 1;
   text-transform: uppercase;
