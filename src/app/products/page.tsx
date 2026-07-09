@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import ProductModel3D from "@/components/ProductModel3D";
 import Ripple from "@/components/Ripple";
 import { getCatalog } from "@/lib/catalog";
 
@@ -78,6 +79,9 @@ export default async function ProductsPage({
                   animated={false}
                 />
               )}
+              {/* 3D model takes over this panel when the GLB lands in
+                  public/models/ — see the README there. */}
+              <ProductModel3D alt={featured.name} />
             </div>
             <div>
               <p className="inline-block rounded-full border border-gold/50 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-gold">

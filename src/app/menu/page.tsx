@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { Metadata } from "next";
+import SplashDrink from "@/components/SplashDrink";
 import { currentMenu } from "@/lib/menu";
 
 export const metadata: Metadata = {
@@ -35,13 +36,7 @@ export default function MenuPage() {
             {currentMenu.sections[0].drinks.map((d) => (
               <div key={d.name}>
                 {d.image && (
-                  <Image
-                    src={d.image}
-                    alt={d.name}
-                    width={280}
-                    height={340}
-                    className="mx-auto h-44 w-auto object-contain sm:h-52"
-                  />
+                  <SplashDrink src={d.image} alt={d.name} accent={d.accent} />
                 )}
                 <h2
                   className="h-sign mt-3 text-3xl"
@@ -81,13 +76,7 @@ export default function MenuPage() {
           {currentMenu.sections[1].drinks.map((d) => (
             <div key={d.name} className="mt-6">
               {d.image && (
-                <Image
-                  src={d.image}
-                  alt={d.name}
-                  width={280}
-                  height={340}
-                  className="mx-auto h-44 w-auto object-contain sm:h-52"
-                />
+                <SplashDrink src={d.image} alt={d.name} accent={d.accent} />
               )}
               <h3
                 className="h-sign mt-3 text-3xl"

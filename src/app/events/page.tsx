@@ -37,8 +37,11 @@ export default function EventsPage() {
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
             Events · Las Vegas
           </p>
-          <h1 className="h-sign mt-4 max-w-3xl text-5xl text-shell sm:text-6xl">
-            Build your <span className="text-coconut">own event.</span>
+          <h1
+            className="h-sign brush-swipe mt-4 inline-block max-w-3xl text-5xl text-abyss sm:text-6xl"
+            style={{ "--brush": "var(--gold)" } as React.CSSProperties}
+          >
+            Build your own event.
           </h1>
         </div>
       </section>
@@ -65,8 +68,11 @@ export default function EventsPage() {
       {/* Meet your bartenders */}
       <section className="border-t border-shell/10">
         <div className="mx-auto max-w-6xl px-6 py-12">
-          <h2 className="h-sign text-4xl text-shell sm:text-5xl">
-            Meet your <span className="text-coconut">bartenders.</span>
+          <h2
+            className="h-sign brush-swipe inline-block text-4xl text-shell sm:text-5xl"
+            style={{ "--brush": "var(--violet)" } as React.CSSProperties}
+          >
+            Meet your bartenders.
           </h2>
           <div className="mt-8 grid gap-6 md:grid-cols-2">
             {team.map((t) => (

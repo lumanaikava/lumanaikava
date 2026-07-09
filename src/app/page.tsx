@@ -42,7 +42,10 @@ export default function Home() {
       <section className="border-b border-shell/10">
         <div className="mx-auto max-w-6xl px-6 py-12">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <h2 className="h-sign text-3xl text-shell sm:text-4xl">
+            <h2
+              className="h-sign brush-swipe text-3xl text-abyss sm:text-4xl"
+              style={{ "--brush": "var(--gold)" } as React.CSSProperties}
+            >
               Pouring now
             </h2>
             <Link
@@ -108,7 +111,7 @@ export default function Home() {
             {galleryImages.slice(0, 4).map((src) => (
               <div
                 key={src}
-                className="relative aspect-square overflow-hidden rounded-2xl border border-shell/10 sm:aspect-[4/3]"
+                className="brush-mask relative aspect-square overflow-hidden sm:aspect-[4/3]"
               >
                 <Image
                   src={src}
