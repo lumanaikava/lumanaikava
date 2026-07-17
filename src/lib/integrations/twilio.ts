@@ -4,14 +4,14 @@
  * an extra npm dep.
  */
 
-export async function sendAlertSms(body: string) {
+/** Send an SMS to any number (used by the Command Center composer). */
+export async function sendSms(to: string, body: string) {
   const sid = process.env.TWILIO_ACCOUNT_SID;
   const token = process.env.TWILIO_AUTH_TOKEN;
   const from = process.env.TWILIO_FROM_NUMBER;
-  const to = process.env.TWILIO_ALERT_NUMBER;
 
-  if (!sid || !token || !from || !to) {
-    console.warn("[Twilio] credentials not set — SMS alert skipped.");
+  if (!sid || !token || !from) {
+    console.warn("[Twilio] credentials not set — SMS skipped.");
     return { skipped: true as const };
   }
 
@@ -30,7 +30,19 @@ export async function sendAlertSms(body: string) {
 
   if (!res.ok) {
     const detail = await res.text().catch(() => "");
-    throw new Error(`Twilio ${res.status}: ${detail}`);
+    return { error: `Twilio ${res.status}: ${detail.slice(0, 200)}` as const };
   }
   return { ok: true as const };
+}
+
+/** Internal alert to the owner's phone (booking notifications). */
+export async function sendAlertSms(body: string) {
+  const to = process.env.TWILIO_ALERT_NUMBER;
+  if (!to) {
+    console.warn("[Twilio] TWILIO_ALERT_NUMBER not set — alert skipped.");
+    return { skipped: true as const };
+  }
+  const result = await sendSms(to, body);
+  if ("error" in result) throw new Error(result.error);
+  return result;
 }
