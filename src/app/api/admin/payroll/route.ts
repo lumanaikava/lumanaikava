@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import {
-  appendPayrollEntry,
+  buildEntry,
+  appendCsvEntry,
   COMMISSION_TIERS,
   type CommissionTier,
 } from "@/lib/payroll";
+import {
+  appendEntryToSheet,
+  payrollSheetConfigured,
+} from "@/lib/integrations/payroll-sheet";
 
 export const runtime = "nodejs";
 
@@ -44,29 +49,37 @@ export async function POST(req: Request) {
     return Number.isFinite(n) && n >= 0 ? n : 0;
   };
 
-  try {
-    const entry = await appendPayrollEntry({
-      employee,
-      event: String(b.event ?? "").slice(0, 120),
-      eventDate: String(b.eventDate ?? ""),
-      hours: num(b.hours),
-      sales: num(b.sales),
-      commissionPct: pct as CommissionTier,
-      tips: num(b.tips),
-      bonus: num(b.bonus),
-      expenses: num(b.expenses),
-      expenseNote: String(b.expenseNote ?? "").slice(0, 200),
-      loggedBy: jar.get("lumanai_crew")?.value ?? "Crew",
-    });
-    return NextResponse.json({ ok: true, entry });
-  } catch (err) {
-    console.error("[payroll] append failed:", err);
+  const entry = buildEntry({
+    employee,
+    event: String(b.event ?? "").slice(0, 120),
+    eventDate: String(b.eventDate ?? ""),
+    hours: num(b.hours),
+    sales: num(b.sales),
+    commissionPct: pct as CommissionTier,
+    tips: num(b.tips),
+    bonus: num(b.bonus),
+    expenses: num(b.expenses),
+    expenseNote: String(b.expenseNote ?? "").slice(0, 200),
+    loggedBy: jar.get("lumanai_crew")?.value ?? "Crew",
+  });
+
+  // Write to the Google Sheet (canonical, works when deployed) and the
+  // local CSV (backup, works when running on your machine). Succeed as
+  // long as at least one store took the row.
+  const stores: Promise<void>[] = [appendCsvEntry(entry)];
+  if (payrollSheetConfigured()) stores.push(appendEntryToSheet(entry));
+
+  const results = await Promise.allSettled(stores);
+  const anyOk = results.some((r) => r.status === "fulfilled");
+  if (!anyOk) {
+    console.error("[payroll] all stores failed:", results);
     return NextResponse.json(
       {
         error:
-          "Couldn't write the payroll file — check PAYROLL_CSV_PATH points at a writable location.",
+          "Couldn't save the entry — check the Payroll Sheet webhook or the local file path.",
       },
       { status: 500 },
     );
   }
+  return NextResponse.json({ ok: true, entry });
 }

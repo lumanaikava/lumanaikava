@@ -4,6 +4,10 @@ import LoginForm from "@/components/admin/LoginForm";
 import SmsComposer from "@/components/admin/SmsComposer";
 import PayrollPanel from "@/components/admin/PayrollPanel";
 import { readPayrollEntries } from "@/lib/payroll";
+import {
+  readSheetEntries,
+  payrollSheetConfigured,
+} from "@/lib/integrations/payroll-sheet";
 import { getCatalog } from "@/lib/catalog";
 import { upcomingEventsSynced, formatEventDate } from "@/lib/calendar";
 import { gcalConfigured } from "@/lib/gcal";
@@ -26,10 +30,14 @@ const DRIVE_FOLDER =
 const RECIPES_DOC =
   "https://docs.google.com/document/d/1LlLkiCrVhx_ZFlhQRv9HJu-sZ_lDqQTg2pswrFPlmBk/edit";
 
+const PAYROLL_SHEET =
+  "https://docs.google.com/spreadsheets/d/1mtUL4Hx2Oz_lDwxgmtF8F61yeSWLVVr6fOZlyv02woI/edit";
+
 const quickLinks = [
   { label: "Gmail", href: "https://mail.google.com/", note: "lumanai.events" },
   { label: "Drive — Lumanai Business", href: DRIVE_FOLDER, note: "Sheets + docs" },
   { label: "GHL Workflow Recipes", href: RECIPES_DOC, note: "Automation setup guide" },
+  { label: "Payroll Log (Sheet)", href: PAYROLL_SHEET, note: "Live commissions ledger" },
   { label: "Google Calendar", href: "https://calendar.google.com/", note: "Add events here → site syncs" },
   { label: "GoHighLevel", href: "https://app.gohighlevel.com/", note: "Leads + automations" },
   { label: "Shopify Admin", href: "https://admin.shopify.com/store/lumanai-kava", note: "Orders + products" },
@@ -96,7 +104,11 @@ export default async function AdminPage() {
     }
   }
 
-  const payrollEntries = await readPayrollEntries();
+  // Prefer the Google Sheet ledger when it's wired up (works after
+  // deploy); fall back to the local CSV.
+  const sheetLive = payrollSheetConfigured();
+  let payrollEntries = sheetLive ? await readSheetEntries() : [];
+  if (payrollEntries.length === 0) payrollEntries = await readPayrollEntries();
 
   const automations: { name: string; status: "live" | "pending"; note: string }[] = [
     { name: "Booking form → GoHighLevel", status: "live", note: "Every quote request creates a lead" },
@@ -127,7 +139,9 @@ export default async function AdminPage() {
     {
       name: "Payroll + commissions",
       status: "live",
-      note: "Log shifts above — auto-computes pay, saves to your spreadsheet",
+      note: sheetLive
+        ? "Log shifts above — auto-computes pay, syncs to your Google Sheet"
+        : "Log shifts above — saves locally; add PAYROLL_SHEET_WEBHOOK_URL to sync the Google Sheet",
     },
     {
       name: "AI email agent (auto-replies)",

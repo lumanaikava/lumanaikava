@@ -103,17 +103,19 @@ function toRow(e: PayrollEntry): string {
     .join(",");
 }
 
-export async function appendPayrollEntry(
-  input: PayrollInput,
-): Promise<PayrollEntry> {
+/** Turn a raw input into a full entry (adds timestamp + computed pay). */
+export function buildEntry(input: PayrollInput): PayrollEntry {
   const { commissionAmt, totalPayout } = computePayout(input);
-  const entry: PayrollEntry = {
+  return {
     ...input,
     timestamp: new Date().toISOString(),
     commissionAmt,
     totalPayout,
   };
+}
 
+/** Append one entry to the local CSV ledger (may throw on a read-only fs). */
+export async function appendCsvEntry(entry: PayrollEntry): Promise<void> {
   const file = payrollCsvPath();
   await fs.mkdir(path.dirname(file), { recursive: true });
 
@@ -125,7 +127,29 @@ export async function appendPayrollEntry(
   }
   const header = exists ? "" : COLUMNS.join(",") + "\r\n";
   await fs.appendFile(file, header + toRow(entry) + "\r\n", "utf8");
-  return entry;
+}
+
+/** Column order — shared with the Google Sheet integration. */
+export const PAYROLL_COLUMNS = COLUMNS;
+
+/** Ordered cell values for one entry, matching PAYROLL_COLUMNS. */
+export function entryToValues(e: PayrollEntry): (string | number)[] {
+  return [
+    e.timestamp,
+    e.employee,
+    e.event,
+    e.eventDate,
+    e.hours,
+    e.sales,
+    e.commissionPct,
+    e.commissionAmt,
+    e.tips,
+    e.bonus,
+    e.expenses,
+    e.expenseNote,
+    e.totalPayout,
+    e.loggedBy,
+  ];
 }
 
 /** Parse the CSV back for display. Returns newest first. */
