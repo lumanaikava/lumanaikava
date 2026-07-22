@@ -226,10 +226,10 @@ body {
 @keyframes palm-sway {
   0%,
   100% {
-    transform: rotate(-1.6deg);
+    transform: rotate(-3.2deg);
   }
   50% {
-    transform: rotate(1.6deg);
+    transform: rotate(3.2deg);
   }
 }
 
@@ -249,7 +249,7 @@ body {
     transform-origin: bottom center;
   }
   .ticker-track {
-    animation: ticker-scroll 40s linear infinite;
+    animation: ticker-scroll 53s linear infinite;
   }
   .ticker-track:hover {
     animation-play-state: paused;

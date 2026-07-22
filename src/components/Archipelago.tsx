@@ -95,28 +95,39 @@ function PalmTree({
 }) {
   return (
     <svg
-      viewBox="0 0 200 320"
+      viewBox="0 0 240 300"
       className={`palm-sway ${className ?? ""}`}
       style={{ animationDelay: delay, color, transform: flip ? "scaleX(-1)" : undefined }}
       fill="currentColor"
       aria-hidden
     >
       {/* trunk */}
-      <path d="M92 320 C88 250 88 182 98 118 L108 120 C104 190 108 250 108 320 Z" />
-      {/* fronds radiating from the crown (~100,116) */}
-      <path d="M100 116 C62 96 28 100 4 118 C30 104 64 110 100 122 Z" />
-      <path d="M100 116 C66 84 40 70 22 60 C46 78 72 96 100 120 Z" />
-      <path d="M100 116 C84 78 74 52 70 28 C78 60 90 92 102 118 Z" />
-      <path d="M100 114 C96 78 100 50 110 28 C106 62 108 92 104 116 Z" />
-      <path d="M100 116 C118 80 130 54 138 32 C124 64 110 92 102 118 Z" />
-      <path d="M100 116 C134 84 160 72 178 62 C154 80 128 98 100 120 Z" />
-      <path d="M100 116 C138 96 172 100 196 118 C170 104 136 110 100 122 Z" />
-      <path d="M100 118 C140 112 168 122 188 140 C164 122 134 118 100 124 Z" />
-      <path d="M100 118 C60 112 32 122 12 140 C36 122 66 118 100 124 Z" />
-      {/* coconuts */}
-      <circle cx="94" cy="126" r="4" />
-      <circle cx="107" cy="128" r="4" />
-      <circle cx="100" cy="133" r="3.5" />
+      <path d="M108 300 C102 224 102 150 116 88 L132 90 C124 156 130 228 132 300 Z" />
+      {/* full, broad fronds radiating from the crown (~122,88) */}
+      {/* far-left droop */}
+      <path d="M122 100 C72 98 30 118 0 152 C30 128 70 114 122 110 Z" />
+      {/* left low */}
+      <path d="M122 96 C68 84 26 92 2 114 C30 96 72 102 122 106 Z" />
+      {/* left mid */}
+      <path d="M122 92 C70 64 34 48 6 36 C34 66 78 84 122 104 Z" />
+      {/* left high */}
+      <path d="M120 88 C90 52 78 22 74 -4 C88 32 106 72 126 96 Z" />
+      {/* center-left */}
+      <path d="M118 88 C106 50 108 18 116 -10 C128 20 124 60 126 94 Z" />
+      {/* center-right */}
+      <path d="M124 88 C136 50 134 18 128 -10 C116 20 120 60 120 94 Z" />
+      {/* right high */}
+      <path d="M124 88 C154 52 166 22 170 -4 C156 32 138 72 118 96 Z" />
+      {/* right mid */}
+      <path d="M122 92 C174 64 210 48 238 36 C210 66 166 84 122 104 Z" />
+      {/* right low */}
+      <path d="M122 96 C176 84 216 92 242 114 C214 96 172 102 122 106 Z" />
+      {/* far-right droop */}
+      <path d="M122 100 C172 98 214 118 244 152 C214 128 174 114 122 110 Z" />
+      {/* coconut cluster */}
+      <circle cx="116" cy="102" r="5" />
+      <circle cx="130" cy="104" r="5" />
+      <circle cx="123" cy="110" r="4.5" />
     </svg>
   );
 }
@@ -173,37 +184,28 @@ export default function Archipelago({
         aria-hidden
       />
 
-      {/* The body of water — moonlit, shimmering, lower third */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%]" aria-hidden>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#12234f] via-[#0c1a3e] to-[#060f28]" />
-        <div className="ocean-surface absolute inset-0 opacity-60" />
-        {/* moon reflection streak */}
-        <div className="absolute right-[12%] top-0 h-full w-10 -translate-x-1/2 bg-gradient-to-b from-gold/25 to-transparent blur-md" />
-        {/* horizon glow where sky meets water */}
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
-      </div>
-
-      {/* Palm-tree silhouettes framing the scene */}
+      {/* Big palm-tree silhouettes hugging the edges of the screen */}
       <PalmTree
-        className="pointer-events-none absolute -left-8 bottom-[26%] w-40 opacity-90 blur-[0.5px] lg:w-56"
-        color="#070d24"
+        className="pointer-events-none absolute -left-28 bottom-0 w-80 opacity-95 sm:w-96 lg:-left-24 lg:w-[30rem]"
+        color="#0e1638"
         delay="0s"
       />
       <PalmTree
-        className="pointer-events-none absolute left-[14%] bottom-[30%] hidden w-28 opacity-70 blur-[1.5px] lg:block"
-        color="#0a1230"
-        delay="1.5s"
-      />
-      <PalmTree
-        className="pointer-events-none absolute -right-6 bottom-[24%] w-44 opacity-90 blur-[0.5px] lg:w-60"
-        color="#070d24"
+        className="pointer-events-none absolute -right-28 bottom-0 w-80 opacity-95 sm:w-96 lg:-right-24 lg:w-[30rem]"
+        color="#0e1638"
         delay="0.8s"
         flip
       />
+      {/* Smaller depth palms tucked into the corners */}
       <PalmTree
-        className="pointer-events-none absolute right-[16%] bottom-[31%] hidden w-24 opacity-70 blur-[1.5px] lg:block"
-        color="#0a1230"
-        delay="2.2s"
+        className="pointer-events-none absolute -left-8 bottom-0 hidden w-60 opacity-60 blur-[2px] lg:block"
+        color="#0b1230"
+        delay="1.8s"
+      />
+      <PalmTree
+        className="pointer-events-none absolute -right-8 bottom-0 hidden w-60 opacity-60 blur-[2px] lg:block"
+        color="#0b1230"
+        delay="2.6s"
         flip
       />
 
