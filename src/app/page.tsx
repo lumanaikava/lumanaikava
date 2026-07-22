@@ -9,12 +9,12 @@ import { upcomingEventsSynced, formatEventDate } from "@/lib/calendar";
 export const revalidate = 3600;
 
 export default async function Home() {
-  const nextEvents = (await upcomingEventsSynced())
-    .slice(0, 3)
+  const tickerEvents = (await upcomingEventsSynced(new Date(), 8))
+    .slice(0, 12)
     .map((e) => {
       const d = formatEventDate(e.date);
       return {
-        date: `${d.weekday} ${d.month} ${d.day}`,
+        date: `${d.month} ${d.day}`,
         label: e.title,
         kind: e.kind,
       };
@@ -22,8 +22,8 @@ export default async function Home() {
 
   return (
     <>
-      {/* Everything important in one viewport: logo, slogan, islands, dates */}
-      <Archipelago nextEvents={nextEvents} />
+      {/* Everything important in one viewport: logo, slogan, drinks, dates */}
+      <Archipelago events={tickerEvents} />
 
       {/* The word we own — dictionary entry */}
       <section className="border-b border-shell/10 bg-abyss/60">

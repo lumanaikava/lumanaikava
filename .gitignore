@@ -29,6 +29,10 @@
 # Web-ready copies live in /public.
 /assets/
 
+# payroll ledger (default location when PAYROLL_CSV_PATH is unset) —
+# employee pay data, never commit.
+/data/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

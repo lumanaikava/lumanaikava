@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import LoginForm from "@/components/admin/LoginForm";
 import SmsComposer from "@/components/admin/SmsComposer";
+import PayrollPanel from "@/components/admin/PayrollPanel";
+import { readPayrollEntries } from "@/lib/payroll";
 import { getCatalog } from "@/lib/catalog";
 import { upcomingEventsSynced, formatEventDate } from "@/lib/calendar";
 import { gcalConfigured } from "@/lib/gcal";
@@ -94,6 +96,8 @@ export default async function AdminPage() {
     }
   }
 
+  const payrollEntries = await readPayrollEntries();
+
   const automations: { name: string; status: "live" | "pending"; note: string }[] = [
     { name: "Booking form → GoHighLevel", status: "live", note: "Every quote request creates a lead" },
     { name: "Contact form → GoHighLevel", status: "live", note: "Tagged [Contact form]" },
@@ -119,6 +123,11 @@ export default async function AdminPage() {
       note: twilioReady
         ? "Composer above + booking alerts to your phone"
         : "Needs Twilio creds in .env.local",
+    },
+    {
+      name: "Payroll + commissions",
+      status: "live",
+      note: "Log shifts above — auto-computes pay, saves to your spreadsheet",
     },
     {
       name: "AI email agent (auto-replies)",
@@ -265,6 +274,20 @@ export default async function AdminPage() {
           ))}
         </ul>
       )}
+
+      {/* Payroll + commissions */}
+      <div className="mt-10 flex flex-wrap items-baseline justify-between gap-3">
+        <h2 className="h-sign-med text-2xl text-shell">Payroll &amp; commissions</h2>
+        <p className="text-xs text-shell/50">
+          Saves to your Payroll Log spreadsheet automatically
+        </p>
+      </div>
+      <div className="mt-4">
+        <PayrollPanel
+          initialEntries={payrollEntries}
+          defaultEmployee={crewName}
+        />
+      </div>
 
       {/* Quick links */}
       <h2 className="h-sign-med mt-10 text-2xl text-shell">Everything, one tap</h2>

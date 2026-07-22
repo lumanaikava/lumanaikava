@@ -7,21 +7,20 @@ import { useState, type MouseEvent } from "react";
 import SplashDrink from "@/components/SplashDrink";
 
 /**
- * The Lumanai hero: a craft kava tropical bar at night. The six site
- * sections are drinks standing on a lit wooden back-bar shelf —
- * out-of-focus palm fronds frame the scene, warm light pools behind
- * the glasses. Hover a glass: it sloshes and throws droplets. Click:
- * a golden light-burst carries you to the page (the "transport").
- * Cutouts (transparent bg) live in public/images/drinks/clear/.
+ * The Lumanai hero: a craft kava tropical bar at the shoreline, at
+ * night. Silhouetted palm trees sway behind a moonlit body of water;
+ * the six site sections are drinks standing at the water's edge. Hover
+ * a glass: it sloshes and throws droplets. Click: a golden light-burst
+ * carries you to the page. A ticker of upcoming dates streams across
+ * the bottom, forever. Palette stays navy/purple. Cutouts (transparent
+ * bg) live in public/images/drinks/clear/.
  */
 
 type DrinkNav = {
   href: string;
   label: string;
   img: string;
-  /** Droplet color — roughly matches the (filtered) drink. */
   accent: string;
-  /** Optional recolor so three PNGs can cover six doors. */
   filter?: string;
   delay: string;
 };
@@ -82,28 +81,50 @@ const stars = Array.from({ length: 42 }, (_, i) => {
   return { left: `${x * 100}%`, top: `${y * 52}%`, size: s, delay: `${d}s` };
 });
 
-/** Out-of-focus palm fronds — depth foliage, not decoration. */
-function Frond({ className }: { className?: string }) {
+/** A single palm-tree silhouette: curved trunk + a swaying crown. */
+function PalmTree({
+  className,
+  color,
+  delay,
+  flip,
+}: {
+  className?: string;
+  color: string;
+  delay: string;
+  flip?: boolean;
+}) {
   return (
     <svg
-      viewBox="0 0 420 320"
-      className={className}
-      aria-hidden
+      viewBox="0 0 200 320"
+      className={`palm-sway ${className ?? ""}`}
+      style={{ animationDelay: delay, color, transform: flip ? "scaleX(-1)" : undefined }}
       fill="currentColor"
+      aria-hidden
     >
-      <path d="M8,318 C70,240 150,190 285,168 C160,204 80,262 8,318 Z" />
-      <path d="M4,312 C50,215 110,140 230,86 C120,160 50,240 4,312 Z" />
-      <path d="M12,316 C100,270 210,240 350,242 C215,255 105,285 12,316 Z" />
-      <path d="M2,308 C30,200 60,110 130,30 C70,130 30,220 2,308 Z" />
-      <path d="M16,318 C120,296 250,290 400,306 C255,282 120,288 16,318 Z" />
+      {/* trunk */}
+      <path d="M92 320 C88 250 88 182 98 118 L108 120 C104 190 108 250 108 320 Z" />
+      {/* fronds radiating from the crown (~100,116) */}
+      <path d="M100 116 C62 96 28 100 4 118 C30 104 64 110 100 122 Z" />
+      <path d="M100 116 C66 84 40 70 22 60 C46 78 72 96 100 120 Z" />
+      <path d="M100 116 C84 78 74 52 70 28 C78 60 90 92 102 118 Z" />
+      <path d="M100 114 C96 78 100 50 110 28 C106 62 108 92 104 116 Z" />
+      <path d="M100 116 C118 80 130 54 138 32 C124 64 110 92 102 118 Z" />
+      <path d="M100 116 C134 84 160 72 178 62 C154 80 128 98 100 120 Z" />
+      <path d="M100 116 C138 96 172 100 196 118 C170 104 136 110 100 122 Z" />
+      <path d="M100 118 C140 112 168 122 188 140 C164 122 134 118 100 124 Z" />
+      <path d="M100 118 C60 112 32 122 12 140 C36 122 66 118 100 124 Z" />
+      {/* coconuts */}
+      <circle cx="94" cy="126" r="4" />
+      <circle cx="107" cy="128" r="4" />
+      <circle cx="100" cy="133" r="3.5" />
     </svg>
   );
 }
 
 export default function Archipelago({
-  nextEvents,
+  events,
 }: {
-  nextEvents: { date: string; label: string; kind?: string }[];
+  events: { date: string; label: string; kind?: string }[];
 }) {
   const router = useRouter();
   const [burst, setBurst] = useState<{ x: number; y: number } | null>(null);
@@ -115,6 +136,9 @@ export default function Archipelago({
     setBurst({ x: e.clientX, y: e.clientY });
     window.setTimeout(() => router.push(href), 480);
   }
+
+  // Duplicate the list so the marquee loops seamlessly.
+  const ticker = events.length ? [...events, ...events] : [];
 
   return (
     <section
@@ -145,12 +169,43 @@ export default function Archipelago({
       ))}
       {/* Moon */}
       <div
-        className="pointer-events-none absolute right-[10%] top-[7%] h-20 w-20 rounded-full bg-gold/80 shadow-[0_0_100px_44px_rgba(237,226,180,0.18)]"
+        className="pointer-events-none absolute right-[12%] top-[8%] h-16 w-16 rounded-full bg-gold/80 shadow-[0_0_90px_40px_rgba(237,226,180,0.18)]"
         aria-hidden
       />
-      {/* Foreground foliage framing the bar */}
-      <Frond className="pointer-events-none absolute -left-16 bottom-10 w-[340px] text-[#0d1436] opacity-70 blur-[3px] lg:w-[420px]" />
-      <Frond className="pointer-events-none absolute -right-16 bottom-6 w-[320px] -scale-x-100 text-[#101040] opacity-60 blur-[4px] lg:w-[400px]" />
+
+      {/* The body of water — moonlit, shimmering, lower third */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%]" aria-hidden>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#12234f] via-[#0c1a3e] to-[#060f28]" />
+        <div className="ocean-surface absolute inset-0 opacity-60" />
+        {/* moon reflection streak */}
+        <div className="absolute right-[12%] top-0 h-full w-10 -translate-x-1/2 bg-gradient-to-b from-gold/25 to-transparent blur-md" />
+        {/* horizon glow where sky meets water */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+      </div>
+
+      {/* Palm-tree silhouettes framing the scene */}
+      <PalmTree
+        className="pointer-events-none absolute -left-8 bottom-[26%] w-40 opacity-90 blur-[0.5px] lg:w-56"
+        color="#070d24"
+        delay="0s"
+      />
+      <PalmTree
+        className="pointer-events-none absolute left-[14%] bottom-[30%] hidden w-28 opacity-70 blur-[1.5px] lg:block"
+        color="#0a1230"
+        delay="1.5s"
+      />
+      <PalmTree
+        className="pointer-events-none absolute -right-6 bottom-[24%] w-44 opacity-90 blur-[0.5px] lg:w-60"
+        color="#070d24"
+        delay="0.8s"
+        flip
+      />
+      <PalmTree
+        className="pointer-events-none absolute right-[16%] bottom-[31%] hidden w-24 opacity-70 blur-[1.5px] lg:block"
+        color="#0a1230"
+        delay="2.2s"
+        flip
+      />
 
       {/* Logo + slogan + CTAs */}
       <div className="relative mx-auto flex max-w-4xl flex-col items-center px-6 pt-16 text-center lg:pt-20">
@@ -181,16 +236,11 @@ export default function Archipelago({
         </div>
       </div>
 
-      {/* The back bar — every drink is a door */}
+      {/* The drinks, standing at the water's edge — every one a door */}
       <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-6 pb-6">
-        {/* Warm light pooling behind the bottles */}
-        <div
-          className="pointer-events-none absolute inset-x-0 bottom-10 h-56 bg-[radial-gradient(60%_100%_at_50%_100%,rgba(237,226,180,0.12),transparent_70%)]"
-          aria-hidden
-        />
         <nav
           aria-label="Site sections"
-          className="relative flex flex-wrap items-end justify-center gap-x-4 gap-y-7 pb-1 sm:gap-x-8 lg:justify-between lg:px-6"
+          className="relative flex flex-wrap items-end justify-center gap-x-4 gap-y-7 pb-2 sm:gap-x-8 lg:justify-between lg:px-6"
         >
           {nav.map((d) => (
             <Link
@@ -210,8 +260,8 @@ export default function Archipelago({
                   imgClassName="h-24 w-auto object-contain transition-transform duration-500 ease-out group-hover:scale-105 sm:h-28 lg:h-36"
                   imgStyle={
                     d.filter
-                      ? { filter: `${d.filter} drop-shadow(0 10px 14px rgba(0,0,0,0.45))` }
-                      : { filter: "drop-shadow(0 10px 14px rgba(0,0,0,0.45))" }
+                      ? { filter: `${d.filter} drop-shadow(0 12px 16px rgba(0,0,0,0.55))` }
+                      : { filter: "drop-shadow(0 12px 16px rgba(0,0,0,0.55))" }
                   }
                 />
               </span>
@@ -221,40 +271,35 @@ export default function Archipelago({
             </Link>
           ))}
         </nav>
-        {/* The wooden shelf they stand on */}
-        <div className="relative" aria-hidden>
-          <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
-          <div className="h-3 w-full rounded-b-md bg-gradient-to-b from-[#6b4a26] via-[#4a3118] to-[#2c1c0d] shadow-[0_10px_24px_rgba(0,0,0,0.55)]" />
-          <div className="mx-auto h-8 w-11/12 bg-gradient-to-b from-gold/[0.08] to-transparent" />
-        </div>
       </div>
 
-      {/* Next appearances ticker — purple dates for markets, blue for events */}
-      <div className="relative border-t border-shell/15 bg-abyss/70 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-1.5 px-6 py-3.5">
-          {nextEvents.map((e) => (
-            <p
-              key={e.label + e.date}
-              className="text-[10px] font-medium uppercase tracking-[0.2em] text-shell/75"
-            >
+      {/* Upcoming-dates ticker — streams across forever, markets purple */}
+      {ticker.length > 0 && (
+        <div className="relative overflow-hidden border-t border-shell/15 bg-abyss/80 py-3 backdrop-blur">
+          <div className="ticker-track flex w-max items-center gap-x-10 whitespace-nowrap pr-10">
+            {ticker.map((e, i) => (
               <span
-                className={
-                  e.kind === "market" ? "text-[#c9a7ee]" : "text-[#9ec5ea]"
-                }
+                key={i}
+                className="flex items-center gap-x-3 text-xs font-semibold uppercase tracking-[0.14em] text-shell/80"
               >
-                {e.date}
-              </span>{" "}
-              · {e.label}
-            </p>
-          ))}
-          <Link
-            href="/find-us"
-            className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold hover:text-shell"
-          >
-            Full calendar →
-          </Link>
+                <span
+                  className="inline-block h-1.5 w-1.5 rounded-full"
+                  style={{
+                    backgroundColor: e.kind === "market" ? "#c9a7ee" : "#9ec5ea",
+                  }}
+                  aria-hidden
+                />
+                <span
+                  style={{ color: e.kind === "market" ? "#c9a7ee" : "#9ec5ea" }}
+                >
+                  {e.date}
+                </span>
+                {e.label}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Light-burst transport overlay */}
       {burst && (

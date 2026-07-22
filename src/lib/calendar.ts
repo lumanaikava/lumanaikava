@@ -44,10 +44,34 @@ export const oneOffEvents: CalendarEvent[] = [
   { date: "2026-07-11", title: "Heartspace BLVD", kind: "bar" },
   { date: "2026-07-15", title: "Etho Founders Night", kind: "bar" },
   {
+    date: "2026-07-24",
+    title: "Sweat Equity Sueno 001",
+    location: "Las Vegas",
+    kind: "special",
+  },
+  {
+    date: "2026-07-29",
+    title: "Home Court Presence x Etho",
+    location: "Las Vegas",
+    kind: "special",
+  },
+  {
     date: "2026-08-07",
     title: "First Friday",
     location: "Arts District, Las Vegas",
     time: "5–11pm",
+    kind: "special",
+  },
+  {
+    date: "2026-08-08",
+    title: "Sweat Equity Heat Wave",
+    location: "Las Vegas",
+    kind: "special",
+  },
+  {
+    date: "2026-08-08",
+    title: "GRIT After Dark",
+    location: "Las Vegas",
     kind: "special",
   },
 ];

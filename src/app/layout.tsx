@@ -1,16 +1,23 @@
 import type { Metadata } from "next";
-import { Barlow_Semi_Condensed } from "next/font/google";
+import { Barlow, Barlow_Semi_Condensed } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-// The brand typeface — Barlow Semi Condensed for everything, display
-// through body. Heavy weights carry the bar-sign headlines; lighter
-// weights handle copy.
+// Bar-sign headlines: Barlow Semi Condensed, heavy weights.
 const barlow = Barlow_Semi_Condensed({
   variable: "--font-barlow",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800", "900"],
+});
+
+// Body copy + labels: standard-width Barlow — the readable sibling of
+// the condensed sign face, so small text stays legible without going
+// off-brand.
+const barlowBody = Barlow({
+  variable: "--font-barlow-body",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -85,7 +92,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${barlow.variable} h-full antialiased`}
+      className={`${barlow.variable} ${barlowBody.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-ocean text-shell">
         <a href="#main" className="skip-link">

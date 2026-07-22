@@ -31,13 +31,14 @@
   --color-gold: var(--gold);
   --color-teal: var(--teal);
 
-  /* One brand typeface everywhere: Barlow Semi Condensed. All Tailwind
-     font utilities (font-sans/font-mono/etc.) resolve to it. */
-  --font-sans: var(--font-barlow), "Barlow Semi Condensed", sans-serif;
+  /* Two weights of one family. Sign headlines (.h-sign*) use Barlow Semi
+     Condensed; everything else — body copy, labels, nav — uses the wider
+     Barlow so small text stays readable. */
+  --font-sans: var(--font-barlow-body), "Barlow", system-ui, sans-serif;
   --font-sign: var(--font-barlow), "Barlow Semi Condensed", sans-serif;
   --font-display: var(--font-barlow), "Barlow Semi Condensed", sans-serif;
-  --font-body: var(--font-barlow), "Barlow Semi Condensed", sans-serif;
-  --font-mono: var(--font-barlow), "Barlow Semi Condensed", sans-serif;
+  --font-body: var(--font-barlow-body), "Barlow", system-ui, sans-serif;
+  --font-mono: var(--font-barlow-body), "Barlow", system-ui, sans-serif;
 }
 
 /* Bold sign headline — Barlow Semi Condensed Black, matching the
@@ -104,7 +105,7 @@ body {
 }
 
 body {
-  font-family: var(--font-barlow), "Barlow Semi Condensed", sans-serif;
+  font-family: var(--font-barlow-body), "Barlow", system-ui, sans-serif;
   background-image:
     radial-gradient(
       1200px 800px at 85% -10%,
@@ -218,6 +219,40 @@ body {
   }
   to {
     transform: scale(1.08);
+  }
+}
+
+/* Palm fronds sway from the crown of the tree. */
+@keyframes palm-sway {
+  0%,
+  100% {
+    transform: rotate(-1.6deg);
+  }
+  50% {
+    transform: rotate(1.6deg);
+  }
+}
+
+/* A continuously scrolling ticker of upcoming dates. */
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .palm-sway {
+    animation: palm-sway 6s ease-in-out infinite;
+    transform-origin: bottom center;
+  }
+  .ticker-track {
+    animation: ticker-scroll 40s linear infinite;
+  }
+  .ticker-track:hover {
+    animation-play-state: paused;
   }
 }
 

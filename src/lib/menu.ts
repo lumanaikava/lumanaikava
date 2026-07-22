@@ -45,7 +45,7 @@ export const currentMenu: Menu = {
         {
           name: "Hive Mind",
           ingredients:
-            "LUMANAI KAVA · Clover Honey · Fresh Ginger · Lemon Essence",
+            "LUMANAI KAVA · Manuka Honey · Fresh Ginger · Lemon Essence",
           image: "/images/drinks/hive-mind.png",
           accent: "#e8871f",
           effects: ["Social", "Uplifted"],
