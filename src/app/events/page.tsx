@@ -37,11 +37,8 @@ export default function EventsPage() {
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
             Events · Las Vegas
           </p>
-          <h1
-            className="h-sign brush-swipe mt-4 inline-block max-w-3xl text-5xl text-abyss sm:text-6xl"
-            style={{ "--brush": "var(--gold)" } as React.CSSProperties}
-          >
-            Build your own event.
+          <h1 className="h-sign mt-4 max-w-3xl text-5xl text-shell sm:text-6xl">
+            Build your own <span className="text-coconut">event.</span>
           </h1>
         </div>
       </section>
@@ -68,26 +65,31 @@ export default function EventsPage() {
       {/* Meet your bartenders */}
       <section className="border-t border-shell/10">
         <div className="mx-auto max-w-6xl px-6 py-12">
-          <h2
-            className="h-sign brush-swipe inline-block text-4xl text-shell sm:text-5xl"
-            style={{ "--brush": "var(--violet)" } as React.CSSProperties}
-          >
-            Meet your bartenders.
+          <h2 className="h-sign text-4xl text-shell sm:text-5xl">
+            Meet your <span className="text-coconut">bartenders.</span>
           </h2>
-          <div className="mt-8 grid gap-6 md:grid-cols-2">
+          <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {team.map((t) => (
               <div
                 key={t.name}
                 className="flex gap-6 overflow-hidden rounded-3xl border border-shell/10 bg-lagoon/30"
               >
-                <div className="relative w-36 shrink-0 sm:w-44">
-                  <Image
-                    src={t.photo}
-                    alt={`${t.name} behind the Lumanai bar`}
-                    fill
-                    sizes="176px"
-                    className="object-cover"
-                  />
+                <div className="relative w-36 shrink-0 bg-abyss/50 sm:w-44">
+                  {t.photo ? (
+                    <Image
+                      src={t.photo}
+                      alt={`${t.name} behind the Lumanai bar`}
+                      fill
+                      sizes="176px"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full min-h-44 items-center justify-center">
+                      <span className="h-sign text-7xl text-shell/20">
+                        {t.name[0]}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className="py-6 pr-6">
                   <h3 className="h-sign text-3xl text-shell">{t.name}</h3>

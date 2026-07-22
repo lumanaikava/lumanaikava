@@ -90,7 +90,7 @@ export default function FindUsPage() {
           </p>
           <Link
             href="/events"
-            className="mt-6 inline-block rounded-full bg-gold px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss hover:bg-shell"
+            className="btn-brush mt-6 inline-block font-mono text-xs font-bold uppercase tracking-[0.2em] text-shell"
           >
             Build Your Event
           </Link>

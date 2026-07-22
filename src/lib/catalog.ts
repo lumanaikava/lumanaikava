@@ -15,6 +15,13 @@ import {
   getProduct as getStaticProduct,
 } from "@/lib/products";
 
+/**
+ * The Aug 28 party ticket lives in Shopify under this handle but never
+ * appears in shop listings — it's only purchasable through the
+ * password-gated /invited page.
+ */
+export const PARTY_TICKET_HANDLE = "kava-party-ticket";
+
 export type CatalogProduct = {
   handle: string;
   name: string;
@@ -87,7 +94,9 @@ export async function getCatalog(): Promise<{
   live: boolean;
 }> {
   try {
-    const live = await getAllProducts();
+    const live = (await getAllProducts()).filter(
+      (p) => p.handle !== PARTY_TICKET_HANDLE,
+    );
     if (live.length > 0) return { items: live.map(fromShopify), live: true };
   } catch (err) {
     console.error("[catalog] Shopify unavailable, using static fallback:", err);

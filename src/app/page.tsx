@@ -42,11 +42,8 @@ export default async function Home() {
       <section className="border-b border-shell/10">
         <div className="mx-auto max-w-6xl px-6 py-12">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <h2
-              className="h-sign brush-swipe text-3xl text-abyss sm:text-4xl"
-              style={{ "--brush": "var(--gold)" } as React.CSSProperties}
-            >
-              Pouring now
+            <h2 className="h-sign text-3xl text-shell sm:text-4xl">
+              Pouring <span className="text-coconut">now</span>
             </h2>
             <Link
               href="/menu"
@@ -130,7 +127,8 @@ export default async function Home() {
             </h2>
             <Link
               href="/events"
-              className="rounded-full bg-gold px-9 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss transition-colors hover:bg-shell"
+              className="btn-brush font-mono text-xs font-bold uppercase tracking-[0.2em] text-shell"
+              style={{ "--brush-bg": "var(--amethyst)" } as React.CSSProperties}
             >
               Build Your Event
             </Link>

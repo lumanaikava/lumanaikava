@@ -21,11 +21,17 @@ export default function SplashDrink({
   alt,
   accent = "#185c7c",
   className = "",
+  imgClassName = "h-44 w-auto object-contain sm:h-52",
+  imgStyle,
 }: {
   src: string;
   alt: string;
   accent?: string;
   className?: string;
+  /** Size/spacing for the glass image — override for smaller contexts. */
+  imgClassName?: string;
+  /** e.g. a hue-rotate filter to recolor a drink for nav duty. */
+  imgStyle?: React.CSSProperties;
 }) {
   return (
     <span className={`splash-drink relative inline-block ${className}`}>
@@ -51,7 +57,8 @@ export default function SplashDrink({
         alt={alt}
         width={280}
         height={340}
-        className="splash-glass mx-auto h-44 w-auto object-contain sm:h-52"
+        className={`splash-glass mx-auto ${imgClassName}`}
+        style={imgStyle}
       />
     </span>
   );

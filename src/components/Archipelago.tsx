@@ -1,96 +1,83 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, type MouseEvent } from "react";
+import SplashDrink from "@/components/SplashDrink";
 
 /**
- * The Lumanai hero: logo, slogan, and the archipelago in one viewport.
- * Destinations are distant islands on a moonlit horizon — layered
- * silhouettes with atmospheric haze and water reflections. Hover: the
- * island catches the light. Click: a golden ripple transports you.
+ * The Lumanai hero: logo, slogan, and the back bar in one viewport.
+ * Navigation = the drinks themselves, lined up on a lit shelf. Hover a
+ * glass and it sloshes + throws droplets (SplashDrink). Labels are the
+ * plain site sections — no fantasy names. Until we have a unique PNG
+ * per destination, some glasses are recolored with hue-rotate filters.
+ * Cutouts (transparent bg) live in public/images/drinks/clear/.
  */
 
-type IslandDef = {
+type DrinkNav = {
   href: string;
-  name: string;
-  tagline: string;
-  /** Turbulence seed — gives each ink stroke its own ragged character. */
-  seed: number;
-  /** Stroke thickness above the waterline. */
-  h: number;
-  /** Relative width on the horizon row. */
-  width: string;
+  label: string;
+  img: string;
+  /** Droplet color — roughly matches the (filtered) drink. */
+  accent: string;
+  /** Optional recolor so three PNGs can cover seven doors. */
+  filter?: string;
   delay: string;
-  /** Fogged teaser island — anchors to the waitlist instead of sailing. */
-  uncharted?: boolean;
+  /** The Lounge — fogged-out teaser, anchors to the waitlist. */
+  lounge?: boolean;
 };
 
-const islands: IslandDef[] = [
+const nav: DrinkNav[] = [
   {
-    href: "/events",
-    name: "The Bar",
-    tagline: "Build your event",
-    seed: 7,
-    h: 44,
-    width: "lg:w-[17%]",
+    href: "/menu",
+    label: "Menu",
+    img: "/images/drinks/clear/hive-mind.png",
+    accent: "#e8871f",
     delay: "0s",
   },
   {
-    href: "/menu",
-    name: "Naktail Cove",
-    tagline: "What's pouring",
-    seed: 23,
-    h: 30,
-    width: "lg:w-[13%]",
-    delay: "1.4s",
+    href: "/products",
+    label: "Shop",
+    img: "/images/drinks/clear/pacific-rim.png",
+    accent: "#8aa32b",
+    delay: "1.6s",
   },
   {
-    href: "/products",
-    name: "Trading Post",
-    tagline: "Shop RUSH + bottles",
-    seed: 41,
-    h: 38,
-    width: "lg:w-[15%]",
-    delay: "0.8s",
+    href: "/events",
+    label: "Events",
+    img: "/images/drinks/clear/adapterol-spritz.png",
+    accent: "#a93343",
+    delay: "0.9s",
   },
   {
     href: "/find-us",
-    name: "The Lagoon",
-    tagline: "Find us this weekend",
-    seed: 59,
-    h: 26,
-    width: "lg:w-[13%]",
-    delay: "2.2s",
+    label: "Find Us",
+    img: "/images/drinks/clear/hive-mind.png",
+    accent: "#2f9d99",
+    filter: "hue-rotate(150deg) saturate(0.85)",
+    delay: "2.3s",
   },
   {
     href: "/ingredients",
-    name: "The Grove",
-    tagline: "What's inside",
-    seed: 3,
-    h: 42,
-    width: "lg:w-[16%]",
-    delay: "1.1s",
+    label: "Ingredients",
+    img: "/images/drinks/clear/adapterol-spritz.png",
+    accent: "#7a5cc4",
+    filter: "hue-rotate(230deg) saturate(0.9)",
+    delay: "1.2s",
   },
   {
     href: "/rewards",
-    name: "Coconut Cove",
-    tagline: "Earn coconuts",
-    seed: 31,
-    h: 24,
-    width: "lg:w-[12%]",
-    delay: "2.8s",
+    label: "Rewards",
+    img: "/images/drinks/clear/pacific-rim.png",
+    accent: "#d8b23a",
+    filter: "hue-rotate(-45deg) saturate(1.2)",
+    delay: "2.9s",
   },
   {
     href: "#waitlist",
-    name: "The Lounge",
-    tagline: "Las Vegas · soon",
-    seed: 77,
-    h: 28,
-    width: "lg:w-[12%]",
-    delay: "3.4s",
-    uncharted: true,
+    label: "The Lounge",
+    img: "/images/drinks/clear/hive-mind.png",
+    accent: "#8892b0",
+    filter: "grayscale(1) brightness(0.5) contrast(1.05)",
+    delay: "3.5s",
+    lounge: true,
   },
 ];
 
@@ -102,117 +89,11 @@ const stars = Array.from({ length: 42 }, (_, i) => {
   return { left: `${x * 100}%`, top: `${y * 52}%`, size: s, delay: `${d}s` };
 });
 
-/** Sumi-e ink-stroke island: ragged brush slab, moonlit rim, reflection. */
-function IslandSvg({ id, seed, h }: { id: string; seed: number; h: number }) {
-  const top = 100 - h;
-  return (
-    <svg viewBox="0 0 200 150" className="w-full" aria-hidden>
-      <defs>
-        <linearGradient id={`${id}-body`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#4a3585" />
-          <stop offset="60%" stopColor="#221c4e" />
-          <stop offset="100%" stopColor="#0a0f2e" />
-        </linearGradient>
-        <linearGradient id={`${id}-rim`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#ede2b4" stopOpacity="0" />
-          <stop offset="60%" stopColor="#ede2b4" stopOpacity="0.55" />
-          <stop offset="100%" stopColor="#e8d5a6" stopOpacity="0.85" />
-        </linearGradient>
-        <linearGradient id={`${id}-refl`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#4a3585" stopOpacity="0.32" />
-          <stop offset="100%" stopColor="#4a3585" stopOpacity="0" />
-        </linearGradient>
-        <filter id={`${id}-rough`} x="-20%" y="-60%" width="140%" height="220%">
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.018 0.07"
-            numOctaves="4"
-            seed={seed}
-            result="n"
-          />
-          <feDisplacementMap in="SourceGraphic" in2="n" scale="15" />
-        </filter>
-        <filter id={`${id}-fine`} x="-30%" y="-120%" width="160%" height="340%">
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.055 0.16"
-            numOctaves="3"
-            seed={seed + 13}
-            result="n"
-          />
-          <feDisplacementMap in="SourceGraphic" in2="n" scale="9" />
-        </filter>
-        <filter id={`${id}-blur`} x="-20%" y="-40%" width="140%" height="180%">
-          <feGaussianBlur stdDeviation="2" />
-        </filter>
-      </defs>
-
-      {/* ink slab body */}
-      <rect
-        x="14"
-        y={top}
-        width="172"
-        height={h}
-        rx={Math.min(h * 0.42, 16)}
-        fill={`url(#${id}-body)`}
-        filter={`url(#${id}-rough)`}
-      />
-      {/* dry-brush tails past the stroke ends */}
-      <rect x="2" y={top + h * 0.55} width="34" height="5" rx="2.5" fill="#2b2160" opacity="0.7" filter={`url(#${id}-fine)`} />
-      <rect x="166" y={top + h * 0.35} width="32" height="4" rx="2" fill="#2b2160" opacity="0.7" filter={`url(#${id}-fine)`} />
-      {/* moonlit rim along the top edge */}
-      <rect
-        x="20"
-        y={top - 1}
-        width="162"
-        height="5"
-        rx="2.5"
-        fill={`url(#${id}-rim)`}
-        filter={`url(#${id}-fine)`}
-      />
-      {/* reflection below the waterline */}
-      <g transform={`translate(0 ${204 + h * 0.9}) scale(1 -0.42)`}>
-        <rect
-          x="18"
-          y={top}
-          width="164"
-          height={h}
-          rx={Math.min(h * 0.42, 16)}
-          fill={`url(#${id}-refl)`}
-          filter={`url(#${id}-blur)`}
-        />
-      </g>
-      {/* waterline glint */}
-      <line
-        x1="8"
-        y1="101"
-        x2="192"
-        y2="101"
-        stroke="#ede2b4"
-        strokeWidth="0.5"
-        opacity="0.22"
-      />
-    </svg>
-  );
-}
-
 export default function Archipelago({
   nextEvents,
 }: {
   nextEvents: { date: string; label: string }[];
 }) {
-  const router = useRouter();
-  const [transport, setTransport] = useState<{ x: number; y: number } | null>(
-    null,
-  );
-
-  function sail(e: MouseEvent<HTMLAnchorElement>, href: string) {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    e.preventDefault();
-    setTransport({ x: e.clientX, y: e.clientY });
-    window.setTimeout(() => router.push(href), 480);
-  }
-
   return (
     <section
       aria-label="Lumanai — explore the site"
@@ -259,10 +140,10 @@ export default function Archipelago({
         <h1 className="h-sign mt-6 text-2xl text-shell sm:text-4xl">
           All the buzz <span className="text-coconut">without the booze</span>
         </h1>
-        <div className="mt-7 flex flex-wrap justify-center gap-3">
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
           <Link
             href="/events"
-            className="rounded-full bg-gold px-7 py-3 text-xs font-bold uppercase tracking-[0.2em] text-abyss transition-colors hover:bg-shell"
+            className="btn-brush text-xs font-bold uppercase tracking-[0.2em] text-shell"
           >
             Build Your Event
           </Link>
@@ -275,41 +156,60 @@ export default function Archipelago({
         </div>
       </div>
 
-      {/* The horizon — six islands on one waterline */}
+      {/* The back bar — every drink is a door */}
       <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-6 pb-6">
-        <div className="grid grid-cols-3 gap-x-4 gap-y-8 pb-4 lg:flex lg:items-end lg:justify-between lg:gap-0 lg:pb-0">
-          {islands.map((isl, i) => (
-            <a
-              key={isl.href}
-              href={isl.href}
-              onClick={isl.uncharted ? undefined : (e) => sail(e, isl.href)}
-              className={`island-link group relative block w-full ${isl.width}`}
+        <nav
+          aria-label="Site sections"
+          className="flex flex-wrap items-end justify-center gap-x-4 gap-y-7 pb-1 sm:gap-x-8 lg:justify-between"
+        >
+          {nav.map((d) => (
+            <Link
+              key={d.href}
+              href={d.href}
+              className={`group block text-center ${d.lounge ? "opacity-70 transition-opacity hover:opacity-100" : ""}`}
             >
-              <div className="island-bob" style={{ animationDelay: isl.delay }}>
-                <div
-                  className={`island-body relative ${isl.uncharted ? "opacity-50 blur-[1.5px] transition-all group-hover:opacity-80 group-hover:blur-[0.5px]" : ""}`}
-                >
-                  <IslandSvg id={`isl${i}`} seed={isl.seed} h={isl.h} />
-                </div>
-              </div>
-              <p className="island-label -mt-3 text-center transition-colors">
-                <span
-                  className={`h-sign-med block text-base lg:text-lg ${isl.uncharted ? "text-shell/50" : "text-shell/90"}`}
-                >
-                  {isl.name}
+              <span
+                className="island-bob block"
+                style={{ animationDelay: d.delay }}
+              >
+                <SplashDrink
+                  src={d.img}
+                  alt=""
+                  accent={d.accent}
+                  imgClassName="h-24 w-auto object-contain transition-transform duration-500 ease-out group-hover:scale-105 sm:h-28 lg:h-36"
+                  imgStyle={
+                    d.filter
+                      ? { filter: `${d.filter} drop-shadow(0 10px 14px rgba(0,0,0,0.45))` }
+                      : { filter: "drop-shadow(0 10px 14px rgba(0,0,0,0.45))" }
+                  }
+                />
+              </span>
+              <span
+                className={`h-sign-med mt-2 block text-base transition-colors duration-300 lg:text-lg ${
+                  d.lounge
+                    ? "text-shell/50 group-hover:text-gold"
+                    : "text-shell/90 group-hover:text-gold"
+                }`}
+              >
+                {d.label}
+              </span>
+              {d.lounge && (
+                <span className="mt-1 inline-block rounded-full border border-gold/40 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-gold">
+                  Soon
                 </span>
-                <span className="mt-0.5 hidden text-[10px] font-medium uppercase tracking-[0.2em] text-shell/45 sm:block">
-                  {isl.tagline}
-                </span>
-                {isl.uncharted && (
-                  <span className="mt-1 inline-block rounded-full border border-gold/40 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-gold">
-                    Uncharted
-                  </span>
-                )}
-              </p>
-            </a>
+              )}
+            </Link>
           ))}
-        </div>
+        </nav>
+        {/* Lit shelf edge under the glasses */}
+        <div
+          className="h-px w-full bg-gradient-to-r from-transparent via-gold/45 to-transparent"
+          aria-hidden
+        />
+        <div
+          className="mx-auto h-6 w-4/5 bg-gradient-to-b from-gold/[0.07] to-transparent"
+          aria-hidden
+        />
       </div>
 
       {/* Next appearances ticker */}
@@ -331,23 +231,6 @@ export default function Archipelago({
           </Link>
         </div>
       </div>
-
-      {/* Transport ripple overlay */}
-      {transport && (
-        <div className="pointer-events-none fixed inset-0 z-[90]" aria-hidden>
-          <span
-            className="transport-ring absolute block h-[120vmax] w-[120vmax] rounded-full"
-            style={{
-              left: transport.x,
-              top: transport.y,
-              marginLeft: "-60vmax",
-              marginTop: "-60vmax",
-              background:
-                "radial-gradient(circle, rgba(237,226,180,0.9) 0%, rgba(107,58,156,0.9) 35%, rgba(5,16,42,1) 70%)",
-            }}
-          />
-        </div>
-      )}
     </section>
   );
 }

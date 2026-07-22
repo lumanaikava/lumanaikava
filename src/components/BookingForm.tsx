@@ -60,13 +60,28 @@ export default function BookingForm({ prefill }: { prefill?: string }) {
         <Field label="Phone" name="phone" type="tel" />
         <Field label="Event date" name="date" type="date" />
       </div>
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-3">
         <Field
           label="City"
           name="city"
           placeholder="Las Vegas, Summerlin, Henderson..."
         />
         <Field label="Guest count" name="guests" type="number" min="1" />
+        <label className="block">
+          <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
+            Your bartender
+          </span>
+          <select
+            name="bartender"
+            defaultValue=""
+            className="mt-2 w-full rounded-xl border border-shell/20 bg-abyss/60 px-4 py-3 text-shell outline-none focus:border-gold"
+          >
+            <option value="">No preference</option>
+            <option value="Ash">Ash</option>
+            <option value="Zach">Zach</option>
+            <option value="Karina">Karina</option>
+          </select>
+        </label>
       </div>
       <label className="block">
         <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
@@ -85,7 +100,7 @@ export default function BookingForm({ prefill }: { prefill?: string }) {
       <button
         type="submit"
         disabled={state === "submitting"}
-        className="rounded-full bg-gold px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss transition-colors hover:bg-shell disabled:opacity-60"
+        className="btn-brush font-mono text-xs font-bold uppercase tracking-[0.2em] text-shell"
       >
         {state === "submitting" ? "Sending..." : "Request a Quote"}
       </button>

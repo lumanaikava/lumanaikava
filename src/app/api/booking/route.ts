@@ -8,9 +8,9 @@ import { sendAlertSms } from "@/lib/integrations/twilio";
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  let payload: BookingPayload;
+  let payload: BookingPayload & { bartender?: string };
   try {
-    payload = (await req.json()) as BookingPayload;
+    payload = (await req.json()) as BookingPayload & { bartender?: string };
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
@@ -20,6 +20,12 @@ export async function POST(req: Request) {
       { error: "Missing required fields." },
       { status: 400 },
     );
+  }
+
+  // The webhook's field set is fixed — ride the bartender pick along in
+  // the message so GHL sees it without a new custom field.
+  if (payload.bartender) {
+    payload.message += `\n\nPreferred bartender: ${payload.bartender}`;
   }
 
   try {

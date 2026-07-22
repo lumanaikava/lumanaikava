@@ -95,7 +95,7 @@ export default async function ProductsPage({
                 strength without the brew time.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-6">
-                <span className="rounded-full bg-gold px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss transition-colors group-hover:bg-shell">
+                <span className="btn-brush font-mono text-xs font-bold uppercase tracking-[0.2em] text-shell">
                   Shop RUSH
                 </span>
                 <span className="font-mono text-2xl text-gold">
