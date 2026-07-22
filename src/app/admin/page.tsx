@@ -15,9 +15,13 @@ export const dynamic = "force-dynamic";
 const DRIVE_FOLDER =
   "https://drive.google.com/drive/folders/110qIHJ8pAM_RHOPP0aKFLclL8R95t8Na";
 
+const RECIPES_DOC =
+  "https://docs.google.com/document/d/1LlLkiCrVhx_ZFlhQRv9HJu-sZ_lDqQTg2pswrFPlmBk/edit";
+
 const quickLinks = [
   { label: "Gmail", href: "https://mail.google.com/", note: "lumanai.events" },
   { label: "Drive — Lumanai Business", href: DRIVE_FOLDER, note: "Sheets + docs" },
+  { label: "GHL Workflow Recipes", href: RECIPES_DOC, note: "Automation setup guide" },
   { label: "Google Calendar", href: "https://calendar.google.com/", note: "Residencies synced" },
   { label: "GoHighLevel", href: "https://app.gohighlevel.com/", note: "Leads + automations" },
   { label: "Shopify Admin", href: "https://admin.shopify.com/store/lumanai-kava", note: "Orders + products" },
@@ -29,11 +33,11 @@ const quickLinks = [
 const automations: { name: string; status: "live" | "pending"; note: string }[] = [
   { name: "Booking form → GoHighLevel", status: "live", note: "Every quote request creates a lead" },
   { name: "Contact form → GoHighLevel", status: "live", note: "Tagged [Contact form]" },
-  { name: "Newsletter/waitlist → GoHighLevel", status: "live", note: "Tagged [Newsletter] — add a GHL branch to nurture" },
+  { name: "Newsletter/waitlist → GoHighLevel", status: "live", note: "Tagged [Newsletter] — nurture branch: Recipe 2" },
   { name: "Shop → Shopify checkout", status: "live", note: "Storefront API, hosted checkout" },
   { name: "SMS sending (Twilio)", status: "pending", note: "Needs Twilio creds in .env.local" },
   { name: "Booking SMS alert to your phone", status: "pending", note: "Fires automatically once Twilio is set" },
-  { name: "AI email agent (auto-replies)", status: "pending", note: "Built in GHL: Automation → AI agents, on top of the tagged leads above" },
+  { name: "AI email agent (auto-replies)", status: "pending", note: "Recipe 5 in the GHL Workflow Recipes doc — bot prompt ready to paste" },
 ];
 
 export default async function AdminPage() {
