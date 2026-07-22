@@ -60,11 +60,17 @@ export async function readSheetEntries(): Promise<PayrollEntry[]> {
 function rowToEntry(c: SheetRow): PayrollEntry {
   const s = (v: unknown) => String(v ?? "");
   const n = (v: unknown) => Number(v) || 0;
+  // Sheets may hand back a date cell as a full ISO timestamp — keep just
+  // the calendar day for display.
+  const day = (v: unknown) => {
+    const str = s(v);
+    return /^\d{4}-\d{2}-\d{2}T/.test(str) ? str.slice(0, 10) : str;
+  };
   return {
     timestamp: s(c[0]),
     employee: s(c[1]),
     event: s(c[2]),
-    eventDate: s(c[3]),
+    eventDate: day(c[3]),
     hours: n(c[4]),
     sales: n(c[5]),
     commissionPct: (n(c[6]) || 10) as CommissionTier,
