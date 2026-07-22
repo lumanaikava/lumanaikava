@@ -233,13 +233,19 @@ body {
   }
 }
 
-/* A continuously scrolling ticker of upcoming dates. */
-@keyframes ticker-scroll {
-  from {
-    transform: translateX(0);
+/* Upcoming dates fade in, hold, then out — one at a time. */
+@keyframes date-fade {
+  0% {
+    opacity: 0;
   }
-  to {
-    transform: translateX(-50%);
+  12% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
 
@@ -248,11 +254,8 @@ body {
     animation: palm-sway 6s ease-in-out infinite;
     transform-origin: bottom center;
   }
-  .ticker-track {
-    animation: ticker-scroll 53s linear infinite;
-  }
-  .ticker-track:hover {
-    animation-play-state: paused;
+  .date-fade {
+    animation: date-fade 4s ease-in-out both;
   }
 }
 

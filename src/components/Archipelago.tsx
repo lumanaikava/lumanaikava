@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type MouseEvent } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import SplashDrink from "@/components/SplashDrink";
 
 /**
@@ -148,13 +148,22 @@ export default function Archipelago({
     window.setTimeout(() => router.push(href), 480);
   }
 
-  // Duplicate the list so the marquee loops seamlessly.
-  const ticker = events.length ? [...events, ...events] : [];
+  // Cycle through upcoming dates, fading between them.
+  const [dateIdx, setDateIdx] = useState(0);
+  useEffect(() => {
+    if (events.length <= 1) return;
+    const t = setInterval(
+      () => setDateIdx((i) => (i + 1) % events.length),
+      4000,
+    );
+    return () => clearInterval(t);
+  }, [events.length]);
+  const current = events.length ? events[dateIdx % events.length] : null;
 
   return (
     <section
       aria-label="Lumanai — explore the site"
-      className="relative flex min-h-[100svh] flex-col overflow-hidden"
+      className="relative flex min-h-[calc(100svh_-_5.5rem)] flex-col overflow-hidden"
     >
       {/* Night sky over the roots pattern */}
       <div
@@ -210,14 +219,14 @@ export default function Archipelago({
       />
 
       {/* Logo + slogan + CTAs */}
-      <div className="relative mx-auto flex max-w-4xl flex-col items-center px-6 pt-16 text-center lg:pt-20">
+      <div className="relative mx-auto flex max-w-4xl flex-col items-center px-6 pt-12 text-center lg:pt-14">
         <Image
           src="/lumanai-wordmark.svg"
           alt="LUMANAI"
           width={420}
           height={170}
           priority
-          className="h-auto w-[60vw] max-w-[420px]"
+          className="h-auto w-[72vw] max-w-[504px]"
         />
         <h1 className="h-sign mt-6 text-2xl text-shell sm:text-4xl">
           All the buzz <span className="text-coconut">without the booze</span>
@@ -238,8 +247,8 @@ export default function Archipelago({
         </div>
       </div>
 
-      {/* The drinks, standing at the water's edge — every one a door */}
-      <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-6 pb-6">
+      {/* The drinks — lifted up so the titles read without scrolling */}
+      <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-6 pb-10">
         <nav
           aria-label="Site sections"
           className="relative flex flex-wrap items-end justify-center gap-x-4 gap-y-7 pb-2 sm:gap-x-8 lg:justify-between lg:px-6"
@@ -275,30 +284,31 @@ export default function Archipelago({
         </nav>
       </div>
 
-      {/* Upcoming-dates ticker — streams across forever, markets purple */}
-      {ticker.length > 0 && (
-        <div className="relative overflow-hidden border-t border-shell/15 bg-abyss/80 py-3 backdrop-blur">
-          <div className="ticker-track flex w-max items-center gap-x-10 whitespace-nowrap pr-10">
-            {ticker.map((e, i) => (
+      {/* Upcoming dates — one at a time, fading in and out */}
+      {current && (
+        <div className="relative border-t border-shell/15 bg-abyss/80 py-4 backdrop-blur">
+          <div className="mx-auto flex h-5 max-w-6xl items-center justify-center px-6">
+            <p
+              key={dateIdx}
+              className="date-fade flex items-center gap-x-3 text-xs font-semibold uppercase tracking-[0.14em] text-shell/85"
+            >
               <span
-                key={i}
-                className="flex items-center gap-x-3 text-xs font-semibold uppercase tracking-[0.14em] text-shell/80"
+                className="inline-block h-1.5 w-1.5 rounded-full"
+                style={{
+                  backgroundColor:
+                    current.kind === "market" ? "#c9a7ee" : "#9ec5ea",
+                }}
+                aria-hidden
+              />
+              <span
+                style={{
+                  color: current.kind === "market" ? "#c9a7ee" : "#9ec5ea",
+                }}
               >
-                <span
-                  className="inline-block h-1.5 w-1.5 rounded-full"
-                  style={{
-                    backgroundColor: e.kind === "market" ? "#c9a7ee" : "#9ec5ea",
-                  }}
-                  aria-hidden
-                />
-                <span
-                  style={{ color: e.kind === "market" ? "#c9a7ee" : "#9ec5ea" }}
-                >
-                  {e.date}
-                </span>
-                {e.label}
+                {current.date}
               </span>
-            ))}
+              {current.label}
+            </p>
           </div>
         </div>
       )}
