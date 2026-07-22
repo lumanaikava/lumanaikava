@@ -3,13 +3,13 @@ import Link from "next/link";
 import Archipelago from "@/components/Archipelago";
 import { currentMenu } from "@/lib/menu";
 import { galleryImages } from "@/lib/images";
-import { upcomingEvents, formatEventDate } from "@/lib/calendar";
+import { upcomingEventsSynced, formatEventDate } from "@/lib/calendar";
 
 // The appearances ticker rolls forward — refresh hourly.
 export const revalidate = 3600;
 
-export default function Home() {
-  const nextEvents = upcomingEvents()
+export default async function Home() {
+  const nextEvents = (await upcomingEventsSynced())
     .slice(0, 3)
     .map((e) => {
       const d = formatEventDate(e.date);

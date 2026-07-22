@@ -7,10 +7,11 @@
  *    forever. You never touch them unless a residency changes.
  *
  * 2. ONE-OFFS — sporadic events (private bars, pop-ups, festivals).
- *    To add one: copy a line, set the date as YYYY-MM-DD. Past dates
- *    auto-hide, so you never need to delete old ones.
- *    `kind: "bar"` shows as "Private event — booked" without location;
- *    `kind: "special"` shows full details as a public appearance.
+ *    THE EASY WAY: add the event to the lumanai.events@gmail.com
+ *    Google Calendar — the site syncs it hourly (see src/lib/gcal.ts).
+ *    Put "private" in the title to show it as "Private bar — booked".
+ *    The list below still works as a code-side fallback; past dates
+ *    auto-hide either way.
  */
 
 export type CalendarEvent = {
@@ -91,6 +92,31 @@ export function upcomingEvents(
   return [...generateResidencyDates(now, weeksAhead), ...oneOffs].sort((a, b) =>
     a.date.localeCompare(b.date),
   );
+}
+
+/**
+ * upcomingEvents + one-offs pulled live from the Google Calendar.
+ * Duplicates (same date + title, e.g. First Friday living in both the
+ * code list and the calendar) collapse to one entry.
+ */
+export async function upcomingEventsSynced(
+  now = new Date(),
+  weeksAhead = 4,
+  opts?: { fresh?: boolean },
+): Promise<CalendarEvent[]> {
+  const { googleCalendarEvents } = await import("@/lib/gcal");
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const horizon = new Date(today);
+  horizon.setDate(horizon.getDate() + weeksAhead * 7);
+  const synced = (await googleCalendarEvents(opts)).filter((e) => {
+    const d = new Date(`${e.date}T23:59:59`);
+    return d >= today && d <= horizon;
+  });
+  const merged = new Map<string, CalendarEvent>();
+  for (const e of [...upcomingEvents(now, weeksAhead), ...synced]) {
+    merged.set(`${e.date}|${e.title.toLowerCase()}`, e);
+  }
+  return [...merged.values()].sort((a, b) => a.date.localeCompare(b.date));
 }
 
 export function formatEventDate(iso: string): {

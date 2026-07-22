@@ -1,4 +1,4 @@
-import { upcomingEvents, formatEventDate } from "@/lib/calendar";
+import { upcomingEventsSynced, formatEventDate } from "@/lib/calendar";
 
 const kindLabel = {
   market: "Public pop-up",
@@ -6,8 +6,8 @@ const kindLabel = {
   special: "Special event",
 } as const;
 
-export default function EventsCalendar() {
-  const events = upcomingEvents();
+export default async function EventsCalendar() {
+  const events = await upcomingEventsSynced();
 
   if (events.length === 0) {
     return (
