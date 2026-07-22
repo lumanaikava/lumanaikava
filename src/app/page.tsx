@@ -13,7 +13,11 @@ export default async function Home() {
     .slice(0, 3)
     .map((e) => {
       const d = formatEventDate(e.date);
-      return { date: `${d.weekday} ${d.month} ${d.day}`, label: e.title };
+      return {
+        date: `${d.weekday} ${d.month} ${d.day}`,
+        label: e.title,
+        kind: e.kind,
+      };
     });
 
   return (

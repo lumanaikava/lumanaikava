@@ -1,9 +1,16 @@
 import { upcomingEventsSynced, formatEventDate } from "@/lib/calendar";
 
 const kindLabel = {
-  market: "Public pop-up",
-  bar: "Private bar — booked",
-  special: "Special event",
+  market: "Market",
+  bar: "Private event — booked",
+  special: "Event",
+} as const;
+
+/* Color code: markets pour purple, events pour blue. */
+const kindColor = {
+  market: "#c9a7ee",
+  bar: "#9ec5ea",
+  special: "#9ec5ea",
 } as const;
 
 export default async function EventsCalendar() {
@@ -31,6 +38,7 @@ export default async function EventsCalendar() {
       {events.map((e) => {
         const d = formatEventDate(e.date);
         const isPrivate = e.kind === "bar";
+        const tint = kindColor[e.kind];
         return (
           <li
             key={`${e.date}-${e.title}`}
@@ -40,7 +48,9 @@ export default async function EventsCalendar() {
               <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-coconut">
                 {d.weekday}
               </p>
-              <p className="h-sign text-3xl text-shell">{d.day}</p>
+              <p className="h-sign text-3xl" style={{ color: tint }}>
+                {d.day}
+              </p>
               <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
                 {d.month}
               </p>
@@ -51,7 +61,12 @@ export default async function EventsCalendar() {
               >
                 {e.title}
               </h3>
-              <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
+              <p className="mt-1 flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
+                <span
+                  className="inline-block h-1.5 w-1.5 rounded-full"
+                  style={{ backgroundColor: tint }}
+                  aria-hidden
+                />
                 {kindLabel[e.kind]}
                 {e.location ? ` · ${e.location}` : ""}
                 {e.time ? ` · ${e.time}` : ""}

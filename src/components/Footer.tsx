@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import CoconutSecret from "./CoconutSecret";
 import NewsletterForm from "./NewsletterForm";
 import Ripple from "./Ripple";
 import { navLinks, footerLinks } from "@/lib/nav";
@@ -139,9 +140,18 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-shell/10 pt-6 text-xs text-shell/50 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Lumanai Kava · Terra Incognita LLC</p>
-          <p>
+          <p className="flex items-center gap-2.5">
+            © {new Date().getFullYear()} Lumanai Kava · Terra Incognita LLC
+            <CoconutSecret />
+          </p>
+          <p className="flex items-center gap-4">
             1% of every order supports the South Pacific Islander Organization.
+            <Link
+              href="/admin"
+              className="font-mono text-[10px] uppercase tracking-[0.2em] text-shell/35 transition-colors hover:text-gold"
+            >
+              Crew
+            </Link>
           </p>
         </div>
       </div>

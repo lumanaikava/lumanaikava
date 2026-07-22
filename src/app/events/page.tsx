@@ -57,6 +57,41 @@ export default function EventsPage() {
         </div>
       </section>
 
+      {/* What shows up with us — proof, not promises */}
+      <section className="border-b border-shell/10">
+        <div className="mx-auto max-w-6xl px-6 py-10">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {[
+              { src: eventImages.boothWide, label: "The full bar setup" },
+              { src: eventImages.bartenderShaker, label: "Trained crew" },
+              { src: eventImages.menuOnBar, label: "Custom menus" },
+              { src: eventImages.drinkClose, label: "Craft glassware" },
+              { src: eventImages.pouring, label: "Live pours" },
+              { src: eventImages.poolside, label: "Any venue" },
+            ].map((p, i) => (
+              <figure key={p.label} className="text-center">
+                <div
+                  className={`relative aspect-square overflow-hidden ${
+                    i % 2 === 0 ? "brush-mask" : "rounded-2xl"
+                  }`}
+                >
+                  <Image
+                    src={p.src}
+                    alt={p.label}
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 17vw"
+                    className="object-cover transition-transform duration-500 hover:scale-105"
+                  />
+                </div>
+                <figcaption className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-shell/60">
+                  {p.label}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* The builder (includes the booking form) */}
       <section className="py-10">
         <EventBuilder />

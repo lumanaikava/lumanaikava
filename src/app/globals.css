@@ -199,11 +199,14 @@ body {
 }
 
 @keyframes transport {
-  from {
+  0% {
     transform: scale(0);
+    opacity: 0;
+  }
+  12% {
     opacity: 1;
   }
-  to {
+  100% {
     transform: scale(3);
     opacity: 1;
   }

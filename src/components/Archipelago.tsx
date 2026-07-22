@@ -1,13 +1,17 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState, type MouseEvent } from "react";
 import SplashDrink from "@/components/SplashDrink";
 
 /**
- * The Lumanai hero: logo, slogan, and the back bar in one viewport.
- * Navigation = the drinks themselves, lined up on a lit shelf. Hover a
- * glass and it sloshes + throws droplets (SplashDrink). Labels are the
- * plain site sections — no fantasy names. Until we have a unique PNG
- * per destination, some glasses are recolored with hue-rotate filters.
+ * The Lumanai hero: a craft kava tropical bar at night. The six site
+ * sections are drinks standing on a lit wooden back-bar shelf —
+ * out-of-focus palm fronds frame the scene, warm light pools behind
+ * the glasses. Hover a glass: it sloshes and throws droplets. Click:
+ * a golden light-burst carries you to the page (the "transport").
  * Cutouts (transparent bg) live in public/images/drinks/clear/.
  */
 
@@ -17,11 +21,9 @@ type DrinkNav = {
   img: string;
   /** Droplet color — roughly matches the (filtered) drink. */
   accent: string;
-  /** Optional recolor so three PNGs can cover seven doors. */
+  /** Optional recolor so three PNGs can cover six doors. */
   filter?: string;
   delay: string;
-  /** The Lounge — fogged-out teaser, anchors to the waitlist. */
-  lounge?: boolean;
 };
 
 const nav: DrinkNav[] = [
@@ -41,7 +43,7 @@ const nav: DrinkNav[] = [
   },
   {
     href: "/events",
-    label: "Events",
+    label: "Book",
     img: "/images/drinks/clear/adapterol-spritz.png",
     accent: "#a93343",
     delay: "0.9s",
@@ -70,15 +72,6 @@ const nav: DrinkNav[] = [
     filter: "hue-rotate(-45deg) saturate(1.2)",
     delay: "2.9s",
   },
-  {
-    href: "#waitlist",
-    label: "The Lounge",
-    img: "/images/drinks/clear/hive-mind.png",
-    accent: "#8892b0",
-    filter: "grayscale(1) brightness(0.5) contrast(1.05)",
-    delay: "3.5s",
-    lounge: true,
-  },
 ];
 
 const stars = Array.from({ length: 42 }, (_, i) => {
@@ -89,11 +82,40 @@ const stars = Array.from({ length: 42 }, (_, i) => {
   return { left: `${x * 100}%`, top: `${y * 52}%`, size: s, delay: `${d}s` };
 });
 
+/** Out-of-focus palm fronds — depth foliage, not decoration. */
+function Frond({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 420 320"
+      className={className}
+      aria-hidden
+      fill="currentColor"
+    >
+      <path d="M8,318 C70,240 150,190 285,168 C160,204 80,262 8,318 Z" />
+      <path d="M4,312 C50,215 110,140 230,86 C120,160 50,240 4,312 Z" />
+      <path d="M12,316 C100,270 210,240 350,242 C215,255 105,285 12,316 Z" />
+      <path d="M2,308 C30,200 60,110 130,30 C70,130 30,220 2,308 Z" />
+      <path d="M16,318 C120,296 250,290 400,306 C255,282 120,288 16,318 Z" />
+    </svg>
+  );
+}
+
 export default function Archipelago({
   nextEvents,
 }: {
-  nextEvents: { date: string; label: string }[];
+  nextEvents: { date: string; label: string; kind?: string }[];
 }) {
+  const router = useRouter();
+  const [burst, setBurst] = useState<{ x: number; y: number } | null>(null);
+
+  /** The light-burst transport: golden explosion from the click point. */
+  function sail(e: MouseEvent<HTMLAnchorElement>, href: string) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    e.preventDefault();
+    setBurst({ x: e.clientX, y: e.clientY });
+    window.setTimeout(() => router.push(href), 480);
+  }
+
   return (
     <section
       aria-label="Lumanai — explore the site"
@@ -126,6 +148,9 @@ export default function Archipelago({
         className="pointer-events-none absolute right-[10%] top-[7%] h-20 w-20 rounded-full bg-gold/80 shadow-[0_0_100px_44px_rgba(237,226,180,0.18)]"
         aria-hidden
       />
+      {/* Foreground foliage framing the bar */}
+      <Frond className="pointer-events-none absolute -left-16 bottom-10 w-[340px] text-[#0d1436] opacity-70 blur-[3px] lg:w-[420px]" />
+      <Frond className="pointer-events-none absolute -right-16 bottom-6 w-[320px] -scale-x-100 text-[#101040] opacity-60 blur-[4px] lg:w-[400px]" />
 
       {/* Logo + slogan + CTAs */}
       <div className="relative mx-auto flex max-w-4xl flex-col items-center px-6 pt-16 text-center lg:pt-20">
@@ -158,15 +183,21 @@ export default function Archipelago({
 
       {/* The back bar — every drink is a door */}
       <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col justify-end px-6 pb-6">
+        {/* Warm light pooling behind the bottles */}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-10 h-56 bg-[radial-gradient(60%_100%_at_50%_100%,rgba(237,226,180,0.12),transparent_70%)]"
+          aria-hidden
+        />
         <nav
           aria-label="Site sections"
-          className="flex flex-wrap items-end justify-center gap-x-4 gap-y-7 pb-1 sm:gap-x-8 lg:justify-between"
+          className="relative flex flex-wrap items-end justify-center gap-x-4 gap-y-7 pb-1 sm:gap-x-8 lg:justify-between lg:px-6"
         >
           {nav.map((d) => (
             <Link
               key={d.href}
               href={d.href}
-              className={`group block text-center ${d.lounge ? "opacity-70 transition-opacity hover:opacity-100" : ""}`}
+              onClick={(e) => sail(e, d.href)}
+              className="group block text-center"
             >
               <span
                 className="island-bob block"
@@ -184,35 +215,21 @@ export default function Archipelago({
                   }
                 />
               </span>
-              <span
-                className={`h-sign-med mt-2 block text-base transition-colors duration-300 lg:text-lg ${
-                  d.lounge
-                    ? "text-shell/50 group-hover:text-gold"
-                    : "text-shell/90 group-hover:text-gold"
-                }`}
-              >
+              <span className="h-sign-med mt-2 block text-base text-shell/90 transition-colors duration-300 group-hover:text-gold lg:text-lg">
                 {d.label}
               </span>
-              {d.lounge && (
-                <span className="mt-1 inline-block rounded-full border border-gold/40 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-gold">
-                  Soon
-                </span>
-              )}
             </Link>
           ))}
         </nav>
-        {/* Lit shelf edge under the glasses */}
-        <div
-          className="h-px w-full bg-gradient-to-r from-transparent via-gold/45 to-transparent"
-          aria-hidden
-        />
-        <div
-          className="mx-auto h-6 w-4/5 bg-gradient-to-b from-gold/[0.07] to-transparent"
-          aria-hidden
-        />
+        {/* The wooden shelf they stand on */}
+        <div className="relative" aria-hidden>
+          <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
+          <div className="h-3 w-full rounded-b-md bg-gradient-to-b from-[#6b4a26] via-[#4a3118] to-[#2c1c0d] shadow-[0_10px_24px_rgba(0,0,0,0.55)]" />
+          <div className="mx-auto h-8 w-11/12 bg-gradient-to-b from-gold/[0.08] to-transparent" />
+        </div>
       </div>
 
-      {/* Next appearances ticker */}
+      {/* Next appearances ticker — purple dates for markets, blue for events */}
       <div className="relative border-t border-shell/15 bg-abyss/70 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-1.5 px-6 py-3.5">
           {nextEvents.map((e) => (
@@ -220,7 +237,14 @@ export default function Archipelago({
               key={e.label + e.date}
               className="text-[10px] font-medium uppercase tracking-[0.2em] text-shell/75"
             >
-              <span className="text-coconut">{e.date}</span> · {e.label}
+              <span
+                className={
+                  e.kind === "market" ? "text-[#c9a7ee]" : "text-[#9ec5ea]"
+                }
+              >
+                {e.date}
+              </span>{" "}
+              · {e.label}
             </p>
           ))}
           <Link
@@ -231,6 +255,23 @@ export default function Archipelago({
           </Link>
         </div>
       </div>
+
+      {/* Light-burst transport overlay */}
+      {burst && (
+        <div className="pointer-events-none fixed inset-0 z-[90]" aria-hidden>
+          <span
+            className="transport-ring absolute block h-[120vmax] w-[120vmax] rounded-full"
+            style={{
+              left: burst.x,
+              top: burst.y,
+              marginLeft: "-60vmax",
+              marginTop: "-60vmax",
+              background:
+                "radial-gradient(circle, rgba(237,226,180,0.9) 0%, rgba(107,58,156,0.9) 35%, rgba(5,16,42,1) 70%)",
+            }}
+          />
+        </div>
+      )}
     </section>
   );
 }

@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
+const CREW = ["Ash", "Zach", "Karina"];
+
 export async function POST(req: Request) {
-  let body: { passcode?: string };
+  let body: { passcode?: string; name?: string };
   try {
     body = await req.json();
   } catch {
@@ -21,12 +23,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Wrong passcode." }, { status: 401 });
   }
 
+  const name = CREW.includes(body.name ?? "") ? body.name! : "Crew";
+
   const res = NextResponse.json({ ok: true });
-  res.cookies.set("lumanai_admin", expected, {
+  const cookie = {
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: "lax" as const,
     path: "/",
     maxAge: 60 * 60 * 24 * 14, // two weeks
-  });
+  };
+  res.cookies.set("lumanai_admin", expected, cookie);
+  res.cookies.set("lumanai_crew", name, cookie);
   return res;
 }

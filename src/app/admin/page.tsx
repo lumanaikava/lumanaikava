@@ -60,6 +60,7 @@ export default async function AdminPage() {
     );
   }
 
+  const crewName = jar.get("lumanai_crew")?.value ?? "Crew";
   const calendarSynced = gcalConfigured();
   const ordersReady = shopifyAdminConfigured();
   const twilioReady = Boolean(
@@ -131,7 +132,9 @@ export default async function AdminPage() {
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
         Command Center · lumanai.events@gmail.com
       </p>
-      <h1 className="h-sign mt-2 text-5xl text-shell">Run the island.</h1>
+      <h1 className="h-sign mt-2 text-5xl text-shell">
+        Run the island{crewName !== "Crew" ? `, ${crewName}` : ""}.
+      </h1>
 
       <div className="mt-8 grid gap-5 lg:grid-cols-3">
         {/* Upcoming */}
@@ -152,7 +155,12 @@ export default async function AdminPage() {
               const d = formatEventDate(e.date);
               return (
                 <li key={e.date + e.title} className="flex gap-3 text-sm">
-                  <span className="w-20 shrink-0 font-semibold uppercase tracking-wide text-coconut">
+                  <span
+                    className="w-20 shrink-0 font-semibold uppercase tracking-wide"
+                    style={{
+                      color: e.kind === "market" ? "#c9a7ee" : "#9ec5ea",
+                    }}
+                  >
                     {d.weekday} {d.month} {d.day}
                   </span>
                   <span className="text-shell/80">
