@@ -1,6 +1,7 @@
 import {
   entryToValues,
   type PayrollEntry,
+  type PayrollKind,
   type CommissionTier,
 } from "@/lib/payroll";
 
@@ -10,8 +11,13 @@ import {
  * On a deployed (serverless) host the app can't write local files, so
  * the canonical payroll ledger is a Google Sheet. A tiny Apps Script
  * bound to that sheet exposes a URL that:
- *   • POST  → appends one row
- *   • GET   → returns recent rows (newest first)
+ *   • POST { action: "append", values }        → appends one row
+ *   • POST { action: "replace", rows }          → rewrites every data row
+ *   • GET  ?list=1                              → returns recent rows
+ *
+ * "replace" is how edits and deletes work: read every row, mutate the
+ * one that changed (or drop it) in JS, then send the whole list back —
+ * simpler and safer than asking Apps Script to find-and-patch one row.
  *
  * Setup lives in "Payroll Sheet Setup.md" (Lumanai Business folder).
  * Until PAYROLL_SHEET_WEBHOOK_URL is set the app falls back to the local
@@ -25,22 +31,54 @@ export function payrollSheetConfigured(): boolean {
   return Boolean(URL);
 }
 
-export async function appendEntryToSheet(entry: PayrollEntry): Promise<void> {
+/** POST to the webhook and surface Apps Script's embedded {error} — the
+ * script always answers HTTP 200, so errors (bad secret, etc.) only show
+ * up in the JSON body, not the status code. */
+async function callSheet(body: Record<string, unknown>): Promise<unknown> {
   if (!URL) throw new Error("Payroll sheet webhook not configured.");
   const res = await fetch(URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ secret: SECRET, values: entryToValues(entry) }),
-    // Apps Script 302-redirects to its content host; follow it.
+    body: JSON.stringify({ secret: SECRET, ...body }),
     redirect: "follow",
   });
-  if (!res.ok) throw new Error(`Payroll sheet POST ${res.status}`);
+  if (!res.ok) throw new Error(`Payroll sheet ${res.status}`);
+  const data = (await res.json().catch(() => ({}))) as { error?: string };
+  if (data.error) throw new Error(`Payroll sheet: ${data.error}`);
+  return data;
+}
+
+export async function appendEntryToSheet(entry: PayrollEntry): Promise<void> {
+  await callSheet({ action: "append", values: entryToValues(entry) });
+}
+
+/** Rewrite every data row in the sheet with this exact list. */
+async function replaceAllSheetRows(entries: PayrollEntry[]): Promise<void> {
+  await callSheet({ action: "replace", rows: entries.map(entryToValues) });
+}
+
+/** Edit one entry in place (matched by timestamp), then rewrite the sheet. */
+export async function updateEntryInSheet(
+  timestamp: string,
+  updated: PayrollEntry,
+): Promise<void> {
+  const all = await readSheetEntriesRaw();
+  const idx = all.findIndex((e) => e.timestamp === timestamp);
+  if (idx === -1) throw new Error("Entry not found in the Payroll Sheet.");
+  all[idx] = updated;
+  await replaceAllSheetRows(all);
+}
+
+/** Remove one entry (matched by timestamp), then rewrite the sheet. */
+export async function deleteEntryFromSheet(timestamp: string): Promise<void> {
+  const all = await readSheetEntriesRaw();
+  await replaceAllSheetRows(all.filter((e) => e.timestamp !== timestamp));
 }
 
 type SheetRow = (string | number)[];
 
-/** Recent entries from the sheet, newest first. Empty on any failure. */
-export async function readSheetEntries(): Promise<PayrollEntry[]> {
+/** Raw rows in sheet order (oldest first). Empty on any failure. */
+async function readSheetEntriesRaw(): Promise<PayrollEntry[]> {
   if (!URL) return [];
   try {
     const sep = URL.includes("?") ? "&" : "?";
@@ -49,12 +87,17 @@ export async function readSheetEntries(): Promise<PayrollEntry[]> {
       { cache: "no-store", redirect: "follow" },
     );
     if (!res.ok) return [];
-    const data = (await res.json()) as { rows?: SheetRow[] };
-    const rows = data.rows ?? [];
-    return rows.map(rowToEntry).reverse();
+    const data = (await res.json()) as { rows?: SheetRow[]; error?: string };
+    if (data.error) return [];
+    return (data.rows ?? []).map(rowToEntry);
   } catch {
     return [];
   }
+}
+
+/** Recent entries from the sheet, newest first. Empty on any failure. */
+export async function readSheetEntries(): Promise<PayrollEntry[]> {
+  return (await readSheetEntriesRaw()).reverse();
 }
 
 function rowToEntry(c: SheetRow): PayrollEntry {
@@ -81,5 +124,9 @@ function rowToEntry(c: SheetRow): PayrollEntry {
     expenseNote: s(c[11]),
     totalPayout: n(c[12]),
     loggedBy: s(c[13]),
+    // Rows written before hourly logging existed have no Type/Hourly Rate
+    // columns — default them to a plain event entry.
+    kind: (c[14] === "hourly" ? "hourly" : "event") as PayrollKind,
+    hourlyRate: n(c[15]),
   };
 }
