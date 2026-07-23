@@ -83,6 +83,35 @@ function money(n: number): number {
   return Math.round(n * 100) / 100;
 }
 
+/**
+ * Retry a file write a few times before giving up. Windows locks a file
+ * (EBUSY) while it's open in Excel or actively syncing in OneDrive — a
+ * short backoff clears the transient case; a persistent lock (e.g. the
+ * file genuinely open in Excel) still fails, but with a clear reason
+ * instead of throwing a raw EBUSY or — worse — being silently ignored.
+ */
+async function writeWithRetry(fn: () => Promise<void>): Promise<void> {
+  const delaysMs = [150, 400, 900];
+  let lastErr: unknown;
+  for (let attempt = 0; attempt <= delaysMs.length; attempt++) {
+    try {
+      await fn();
+      return;
+    } catch (err) {
+      lastErr = err;
+      const code = (err as NodeJS.ErrnoException)?.code;
+      if (code !== "EBUSY" && code !== "EPERM") throw err;
+      if (attempt < delaysMs.length) {
+        await new Promise((r) => setTimeout(r, delaysMs[attempt]));
+      }
+    }
+  }
+  const code = (lastErr as NodeJS.ErrnoException)?.code;
+  throw new Error(
+    `Couldn't write the Payroll Log CSV — it's locked (${code}). Close it if it's open in Excel or another program, then try again.`,
+  );
+}
+
 /** (event: sales × tier) or (hourly: hours × rate), + tips + bonus + expenses. */
 export function computePayout(input: PayrollInput): {
   commissionAmt: number;
@@ -120,19 +149,22 @@ export function buildEntry(input: PayrollInput): PayrollEntry {
   };
 }
 
-/** Append one entry to the local CSV ledger (may throw on a read-only fs). */
+/** Append one entry to the local CSV ledger (throws a clear error if the
+ * file is locked or otherwise unwritable — never fails silently). */
 export async function appendCsvEntry(entry: PayrollEntry): Promise<void> {
   const file = payrollCsvPath();
   await fs.mkdir(path.dirname(file), { recursive: true });
 
-  let exists = true;
-  try {
-    await fs.access(file);
-  } catch {
-    exists = false;
-  }
-  const header = exists ? "" : COLUMNS.join(",") + "\r\n";
-  await fs.appendFile(file, header + toRow(entry) + "\r\n", "utf8");
+  await writeWithRetry(async () => {
+    let exists = true;
+    try {
+      await fs.access(file);
+    } catch {
+      exists = false;
+    }
+    const header = exists ? "" : COLUMNS.join(",") + "\r\n";
+    await fs.appendFile(file, header + toRow(entry) + "\r\n", "utf8");
+  });
 }
 
 /** Replace an existing CSV row (matched by timestamp) with new values. */
@@ -160,10 +192,12 @@ async function writeAllCsvEntries(entries: PayrollEntry[]): Promise<void> {
   const file = payrollCsvPath();
   await fs.mkdir(path.dirname(file), { recursive: true });
   const body = entries.map(toRow).join("\r\n");
-  await fs.writeFile(
-    file,
-    COLUMNS.join(",") + "\r\n" + body + (body ? "\r\n" : ""),
-    "utf8",
+  await writeWithRetry(() =>
+    fs.writeFile(
+      file,
+      COLUMNS.join(",") + "\r\n" + body + (body ? "\r\n" : ""),
+      "utf8",
+    ),
   );
 }
 

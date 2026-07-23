@@ -31,9 +31,16 @@ export function payrollSheetConfigured(): boolean {
   return Boolean(URL);
 }
 
-/** POST to the webhook and surface Apps Script's embedded {error} — the
- * script always answers HTTP 200, so errors (bad secret, etc.) only show
- * up in the JSON body, not the status code. */
+/**
+ * POST to the webhook and surface every failure mode:
+ *   - non-2xx status
+ *   - Apps Script's embedded {error} (the script always answers HTTP 200,
+ *     even for a bad secret, so errors normally only show up in the body)
+ *   - a broken/misconfigured script, which returns an HTML error PAGE at
+ *     HTTP 200 — NOT valid JSON. Silently treating that as "no error" is
+ *     exactly what let deletes/edits report success while doing nothing,
+ *     so an unparseable body is always a hard failure here, never {}.
+ */
 async function callSheet(body: Record<string, unknown>): Promise<unknown> {
   if (!URL) throw new Error("Payroll sheet webhook not configured.");
   const res = await fetch(URL, {
@@ -42,8 +49,18 @@ async function callSheet(body: Record<string, unknown>): Promise<unknown> {
     body: JSON.stringify({ secret: SECRET, ...body }),
     redirect: "follow",
   });
-  if (!res.ok) throw new Error(`Payroll sheet ${res.status}`);
-  const data = (await res.json().catch(() => ({}))) as { error?: string };
+  const text = await res.text();
+  if (!res.ok) {
+    throw new Error(`Payroll sheet ${res.status}: ${text.slice(0, 200)}`);
+  }
+  let data: { error?: string };
+  try {
+    data = JSON.parse(text);
+  } catch {
+    throw new Error(
+      `Payroll sheet returned a non-JSON response (the Apps Script may be broken) — first 200 chars: ${text.slice(0, 200)}`,
+    );
+  }
   if (data.error) throw new Error(`Payroll sheet: ${data.error}`);
   return data;
 }
@@ -62,7 +79,10 @@ export async function updateEntryInSheet(
   timestamp: string,
   updated: PayrollEntry,
 ): Promise<void> {
-  const all = await readSheetEntriesRaw();
+  // Unwrapped read on purpose: if the sheet can't be read right now, we
+  // must NOT fall through to an empty list and "replace" the sheet with
+  // nothing. Let the failure propagate instead of risking data loss.
+  const all = await fetchSheetRows();
   const idx = all.findIndex((e) => e.timestamp === timestamp);
   if (idx === -1) throw new Error("Entry not found in the Payroll Sheet.");
   all[idx] = updated;
@@ -71,25 +91,44 @@ export async function updateEntryInSheet(
 
 /** Remove one entry (matched by timestamp), then rewrite the sheet. */
 export async function deleteEntryFromSheet(timestamp: string): Promise<void> {
-  const all = await readSheetEntriesRaw();
+  const all = await fetchSheetRows();
   await replaceAllSheetRows(all.filter((e) => e.timestamp !== timestamp));
 }
 
 type SheetRow = (string | number)[];
 
-/** Raw rows in sheet order (oldest first). Empty on any failure. */
-async function readSheetEntriesRaw(): Promise<PayrollEntry[]> {
-  if (!URL) return [];
+/** Raw rows in sheet order (oldest first). Throws on any failure. */
+async function fetchSheetRows(): Promise<PayrollEntry[]> {
+  if (!URL) throw new Error("Payroll sheet webhook not configured.");
+  const sep = URL.includes("?") ? "&" : "?";
+  const res = await fetch(`${URL}${sep}list=1&secret=${encodeURIComponent(SECRET)}`, {
+    cache: "no-store",
+    redirect: "follow",
+  });
+  const text = await res.text();
+  if (!res.ok) {
+    throw new Error(`Payroll sheet ${res.status}: ${text.slice(0, 200)}`);
+  }
+  let data: { rows?: SheetRow[]; error?: string };
   try {
-    const sep = URL.includes("?") ? "&" : "?";
-    const res = await fetch(
-      `${URL}${sep}list=1&secret=${encodeURIComponent(SECRET)}`,
-      { cache: "no-store", redirect: "follow" },
+    data = JSON.parse(text);
+  } catch {
+    throw new Error(
+      `Payroll sheet returned a non-JSON response (the Apps Script may be broken) — first 200 chars: ${text.slice(0, 200)}`,
     );
-    if (!res.ok) return [];
-    const data = (await res.json()) as { rows?: SheetRow[]; error?: string };
-    if (data.error) return [];
-    return (data.rows ?? []).map(rowToEntry);
+  }
+  if (data.error) throw new Error(`Payroll sheet: ${data.error}`);
+  return (data.rows ?? []).map(rowToEntry);
+}
+
+/**
+ * Raw rows, oldest first — safe for DISPLAY use (dashboard, report page).
+ * Swallows failures to an empty array so callers fall back to the local
+ * CSV; never use this as the basis for a "replace" write (see fetchSheetRows).
+ */
+async function readSheetEntriesRaw(): Promise<PayrollEntry[]> {
+  try {
+    return await fetchSheetRows();
   } catch {
     return [];
   }
