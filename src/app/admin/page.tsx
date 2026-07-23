@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import Link from "next/link";
 import LoginForm from "@/components/admin/LoginForm";
 import SmsComposer from "@/components/admin/SmsComposer";
 import PayrollPanel from "@/components/admin/PayrollPanel";
@@ -292,9 +293,17 @@ export default async function AdminPage() {
       {/* Payroll + commissions */}
       <div className="mt-10 flex flex-wrap items-baseline justify-between gap-3">
         <h2 className="h-sign-med text-2xl text-shell">Payroll &amp; commissions</h2>
-        <p className="text-xs text-shell/50">
-          Saves to your Payroll Log spreadsheet automatically
-        </p>
+        <div className="flex items-center gap-4">
+          <p className="text-xs text-shell/50">
+            Saves to your Payroll Log spreadsheet automatically
+          </p>
+          <Link
+            href="/admin/payroll"
+            className="rounded-full border border-gold/40 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-gold hover:bg-gold/10"
+          >
+            Full report →
+          </Link>
+        </div>
       </div>
       <div className="mt-4">
         <PayrollPanel
