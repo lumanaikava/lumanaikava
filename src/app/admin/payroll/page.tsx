@@ -4,7 +4,7 @@ import Link from "next/link";
 import PayrollReport from "@/components/admin/PayrollReport";
 import { readPayrollEntries } from "@/lib/payroll";
 import {
-  readSheetEntries,
+  readSheetEntriesStrict,
   payrollSheetConfigured,
 } from "@/lib/integrations/payroll-sheet";
 
@@ -39,11 +39,19 @@ export default async function PayrollReportPage() {
     );
   }
 
-  // Same source of truth as the dashboard: sheet when it's wired up
-  // (works after deploy), local CSV otherwise.
-  const sheetLive = payrollSheetConfigured();
-  let entries = sheetLive ? await readSheetEntries() : [];
-  if (entries.length === 0) entries = await readPayrollEntries();
+  // Same shared source of truth as the dashboard: the Google Sheet,
+  // with the local backup used only if the sheet can't be reached.
+  let entries;
+  if (payrollSheetConfigured()) {
+    try {
+      entries = await readSheetEntriesStrict();
+    } catch (err) {
+      console.error("[report] Payroll sheet unreachable, using local backup:", err);
+      entries = await readPayrollEntries();
+    }
+  } else {
+    entries = await readPayrollEntries();
+  }
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-10">

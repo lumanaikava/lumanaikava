@@ -139,6 +139,16 @@ export async function readSheetEntries(): Promise<PayrollEntry[]> {
   return (await readSheetEntriesRaw()).reverse();
 }
 
+/**
+ * Recent entries newest-first, but THROWS if the sheet can't be read.
+ * Display pages use this to prefer the sheet and fall back to the local
+ * backup only on a genuine error — an empty-but-working sheet (everything
+ * deleted) returns [] rather than silently showing stale local data.
+ */
+export async function readSheetEntriesStrict(): Promise<PayrollEntry[]> {
+  return (await fetchSheetRows()).reverse();
+}
+
 function rowToEntry(c: SheetRow): PayrollEntry {
   const s = (v: unknown) => String(v ?? "");
   const n = (v: unknown) => Number(v) || 0;

@@ -73,7 +73,11 @@ export default function PayrollPanel({
     emptyForm(CREW.includes(defaultEmployee) ? defaultEmployee : CREW[0]),
   );
   const [status, setStatus] = useState<
-    { kind: "idle" } | { kind: "busy" } | { kind: "error"; msg: string } | { kind: "saved" }
+    | { kind: "idle" }
+    | { kind: "busy" }
+    | { kind: "error"; msg: string }
+    | { kind: "warn"; msg: string }
+    | { kind: "saved" }
   >({ kind: "idle" });
 
   function set<K extends keyof FormValues>(key: K, value: FormValues[K]) {
@@ -134,7 +138,7 @@ export default function PayrollPanel({
       ),
     });
     if (res.ok) {
-      const { entry } = await res.json();
+      const { entry, warning } = await res.json();
       setEntries((prev) =>
         editingTimestamp
           ? prev.map((x) => (x.timestamp === editingTimestamp ? entry : x))
@@ -142,8 +146,12 @@ export default function PayrollPanel({
       );
       setEditingTimestamp(null);
       setForm(emptyForm(form.employee));
-      setStatus({ kind: "saved" });
-      setTimeout(() => setStatus({ kind: "idle" }), 3500);
+      if (warning) {
+        setStatus({ kind: "warn", msg: warning });
+      } else {
+        setStatus({ kind: "saved" });
+        setTimeout(() => setStatus({ kind: "idle" }), 3500);
+      }
     } else {
       const body = await res.json().catch(() => ({}));
       setStatus({ kind: "error", msg: body.error ?? "Couldn't save." });
@@ -159,8 +167,10 @@ export default function PayrollPanel({
       body: JSON.stringify({ timestamp: entry.timestamp }),
     });
     if (res.ok) {
+      const body = await res.json().catch(() => ({}));
       setEntries((prev) => prev.filter((x) => x.timestamp !== entry.timestamp));
       if (editingTimestamp === entry.timestamp) cancelEdit();
+      if (body.warning) window.alert(body.warning);
     } else {
       const body = await res.json().catch(() => ({}));
       window.alert(body.error ?? "Couldn't delete that entry.");
@@ -286,7 +296,7 @@ export default function PayrollPanel({
 
         {form.kind === "event" && (
           <div className="mt-4">
-            <span className={label}>Commission tier</span>
+            <span className={label}>Commission % — pick one or type a custom rate</span>
             <div className="mt-1 flex gap-2">
               {TIERS.map((t) => (
                 <button
@@ -302,6 +312,25 @@ export default function PayrollPanel({
                   {t}%
                 </button>
               ))}
+              <div
+                className={`flex items-center rounded-xl border px-2 transition-colors ${
+                  TIERS.includes(form.pct)
+                    ? "border-shell/20"
+                    : "border-gold bg-gold/15"
+                }`}
+              >
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.5"
+                  value={form.pct}
+                  onChange={(e) => set("pct", Number(e.target.value))}
+                  aria-label="Custom commission percent"
+                  className="w-14 bg-transparent py-2 text-right text-sm font-bold text-shell outline-none"
+                />
+                <span className="pl-0.5 text-sm font-bold text-shell/60">%</span>
+              </div>
             </div>
           </div>
         )}
@@ -400,10 +429,20 @@ export default function PayrollPanel({
           {status.kind === "saved" && (
             <span className="text-xs font-semibold text-gold">Saved ✓</span>
           )}
+          {status.kind === "warn" && (
+            <span className="text-xs font-semibold text-coconut">
+              Saved to backup ⚠
+            </span>
+          )}
           {status.kind === "error" && (
             <span className="text-xs text-coconut">{status.msg}</span>
           )}
         </div>
+        {status.kind === "warn" && (
+          <p className="mt-3 rounded-xl border border-coconut/40 bg-coconut/10 p-3 text-xs leading-relaxed text-coconut">
+            {status.msg}
+          </p>
+        )}
       </form>
 
       {/* The ledger */}

@@ -18,8 +18,10 @@ import path from "path";
  * already keep — no copy/paste.
  */
 
+/** Quick-pick commission percentages shown as buttons; any 0–100 value
+ * is allowed via the custom field, so this type is just `number`. */
 export const COMMISSION_TIERS = [10, 15, 20, 25] as const;
-export type CommissionTier = (typeof COMMISSION_TIERS)[number];
+export type CommissionTier = number;
 
 export type PayrollKind = "event" | "hourly";
 export const DEFAULT_HOURLY_RATE = 15;

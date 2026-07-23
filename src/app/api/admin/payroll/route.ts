@@ -6,7 +6,6 @@ import {
   appendCsvEntry,
   updateCsvEntry,
   deleteCsvEntry,
-  COMMISSION_TIERS,
   DEFAULT_HOURLY_RATE,
   type CommissionTier,
   type PayrollInput,
@@ -36,40 +35,52 @@ const num = (v: unknown) => {
   return Number.isFinite(n) && n >= 0 ? n : 0;
 };
 
-const storeLabel = (i: number) => (i === 0 ? "local CSV" : "Google Sheet");
+type Store = { label: string; run: Promise<void> };
 
 /**
- * Run the CSV + (optional) Sheet write in parallel and report what
- * actually happened. Never mask a real failure as success: if only one
- * store took the write, that's logged loudly even though the request
- * still succeeds, so a locked file or a broken Apps Script shows up in
- * the server console instead of vanishing silently.
+ * Run the writes and report exactly what happened per store. The Google
+ * Sheet is the shared online source of truth; the local CSV is an
+ * automatic backup. We succeed as long as at least one store took the
+ * write (so nothing is ever lost), but we NEVER pretend a store
+ * succeeded when it didn't — a failed store comes back as a warning the
+ * user can see, and is logged, so it can't vanish silently like before.
  */
 async function commitToStores(
-  stores: Promise<void>[],
+  stores: Store[],
   action: string,
-): Promise<{ ok: true } | { ok: false; error: string }> {
-  const results = await Promise.allSettled(stores);
-  const failures = results
-    .map((r, i) => (r.status === "rejected" ? { i, reason: r.reason } : null))
-    .filter((x): x is { i: number; reason: unknown } => x !== null);
-  const anyOk = results.some((r) => r.status === "fulfilled");
-
-  if (failures.length > 0) {
-    for (const f of failures) {
-      console.error(
-        `[payroll] ${action}: ${storeLabel(f.i)} failed —`,
-        f.reason instanceof Error ? f.reason.message : f.reason,
-      );
+): Promise<{ savedTo: string[]; failed: { label: string; message: string }[] }> {
+  const results = await Promise.allSettled(stores.map((s) => s.run));
+  const savedTo: string[] = [];
+  const failed: { label: string; message: string }[] = [];
+  results.forEach((r, i) => {
+    if (r.status === "fulfilled") {
+      savedTo.push(stores[i].label);
+    } else {
+      const message =
+        r.reason instanceof Error ? r.reason.message : String(r.reason);
+      failed.push({ label: stores[i].label, message });
+      console.error(`[payroll] ${action}: ${stores[i].label} failed —`, message);
     }
+  });
+  return { savedTo, failed };
+}
+
+/** Turn a commit result into an HTTP response payload. */
+function commitResponse(
+  action: string,
+  { savedTo, failed }: { savedTo: string[]; failed: { label: string; message: string }[] },
+  extra: Record<string, unknown> = {},
+) {
+  if (savedTo.length === 0) {
+    return NextResponse.json(
+      { error: failed.map((f) => f.message).join(" · ") || `Couldn't ${action}.` },
+      { status: 500 },
+    );
   }
-  if (!anyOk) {
-    const detail = failures
-      .map((f) => (f.reason instanceof Error ? f.reason.message : String(f.reason)))
-      .join(" · ");
-    return { ok: false, error: detail || `Couldn't ${action} anywhere it's stored.` };
-  }
-  return { ok: true };
+  const warning = failed.length
+    ? `Saved, but couldn't reach the ${failed.map((f) => f.label).join(" + ")}. It'll be out of sync until that's fixed. (${failed.map((f) => f.message).join(" · ")})`
+    : undefined;
+  return NextResponse.json({ ok: true, warning, ...extra });
 }
 
 /** Validate + normalize the shared shift fields. Throws a {status,error} on bad input. */
@@ -89,10 +100,11 @@ function parseInput(
     hourlyRate = num(b.hourlyRate) || DEFAULT_HOURLY_RATE;
   } else {
     const pct = Number(b.commissionPct);
-    if (!COMMISSION_TIERS.includes(pct as CommissionTier)) {
-      throw { status: 400, error: "Commission must be 10, 15, 20, or 25%." };
+    if (!Number.isFinite(pct) || pct < 0 || pct > 100) {
+      throw { status: 400, error: "Commission % must be between 0 and 100." };
     }
-    commissionPct = pct as CommissionTier;
+    // Round to two decimals so 12.5, 17.25, etc. are all valid.
+    commissionPct = Math.round(pct * 100) / 100;
   }
 
   return {
@@ -133,19 +145,13 @@ export async function POST(req: Request) {
 
   const entry = buildEntry(input);
 
-  // Write to the local CSV (backup, works when running on your machine)
-  // and the Google Sheet (canonical, works when deployed). Succeed as
-  // long as at least one store took the row — but always report which
-  // store(s) actually failed, so a locked file or broken script never
-  // disappears silently.
-  const stores: Promise<void>[] = [appendCsvEntry(entry)];
-  if (payrollSheetConfigured()) stores.push(appendEntryToSheet(entry));
+  // Google Sheet = shared online source of truth; local CSV = auto-backup.
+  const stores: Store[] = [{ label: "local backup file", run: appendCsvEntry(entry) }];
+  if (payrollSheetConfigured())
+    stores.push({ label: "Google Sheet", run: appendEntryToSheet(entry) });
 
   const result = await commitToStores(stores, "save the entry");
-  if (!result.ok) {
-    return NextResponse.json({ error: result.error }, { status: 500 });
-  }
-  return NextResponse.json({ ok: true, entry });
+  return commitResponse("save the entry", result, { entry });
 }
 
 export async function PUT(req: Request) {
@@ -174,14 +180,14 @@ export async function PUT(req: Request) {
   const { commissionAmt, totalPayout } = computePayout(input);
   const entry = { ...input, timestamp, commissionAmt, totalPayout };
 
-  const stores: Promise<void>[] = [updateCsvEntry(timestamp, input).then(() => {})];
-  if (payrollSheetConfigured()) stores.push(updateEntryInSheet(timestamp, entry));
+  const stores: Store[] = [
+    { label: "local backup file", run: updateCsvEntry(timestamp, input).then(() => {}) },
+  ];
+  if (payrollSheetConfigured())
+    stores.push({ label: "Google Sheet", run: updateEntryInSheet(timestamp, entry) });
 
   const result = await commitToStores(stores, "update the entry");
-  if (!result.ok) {
-    return NextResponse.json({ error: result.error }, { status: 500 });
-  }
-  return NextResponse.json({ ok: true, entry });
+  return commitResponse("update the entry", result, { entry });
 }
 
 export async function DELETE(req: Request) {
@@ -199,12 +205,12 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "Missing timestamp." }, { status: 400 });
   }
 
-  const stores: Promise<void>[] = [deleteCsvEntry(timestamp)];
-  if (payrollSheetConfigured()) stores.push(deleteEntryFromSheet(timestamp));
+  const stores: Store[] = [
+    { label: "local backup file", run: deleteCsvEntry(timestamp) },
+  ];
+  if (payrollSheetConfigured())
+    stores.push({ label: "Google Sheet", run: deleteEntryFromSheet(timestamp) });
 
   const result = await commitToStores(stores, "delete the entry");
-  if (!result.ok) {
-    return NextResponse.json({ error: result.error }, { status: 500 });
-  }
-  return NextResponse.json({ ok: true });
+  return commitResponse("delete the entry", result);
 }

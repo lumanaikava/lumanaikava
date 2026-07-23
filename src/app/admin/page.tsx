@@ -6,7 +6,7 @@ import SmsComposer from "@/components/admin/SmsComposer";
 import PayrollPanel from "@/components/admin/PayrollPanel";
 import { readPayrollEntries } from "@/lib/payroll";
 import {
-  readSheetEntries,
+  readSheetEntriesStrict,
   payrollSheetConfigured,
 } from "@/lib/integrations/payroll-sheet";
 import { getCatalog } from "@/lib/catalog";
@@ -105,11 +105,21 @@ export default async function AdminPage() {
     }
   }
 
-  // Prefer the Google Sheet ledger when it's wired up (works after
-  // deploy); fall back to the local CSV.
+  // The Google Sheet is the shared source of truth. Read it directly;
+  // only fall back to the local backup if the sheet genuinely can't be
+  // reached (so an empty sheet reads as empty, not stale local data).
   const sheetLive = payrollSheetConfigured();
-  let payrollEntries = sheetLive ? await readSheetEntries() : [];
-  if (payrollEntries.length === 0) payrollEntries = await readPayrollEntries();
+  let payrollEntries;
+  if (sheetLive) {
+    try {
+      payrollEntries = await readSheetEntriesStrict();
+    } catch (err) {
+      console.error("[admin] Payroll sheet unreachable, using local backup:", err);
+      payrollEntries = await readPayrollEntries();
+    }
+  } else {
+    payrollEntries = await readPayrollEntries();
+  }
 
   const automations: { name: string; status: "live" | "pending"; note: string }[] = [
     { name: "Booking form → GoHighLevel", status: "live", note: "Every quote request creates a lead" },
