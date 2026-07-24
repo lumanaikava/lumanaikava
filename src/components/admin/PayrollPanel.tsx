@@ -72,6 +72,11 @@ export default function PayrollPanel({
   const [form, setForm] = useState<FormValues>(
     emptyForm(CREW.includes(defaultEmployee) ? defaultEmployee : CREW[0]),
   );
+  // Ash doesn't work shifts himself — he takes whatever's left of an
+  // event's sales after the bartender's commission. On by default for
+  // anyone logging an event; turn it off if someone else already logged
+  // the same event (so Ash isn't credited twice for one night).
+  const [creditAsh, setCreditAsh] = useState(true);
   const [status, setStatus] = useState<
     | { kind: "idle" }
     | { kind: "busy" }
@@ -113,6 +118,10 @@ export default function PayrollPanel({
     setStatus({ kind: "idle" });
   }
 
+  const showCreditAsh =
+    !editingTimestamp && form.kind === "event" && form.employee !== "Ash";
+  const ashRemainderPct = Math.round((100 - form.pct) * 100) / 100;
+
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus({ kind: "busy" });
@@ -137,24 +146,59 @@ export default function PayrollPanel({
         editingTimestamp ? { ...payload, timestamp: editingTimestamp } : payload,
       ),
     });
-    if (res.ok) {
-      const { entry, warning } = await res.json();
-      setEntries((prev) =>
-        editingTimestamp
-          ? prev.map((x) => (x.timestamp === editingTimestamp ? entry : x))
-          : [entry, ...prev],
-      );
-      setEditingTimestamp(null);
-      setForm(emptyForm(form.employee));
-      if (warning) {
-        setStatus({ kind: "warn", msg: warning });
-      } else {
-        setStatus({ kind: "saved" });
-        setTimeout(() => setStatus({ kind: "idle" }), 3500);
-      }
-    } else {
+    if (!res.ok) {
       const body = await res.json().catch(() => ({}));
       setStatus({ kind: "error", msg: body.error ?? "Couldn't save." });
+      return;
+    }
+    const { entry, warning } = await res.json();
+    const newEntries = [entry];
+    const warnings = warning ? [warning] : [];
+
+    // Auto-credit Ash the remaining % of the same event's sales.
+    if (showCreditAsh && creditAsh) {
+      const ashRes = await fetch("/api/admin/payroll", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          employee: "Ash",
+          kind: "event",
+          event: form.event,
+          eventDate: form.eventDate,
+          hours: 0,
+          sales: form.sales,
+          commissionPct: ashRemainderPct,
+          tips: 0,
+          bonus: 0,
+          expenses: 0,
+          expenseNote: `Owner's remainder — auto-credited from ${form.employee}'s ${form.pct}% commission`,
+        }),
+      });
+      if (ashRes.ok) {
+        const ashBody = await ashRes.json();
+        newEntries.push(ashBody.entry);
+        if (ashBody.warning) warnings.push(`Ash's credit: ${ashBody.warning}`);
+      } else {
+        const ashBody = await ashRes.json().catch(() => ({}));
+        warnings.push(
+          `Couldn't auto-credit Ash: ${ashBody.error ?? "unknown error"}`,
+        );
+      }
+    }
+
+    setEntries((prev) =>
+      editingTimestamp
+        ? prev.map((x) => (x.timestamp === editingTimestamp ? entry : x))
+        : [...newEntries, ...prev],
+    );
+    setEditingTimestamp(null);
+    setForm(emptyForm(form.employee));
+    setCreditAsh(true);
+    if (warnings.length) {
+      setStatus({ kind: "warn", msg: warnings.join(" · ") });
+    } else {
+      setStatus({ kind: "saved" });
+      setTimeout(() => setStatus({ kind: "idle" }), 3500);
     }
   }
 
@@ -335,6 +379,29 @@ export default function PayrollPanel({
           </div>
         )}
 
+        {showCreditAsh && (
+          <label className="mt-4 flex items-start gap-3 rounded-xl border border-shell/15 bg-abyss/40 p-3">
+            <input
+              type="checkbox"
+              checked={creditAsh}
+              onChange={(e) => setCreditAsh(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-gold"
+            />
+            <span className="text-xs leading-relaxed text-shell/75">
+              <span className="font-semibold text-shell">
+                Also credit Ash the remaining {ashRemainderPct}%
+              </span>{" "}
+              of this event&apos;s sales ({usd((n(form.sales) * ashRemainderPct) / 100)}
+              ) — he doesn&apos;t log shifts, so this is his cut automatically.
+              <br />
+              <span className="text-coconut/80">
+                Uncheck this if someone else already logged this same event —
+                Ash only gets credited once per event.
+              </span>
+            </span>
+          </label>
+        )}
+
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
           <label className="block">
             <span className={label}>Tips ($)</span>
@@ -400,9 +467,20 @@ export default function PayrollPanel({
             </span>
           </div>
           <div className="mt-3 flex items-baseline justify-between border-t border-shell/10 pt-3">
-            <span className="h-sign-med text-lg text-shell">Total payout</span>
+            <span className="h-sign-med text-lg text-shell">
+              {form.employee}&apos;s payout
+            </span>
             <span className="h-sign text-3xl text-gold">{usd(payout)}</span>
           </div>
+          {showCreditAsh && creditAsh && (
+            <p className="mt-2 border-t border-shell/10 pt-2 text-xs text-shell/60">
+              + Ash gets{" "}
+              <span className="font-semibold text-coconut">
+                {usd((n(form.sales) * ashRemainderPct) / 100)}
+              </span>{" "}
+              logged separately (the remaining {ashRemainderPct}%)
+            </p>
+          )}
         </div>
 
         <div className="mt-4 flex items-center gap-4">
