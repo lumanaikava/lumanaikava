@@ -12,8 +12,13 @@ import SplashDrink from "@/components/SplashDrink";
  * the six site sections are drinks standing at the water's edge. Hover
  * a glass: it sloshes and throws droplets. Click: a golden light-burst
  * carries you to the page. A ticker of upcoming dates streams across
- * the bottom, forever. Palette stays navy/purple. Cutouts (transparent
- * bg) live in public/images/drinks/clear/.
+ * the bottom, forever. Palette stays navy/purple.
+ *
+ * Each section gets its own real drink icon from
+ * public/images/drinks/icons/ — trimmed, transparent, uniform height.
+ * `accent` is the splash-droplet color, brightened from the drink's own
+ * liquid so it reads against the navy. Order alternates warm/cool so no
+ * two neighbours look alike.
  */
 
 type DrinkNav = {
@@ -21,7 +26,6 @@ type DrinkNav = {
   label: string;
   img: string;
   accent: string;
-  filter?: string;
   delay: string;
 };
 
@@ -29,46 +33,43 @@ const nav: DrinkNav[] = [
   {
     href: "/menu",
     label: "Menu",
-    img: "/images/drinks/clear/hive-mind.png",
-    accent: "#e8871f",
+    img: "/images/drinks/icons/hive-gold.png",
+    accent: "#ffbb00",
     delay: "0s",
   },
   {
     href: "/products",
     label: "Shop",
-    img: "/images/drinks/clear/pacific-rim.png",
-    accent: "#8aa32b",
+    img: "/images/drinks/icons/crimson.png",
+    accent: "#ee1144",
     delay: "1.6s",
   },
   {
     href: "/events",
     label: "Book",
-    img: "/images/drinks/clear/adapterol-spritz.png",
-    accent: "#a93343",
+    img: "/images/drinks/icons/kolada.png",
+    accent: "#ffdd77",
     delay: "0.9s",
   },
   {
     href: "/find-us",
     label: "Find Us",
-    img: "/images/drinks/clear/hive-mind.png",
-    accent: "#2f9d99",
-    filter: "hue-rotate(150deg) saturate(0.85)",
+    img: "/images/drinks/icons/violet.png",
+    accent: "#a855e8",
     delay: "2.3s",
   },
   {
     href: "/ingredients",
     label: "Ingredients",
-    img: "/images/drinks/clear/adapterol-spritz.png",
-    accent: "#7a5cc4",
-    filter: "hue-rotate(230deg) saturate(0.9)",
+    img: "/images/drinks/icons/matcha.png",
+    accent: "#b5d334",
     delay: "1.2s",
   },
   {
     href: "/rewards",
     label: "Rewards",
-    img: "/images/drinks/clear/pacific-rim.png",
-    accent: "#d8b23a",
-    filter: "hue-rotate(-45deg) saturate(1.2)",
+    img: "/images/drinks/icons/ros.png",
+    accent: "#ff6a2b",
     delay: "2.9s",
   },
 ];
@@ -269,11 +270,9 @@ export default function Archipelago({
                   alt=""
                   accent={d.accent}
                   imgClassName="h-24 w-auto object-contain transition-transform duration-500 ease-out group-hover:scale-105 sm:h-28 lg:h-36"
-                  imgStyle={
-                    d.filter
-                      ? { filter: `${d.filter} drop-shadow(0 12px 16px rgba(0,0,0,0.55))` }
-                      : { filter: "drop-shadow(0 12px 16px rgba(0,0,0,0.55))" }
-                  }
+                  imgStyle={{
+                    filter: "drop-shadow(0 12px 16px rgba(0,0,0,0.55))",
+                  }}
                 />
               </span>
               <span className="h-sign-med mt-2 block text-base text-shell/90 transition-colors duration-300 group-hover:text-gold lg:text-lg">
