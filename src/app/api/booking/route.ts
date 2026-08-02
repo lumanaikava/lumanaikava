@@ -4,6 +4,7 @@ import {
   type BookingPayload,
 } from "@/lib/integrations/gohighlevel";
 import { sendAlertSms } from "@/lib/integrations/twilio";
+import { hasSmsConsent, consentNote } from "@/lib/sms-consent";
 
 export const runtime = "nodejs";
 
@@ -26,6 +27,15 @@ export async function POST(req: Request) {
   // the message so GHL sees it without a new custom field.
   if (payload.bartender) {
     payload.message += `\n\nPreferred bartender: ${payload.bartender}`;
+  }
+
+  // Stamp the SMS opt-in (or its absence) onto the lead record. Only
+  // meaningful when they actually gave a number.
+  if (payload.phone) {
+    const granted = hasSmsConsent(
+      (payload as { smsConsent?: string }).smsConsent,
+    );
+    payload.message += consentNote(granted, "booking form");
   }
 
   try {

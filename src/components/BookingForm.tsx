@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import SmsConsent from "./SmsConsent";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
@@ -96,6 +97,8 @@ export default function BookingForm({ prefill }: { prefill?: string }) {
           placeholder="Venue, vibe, whether we're the only bar or one of a few..."
         />
       </label>
+
+      <SmsConsent />
 
       <button
         type="submit"

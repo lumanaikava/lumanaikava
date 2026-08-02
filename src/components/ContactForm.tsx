@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import SmsConsent from "./SmsConsent";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
@@ -71,6 +72,16 @@ export default function ContactForm() {
       </label>
       <label className="block">
         <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
+          Phone <span className="normal-case tracking-normal">(optional)</span>
+        </span>
+        <input
+          name="phone"
+          type="tel"
+          className="mt-2 w-full rounded-xl border border-shell/20 bg-abyss/60 px-4 py-3 text-shell outline-none focus:border-gold"
+        />
+      </label>
+      <label className="block">
+        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
           Message
         </span>
         <textarea
@@ -80,6 +91,9 @@ export default function ContactForm() {
           className="mt-2 w-full rounded-xl border border-shell/20 bg-abyss/60 px-4 py-3 text-shell outline-none focus:border-gold"
         />
       </label>
+
+      <SmsConsent />
+
       <button
         type="submit"
         disabled={state === "submitting"}
