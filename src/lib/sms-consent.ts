@@ -11,7 +11,7 @@
  */
 
 export const CONSENT_LANGUAGE =
-  "Text me about events and drink drops. You'll hear from Lumanai a couple times a month — never more. Message and data rates may apply, and you can reply STOP any time to end it.";
+  "Text me about events and drink drops. By checking this box, you agree to receive marketing text messages from Lumanai Kava at the number provided. Message frequency varies (about twice a month). Message and data rates may apply. Reply STOP to unsubscribe or HELP for help.";
 
 /** True when the form's checkbox came back ticked. */
 export function hasSmsConsent(value: unknown): boolean {

@@ -24,9 +24,19 @@ export default function SmsConsent() {
         <span className="font-semibold text-shell">
           Text me about events and drink drops.
         </span>{" "}
-        You&apos;ll hear from Lumanai a couple times a month — never more.
-        Message and data rates may apply, and you can reply STOP any time
-        to end it. Optional; we&apos;ll still answer you either way.
+        By checking this box, you agree to receive marketing text messages
+        from <strong className="text-shell">Lumanai Kava</strong> at the
+        number provided. Message frequency varies (about twice a month).
+        Message and data rates may apply. Reply{" "}
+        <strong className="text-shell">STOP</strong> to unsubscribe or{" "}
+        <strong className="text-shell">HELP</strong> for help. See our{" "}
+        <a
+          href="/policies/privacy-policy"
+          className="underline underline-offset-2 hover:text-gold"
+        >
+          Privacy Policy
+        </a>
+        . Optional — we&apos;ll still answer you either way.
       </span>
     </label>
   );
