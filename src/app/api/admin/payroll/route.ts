@@ -6,6 +6,7 @@ import {
   appendCsvEntry,
   updateCsvEntry,
   deleteCsvEntry,
+  csvBackupEnabled,
   DEFAULT_HOURLY_RATE,
   type CommissionTier,
   type PayrollInput,
@@ -146,7 +147,9 @@ export async function POST(req: Request) {
   const entry = buildEntry(input);
 
   // Google Sheet = shared online source of truth; local CSV = auto-backup.
-  const stores: Store[] = [{ label: "local backup file", run: appendCsvEntry(entry) }];
+  const stores: Store[] = [];
+  if (csvBackupEnabled())
+    stores.push({ label: "local backup file", run: appendCsvEntry(entry) });
   if (payrollSheetConfigured())
     stores.push({ label: "Google Sheet", run: appendEntryToSheet(entry) });
 
@@ -180,9 +183,12 @@ export async function PUT(req: Request) {
   const { commissionAmt, totalPayout } = computePayout(input);
   const entry = { ...input, timestamp, commissionAmt, totalPayout };
 
-  const stores: Store[] = [
-    { label: "local backup file", run: updateCsvEntry(timestamp, input).then(() => {}) },
-  ];
+  const stores: Store[] = [];
+  if (csvBackupEnabled())
+    stores.push({
+      label: "local backup file",
+      run: updateCsvEntry(timestamp, input).then(() => {}),
+    });
   if (payrollSheetConfigured())
     stores.push({ label: "Google Sheet", run: updateEntryInSheet(timestamp, entry) });
 
@@ -205,9 +211,9 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "Missing timestamp." }, { status: 400 });
   }
 
-  const stores: Store[] = [
-    { label: "local backup file", run: deleteCsvEntry(timestamp) },
-  ];
+  const stores: Store[] = [];
+  if (csvBackupEnabled())
+    stores.push({ label: "local backup file", run: deleteCsvEntry(timestamp) });
   if (payrollSheetConfigured())
     stores.push({ label: "Google Sheet", run: deleteEntryFromSheet(timestamp) });
 

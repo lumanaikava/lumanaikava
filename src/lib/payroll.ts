@@ -136,6 +136,19 @@ export function payrollCsvPath(): string {
   );
 }
 
+/**
+ * Is the local CSV backup usable here?
+ *
+ * On a serverless host (Vercel) the filesystem is read-only, so every
+ * write would throw and fill the logs with noise about a backup that was
+ * never going to work. Setting PAYROLL_CSV_PATH is the opt-in: it's set
+ * on the machine in the office, unset in production, where the Google
+ * Sheet is the only store that matters.
+ */
+export function csvBackupEnabled(): boolean {
+  return Boolean(process.env.PAYROLL_CSV_PATH);
+}
+
 function toRow(e: PayrollEntry): string {
   return entryToValues(e).map(csvCell).join(",");
 }
