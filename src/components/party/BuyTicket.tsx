@@ -11,30 +11,27 @@ export type Tier = {
 };
 
 /**
- * What each tier actually gets you. Keyed by a lowercased fragment of the
- * Shopify variant title, so renaming "VIP" to "VIP Table" in Shopify keeps
- * working. Edit these lines freely — they're the only promise the page
- * makes about what's included, so they should match what the crew delivers.
+ * What every ticket gets you. This is the only promise the page makes
+ * about what's included — keep it matched to what the crew actually
+ * hands people at the door.
  */
-const PERKS: { match: string; perks: string[] }[] = [
-  {
-    match: "vip",
-    perks: [
-      "Everything in General",
-      "First pour of the exclusives",
-      "Reserved seating at the bar",
-      "Take-home RUSH tin",
-    ],
-  },
-  {
-    match: "general",
-    perks: ["Open kava bar all night", "The full launch menu", "Live DJ"],
-  },
+const INCLUDED = [
+  "Open kava bar all night",
+  "The full launch menu, exclusives included",
+  "Live DJ",
 ];
+
+/**
+ * Extra perks for named tiers, keyed by a lowercased fragment of the
+ * Shopify variant title. Empty today — the launch sells one ticket. Add
+ * a row here if a VIP variant goes up in Shopify later and the page picks
+ * it up on its own.
+ */
+const TIER_PERKS: { match: string; perks: string[] }[] = [];
 
 function perksFor(title: string): string[] {
   const t = title.toLowerCase();
-  return PERKS.find((p) => t.includes(p.match))?.perks ?? [];
+  return TIER_PERKS.find((p) => t.includes(p.match))?.perks ?? INCLUDED;
 }
 
 export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
@@ -124,6 +121,24 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
         </fieldset>
       )}
 
+      {/* One ticket, one price — say what it buys instead of showing a
+          chooser with nothing to choose. */}
+      {!showTiers && (
+        <div className="text-center">
+          <p className="h-sign text-5xl text-gold">{tier.priceLabel}</p>
+          <ul className="mt-4 inline-flex flex-col gap-1.5 text-left">
+            {INCLUDED.map((p) => (
+              <li key={p} className="text-sm text-shell/75">
+                <span aria-hidden className="mr-2 text-gold">
+                  ·
+                </span>
+                {p}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="flex flex-wrap items-center justify-center gap-4">
         <label
           htmlFor="ticket-qty"
@@ -154,9 +169,13 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
         >
           {busy
             ? "Opening checkout..."
-            : tier.available
-              ? `Claim ${qty > 1 ? `${qty} spots` : "your spot"} · ${tier.priceLabel}`
-              : "Sold out"}
+            : !tier.available
+              ? "Sold out"
+              : `Claim ${qty > 1 ? `${qty} spots` : "your spot"}${
+                  // The price already sits above a lone tier — only repeat
+                  // it when a chooser makes "which price?" a real question.
+                  showTiers ? ` · ${tier.priceLabel}` : ""
+                }`}
         </button>
         {error && <p className="text-sm text-coconut">{error}</p>}
       </div>
