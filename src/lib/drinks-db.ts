@@ -22,6 +22,13 @@ export type DrinkRecord = {
   alsoIn: string[];
   calories?: number;
   caloriesEstimated?: boolean;
+  /**
+   * Pours that exist only behind the velvet rope — the Lumanai Launch
+   * exclusives. Kept out of every public surface (menu, ingredients
+   * "Found in", nutrition) until they earn a spot on the real menu.
+   * Only /invited renders these.
+   */
+  secret?: boolean;
 };
 
 export const drinks: DrinkRecord[] = [
@@ -87,11 +94,43 @@ export const drinks: DrinkRecord[] = [
     calories: 10,
     caloriesEstimated: true,
   },
+
+  /* ── Lumanai Launch exclusives — secret until 08.28 ─────────── */
+  {
+    slug: "purple-pulse",
+    name: "Purple Pulse",
+    kind: "naktail",
+    accent: "#6b3a9c",
+    image: "/images/drinks/icons/violet.png",
+    functional: ["premium-noble-kava", "kanna-leaf-extract"],
+    alsoIn: ["Butterfly pea flower", "Cucumber", "Fresh mint", "Lime"],
+    secret: true,
+  },
+  {
+    slug: "the-foundation",
+    name: "The Foundation",
+    kind: "naktail",
+    accent: "#8aa32b",
+    image: "/images/drinks/icons/matcha.png",
+    functional: ["premium-noble-kava", "lions-mane"],
+    alsoIn: ["Ceremonial matcha", "Coconut milk", "Honey"],
+    secret: true,
+  },
 ];
 
-/** Drinks that pour a given functional ingredient. */
+/** Everything safe to show on public pages — menus, ingredients, nutrition. */
+export const publicDrinks = drinks.filter((d) => !d.secret);
+
+/** Only the launch-party pours. */
+export const secretDrinks = drinks.filter((d) => d.secret);
+
+/**
+ * Drinks that pour a given functional ingredient. Secret pours are
+ * excluded — otherwise the ingredients page's "Found in:" line would
+ * quietly spoil the launch menu.
+ */
 export function drinksWithIngredient(slug: Ingredient["slug"]): DrinkRecord[] {
-  return drinks.filter((d) => d.functional.includes(slug));
+  return publicDrinks.filter((d) => d.functional.includes(slug));
 }
 
 /** Full ingredient records for one drink, for a nutrition/menu detail view. */
