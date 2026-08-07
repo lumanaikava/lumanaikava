@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import type { PayrollEntry, PayrollKind } from "@/lib/payroll";
 
-const CREW = ["Ash", "Zach", "Karina"];
+import { CREW } from "@/lib/crew";
 
 function usd(n: number) {
   return n.toLocaleString("en-US", { style: "currency", currency: "USD" });

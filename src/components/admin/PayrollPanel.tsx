@@ -3,7 +3,8 @@
 import { useMemo, useState, type FormEvent } from "react";
 import type { PayrollEntry, PayrollKind } from "@/lib/payroll";
 
-const CREW = ["Ash", "Zach", "Karina"];
+import { CREW } from "@/lib/crew";
+
 const TIERS = [10, 15, 20, 25];
 const DEFAULT_HOURLY_RATE = 15;
 

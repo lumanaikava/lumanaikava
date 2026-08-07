@@ -1,19 +1,20 @@
 import { NextResponse } from "next/server";
+import { CREW, isCrew, passcodeEnvName } from "@/lib/crew";
 
 export const runtime = "nodejs";
 
-/** Each crew member's own passcode (env). Falls back to nothing if unset. */
+/**
+ * Each crew member's own passcode, e.g. ADMIN_PASSCODE_ARIES. Derived
+ * from the name rather than a hand-written switch so adding someone to
+ * CREW is genuinely all it takes — a missed case here used to mean the
+ * person could only get in with the shared master passcode.
+ *
+ * Returns undefined when unset, and the caller then requires the master
+ * passcode — an unset var must never mean "any passcode works".
+ */
 function passcodeFor(name: string): string | undefined {
-  switch (name) {
-    case "Ash":
-      return process.env.ADMIN_PASSCODE_ASH;
-    case "Zach":
-      return process.env.ADMIN_PASSCODE_ZACH;
-    case "Karina":
-      return process.env.ADMIN_PASSCODE_KARINA;
-    default:
-      return undefined;
-  }
+  if (!isCrew(name)) return undefined;
+  return process.env[passcodeEnvName(name)];
 }
 
 export async function POST(req: Request) {
@@ -25,9 +26,7 @@ export async function POST(req: Request) {
   }
 
   const master = process.env.ADMIN_PASSCODE;
-  const name = ["Ash", "Zach", "Karina"].includes(body.name ?? "")
-    ? body.name!
-    : "Crew";
+  const name = CREW.includes(body.name ?? "") ? body.name! : "Crew";
   const given = body.passcode ?? "";
 
   // Accept the person's own passcode, or the shared master passcode.

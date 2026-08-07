@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 
-const CREW = ["Ash", "Zach", "Karina"];
+import { CREW } from "@/lib/crew";
 
 export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
@@ -34,13 +34,15 @@ export default function LoginForm() {
         <legend className="mx-auto text-xs font-semibold uppercase tracking-[0.2em] text-shell/60">
           Who&apos;s pouring?
         </legend>
-        <div className="mt-3 flex justify-center gap-2">
+        {/* Wraps on purpose — the roster grows, and a phone is where the
+            crew actually signs in. */}
+        <div className="mt-3 flex flex-wrap justify-center gap-2">
           {CREW.map((n) => (
             <button
               key={n}
               type="button"
               onClick={() => setName(n)}
-              className={`rounded-full border px-5 py-2 text-xs font-bold uppercase tracking-[0.2em] transition-colors ${
+              className={`rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] transition-colors ${
                 name === n
                   ? "border-gold bg-gold/15 text-gold"
                   : "border-shell/25 text-shell/70 hover:border-shell/50"

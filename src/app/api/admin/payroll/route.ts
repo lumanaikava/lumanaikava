@@ -17,10 +17,9 @@ import {
   deleteEntryFromSheet,
   payrollSheetConfigured,
 } from "@/lib/integrations/payroll-sheet";
+import { CREW } from "@/lib/crew";
 
 export const runtime = "nodejs";
-
-const CREW = ["Ash", "Zach", "Karina"];
 
 async function requireAuth() {
   const jar = await cookies();
