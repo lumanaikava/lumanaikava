@@ -33,7 +33,8 @@ export type AdminOrder = {
   address: string;
   note: string;
   tags: string[];
-  items: { title: string; quantity: number }[];
+  /** `handle` is absent on deleted products — match defensively. */
+  items: { title: string; quantity: number; handle?: string }[];
 };
 
 type OrdersQueryResult = {
@@ -53,7 +54,15 @@ type OrdersQueryResult = {
           phone: string | null;
         } | null;
         shippingAddress: { address1: string | null; city: string | null } | null;
-        lineItems: { edges: { node: { title: string; quantity: number } }[] };
+        lineItems: {
+          edges: {
+            node: {
+              title: string;
+              quantity: number;
+              variant: { product: { handle: string } | null } | null;
+            };
+          }[];
+        };
       };
     }[];
   };
@@ -121,6 +130,11 @@ export async function getRecentOrders(limit = 25): Promise<AdminOrder[]> {
                   node {
                     title
                     quantity
+                    variant {
+                      product {
+                        handle
+                      }
+                    }
                   }
                 }
               }
@@ -145,7 +159,11 @@ export async function getRecentOrders(limit = 25): Promise<AdminOrder[]> {
       .join(", "),
     note: node.note ?? "",
     tags: node.tags,
-    items: node.lineItems.edges.map((e) => e.node),
+    items: node.lineItems.edges.map((e) => ({
+      title: e.node.title,
+      quantity: e.node.quantity,
+      handle: e.node.variant?.product?.handle,
+    })),
   }));
 }
 

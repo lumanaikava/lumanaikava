@@ -17,6 +17,7 @@ import {
   shopifyAdminConfigured,
   type AdminOrder,
 } from "@/lib/integrations/shopify-admin";
+import { loadGuestBoard } from "@/lib/guest-board";
 
 export const metadata: Metadata = {
   title: "Command Center",
@@ -121,6 +122,9 @@ export default async function AdminPage() {
     payrollEntries = await readPayrollEntries();
   }
 
+  // Never let the party board take the whole dashboard down with it.
+  const guestBoard = await loadGuestBoard().catch(() => null);
+
   const automations: { name: string; status: "live" | "pending"; note: string }[] = [
     { name: "Booking form → GoHighLevel", status: "live", note: "Every quote request creates a lead" },
     { name: "Contact form → GoHighLevel", status: "live", note: "Tagged [Contact form]" },
@@ -153,6 +157,15 @@ export default async function AdminPage() {
       note: sheetLive
         ? "Log shifts above — auto-computes pay, syncs to your Google Sheet"
         : "Log shifts above — saves locally; add PAYROLL_SHEET_WEBHOOK_URL to sync the Google Sheet",
+    },
+    {
+      name: "Ticket buyers → guest list",
+      status: guestBoard?.sheetReady && ordersReady ? "live" : "pending",
+      note: !ordersReady
+        ? "Needs SHOPIFY_ADMIN_TOKEN (read_orders) so buyers sync in"
+        : guestBoard?.sheetReady
+          ? "Buyers appear automatically · leads and check-ins save to the sheet"
+          : "Needs GUESTLIST_SHEET_WEBHOOK_URL to save leads and statuses",
     },
     {
       name: "AI email agent (auto-replies)",
@@ -298,6 +311,46 @@ export default async function AdminPage() {
             </li>
           ))}
         </ul>
+      )}
+
+      {/* Lumanai Launch guest list */}
+      {guestBoard && (
+        <>
+          <div className="mt-10 flex flex-wrap items-baseline justify-between gap-3">
+            <h2 className="h-sign-med text-2xl text-shell">
+              Guest list · Lumanai Launch
+            </h2>
+            <Link
+              href="/admin/guests"
+              className="rounded-full border border-gold/40 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-gold hover:bg-gold/10"
+            >
+              Manage list →
+            </Link>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              { label: "Locked in", value: guestBoard.totals.confirmed },
+              { label: "Leads", value: guestBoard.totals.leads },
+              { label: "Checked in", value: guestBoard.totals.checkedIn },
+              { label: "Headcount", value: guestBoard.totals.headcount },
+            ].map((s) => (
+              <div
+                key={s.label}
+                className="rounded-2xl border border-shell/10 bg-lagoon/30 px-5 py-4"
+              >
+                <p className="h-sign text-4xl text-gold">{s.value}</p>
+                <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-shell/45">
+                  {s.label}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-shell/50">
+            {guestBoard.sheetReady
+              ? "Ticket buyers land here automatically · add leads and lock them in on the full list"
+              : "Read-only — connect the Guest List sheet to save leads (see Guest List Sheet Setup.md)"}
+          </p>
+        </>
       )}
 
       {/* Payroll + commissions */}
