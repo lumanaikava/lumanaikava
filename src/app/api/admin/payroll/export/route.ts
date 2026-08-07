@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { promises as fs } from "fs";
+import { getSession } from "@/lib/admin-session";
 import {
   payrollCsvPath,
   csvBackupEnabled,
@@ -27,10 +27,13 @@ function csvCell(v: string | number): string {
  * from the Google Sheet — the download works the same either way.
  */
 export async function GET() {
-  const jar = await cookies();
-  const auth = jar.get("lumanai_admin")?.value;
-  if (!auth || auth !== process.env.ADMIN_PASSCODE) {
-    return NextResponse.json({ error: "Not signed in." }, { status: 401 });
+  // The whole ledger, every person's pay — owners only.
+  const session = await getSession();
+  if (!session.isOwner) {
+    return NextResponse.json(
+      { error: session.authed ? "Owners only." : "Not signed in." },
+      { status: session.authed ? 403 : 401 },
+    );
   }
 
   let csv: string | null = null;

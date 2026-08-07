@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import Link from "next/link";
 import PayrollReport from "@/components/admin/PayrollReport";
 import { readPayrollEntries } from "@/lib/payroll";
@@ -7,6 +6,7 @@ import {
   readSheetEntriesStrict,
   payrollSheetConfigured,
 } from "@/lib/integrations/payroll-sheet";
+import { getSession } from "@/lib/admin-session";
 
 export const metadata: Metadata = {
   title: "Payroll Report",
@@ -16,24 +16,42 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function PayrollReportPage() {
-  const jar = await cookies();
-  const authed =
-    !!process.env.ADMIN_PASSCODE &&
-    jar.get("lumanai_admin")?.value === process.env.ADMIN_PASSCODE;
+  // The full report is everyone's pay in one table — owners only. Staff
+  // see their own numbers on the Command Center instead.
+  const session = await getSession();
 
-  if (!authed) {
+  if (!session.isOwner) {
     return (
       <section className="mx-auto max-w-2xl px-6 py-24 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
-          Crew only
+          {session.authed ? "Owners only" : "Crew only"}
         </p>
         <h1 className="h-sign mt-3 text-5xl text-shell">Payroll Report</h1>
         <p className="mt-4 text-shell/70">
-          Sign in at the{" "}
-          <Link href="/admin" className="prose-link text-shell hover:text-gold">
-            Command Center
-          </Link>{" "}
-          first.
+          {session.authed ? (
+            <>
+              This page shows the whole crew&apos;s pay. Your own hours and
+              totals are on the{" "}
+              <Link
+                href="/admin"
+                className="prose-link text-shell hover:text-gold"
+              >
+                Command Center
+              </Link>
+              .
+            </>
+          ) : (
+            <>
+              Sign in at the{" "}
+              <Link
+                href="/admin"
+                className="prose-link text-shell hover:text-gold"
+              >
+                Command Center
+              </Link>{" "}
+              first.
+            </>
+          )}
         </p>
       </section>
     );

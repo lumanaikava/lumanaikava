@@ -1,20 +1,30 @@
 import { NextResponse } from "next/server";
-import { CREW, isCrew, passcodeEnvName } from "@/lib/crew";
+import { isCrew, roleOf, passcodeEnvName } from "@/lib/crew";
+import {
+  serializeSession,
+  SESSION_COOKIE,
+  SESSION_COOKIE_OPTIONS,
+} from "@/lib/admin-session";
 
 export const runtime = "nodejs";
 
 /**
- * Each crew member's own passcode, e.g. ADMIN_PASSCODE_ARIES. Derived
- * from the name rather than a hand-written switch so adding someone to
- * CREW is genuinely all it takes — a missed case here used to mean the
- * person could only get in with the shared master passcode.
+ * The passcode that signs this person in.
  *
- * Returns undefined when unset, and the caller then requires the master
- * passcode — an unset var must never mean "any passcode works".
+ * Their own (ADMIN_PASSCODE_ARIES) if set, otherwise the shared
+ * STAFF_PASSCODE for staff. The shared one exists so adding a crew
+ * member doesn't lock them out until someone remembers to create an env
+ * var — but it does let staff sign in as each other, which
+ * passcodeIssues() warns about.
+ *
+ * Undefined means nobody can sign in as them: an unset var must never
+ * mean "any passcode works".
  */
 function passcodeFor(name: string): string | undefined {
   if (!isCrew(name)) return undefined;
-  return process.env[passcodeEnvName(name)];
+  const own = process.env[passcodeEnvName(name)];
+  if (own) return own;
+  return roleOf(name) === "staff" ? process.env.STAFF_PASSCODE : undefined;
 }
 
 export async function POST(req: Request) {
@@ -25,13 +35,33 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const master = process.env.ADMIN_PASSCODE;
-  const name = CREW.includes(body.name ?? "") ? body.name! : "Crew";
-  const given = body.passcode ?? "";
+  const name = body.name ?? "";
+  const role = roleOf(name);
+  if (!role) {
+    return NextResponse.json({ error: "Pick who you are." }, { status: 400 });
+  }
 
-  // Accept the person's own passcode, or the shared master passcode.
+  const given = body.passcode ?? "";
   const personPass = passcodeFor(name);
-  const ok = (personPass && given === personPass) || (master && given === master);
+  const master = process.env.ADMIN_PASSCODE;
+
+  // Say plainly that nobody set them up, rather than letting it look
+  // like they keep typing the wrong code.
+  if (!personPass && role === "staff") {
+    return NextResponse.json(
+      {
+        error: `No passcode is set up for ${name} yet — ask Ash or Zach to add one.`,
+      },
+      { status: 403 },
+    );
+  }
+
+  // The master passcode is an owner override — it must NOT be a way for
+  // staff to sign in, or the whole staff/owner split is decorative.
+  const ok =
+    (personPass && given === personPass) ||
+    (role === "owner" && master && given === master);
+
   if (!ok) {
     return NextResponse.json(
       { error: "Wrong passcode for that name." },
@@ -39,16 +69,15 @@ export async function POST(req: Request) {
     );
   }
 
-  // The gate cookie stays the shared master value so the existing admin
-  // routes keep working; a second cookie records who signed in.
-  const res = NextResponse.json({ ok: true });
-  const cookie = {
-    httpOnly: true,
-    sameSite: "lax" as const,
-    path: "/",
-    maxAge: 60 * 60 * 24 * 14, // two weeks
-  };
-  res.cookies.set("lumanai_admin", master ?? "ok", cookie);
-  res.cookies.set("lumanai_crew", name, cookie);
+  const res = NextResponse.json({ ok: true, name, role });
+  res.cookies.set(
+    SESSION_COOKIE,
+    serializeSession(name, role),
+    SESSION_COOKIE_OPTIONS,
+  );
+  // Retire the old cookies so an existing browser can't keep using the
+  // pre-roles session, which granted everything to everyone.
+  res.cookies.set("lumanai_admin", "", { path: "/", maxAge: 0 });
+  res.cookies.set("lumanai_crew", "", { path: "/", maxAge: 0 });
   return res;
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { getSession } from "@/lib/admin-session";
 import { loadGuestBoard } from "@/lib/guest-board";
 import {
   appendGuest,
@@ -12,17 +12,18 @@ import { isGuestStatus, type Guest } from "@/lib/guests";
 
 export const runtime = "nodejs";
 
+/** Guest contact details are customer data — owners only. */
 async function requireAuth() {
-  const jar = await cookies();
-  const auth = jar.get("lumanai_admin")?.value;
-  if (!auth || auth !== process.env.ADMIN_PASSCODE) {
-    return { ok: false as const, crew: "" };
-  }
-  return { ok: true as const, crew: jar.get("lumanai_crew")?.value ?? "Crew" };
+  const session = await getSession();
+  if (!session.isOwner) return { ok: false as const, crew: "", session };
+  return { ok: true as const, crew: session.name, session };
 }
 
-const unauthorized = () =>
-  NextResponse.json({ error: "Not signed in." }, { status: 401 });
+const unauthorized = (session: { authed: boolean }) =>
+  NextResponse.json(
+    { error: session.authed ? "Owners only." : "Not signed in." },
+    { status: session.authed ? 403 : 401 },
+  );
 
 /**
  * Writes need the sheet — there's nowhere else to put a lead. Say so
@@ -48,14 +49,14 @@ async function body(req: Request): Promise<Record<string, unknown> | null> {
 /** The whole board — buyers merged with saved leads. */
 export async function GET() {
   const auth = await requireAuth();
-  if (!auth.ok) return unauthorized();
+  if (!auth.ok) return unauthorized(auth.session);
   return NextResponse.json(await loadGuestBoard());
 }
 
 /** Add a lead by hand. */
 export async function POST(req: Request) {
   const auth = await requireAuth();
-  if (!auth.ok) return unauthorized();
+  if (!auth.ok) return unauthorized(auth.session);
   if (!guestSheetConfigured()) return needsSheet();
 
   const b = await body(req);
@@ -99,7 +100,7 @@ export async function POST(req: Request) {
 /** Change a status (lock someone in, check them in) or edit notes. */
 export async function PUT(req: Request) {
   const auth = await requireAuth();
-  if (!auth.ok) return unauthorized();
+  if (!auth.ok) return unauthorized(auth.session);
   if (!guestSheetConfigured()) return needsSheet();
 
   const b = await body(req);
@@ -134,7 +135,7 @@ export async function PUT(req: Request) {
 /** Remove a manually-added guest. */
 export async function DELETE(req: Request) {
   const auth = await requireAuth();
-  if (!auth.ok) return unauthorized();
+  if (!auth.ok) return unauthorized(auth.session);
   if (!guestSheetConfigured()) return needsSheet();
 
   const b = await body(req);

@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { sendSms } from "@/lib/integrations/twilio";
+import { getSession } from "@/lib/admin-session";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  // Same cookie the Command Center login sets.
-  const jar = await cookies();
-  const auth = jar.get("lumanai_admin")?.value;
-  if (!auth || auth !== process.env.ADMIN_PASSCODE) {
-    return NextResponse.json({ error: "Not signed in." }, { status: 401 });
+  // Texting customers from the business number is an owner action.
+  const session = await getSession();
+  if (!session.isOwner) {
+    return NextResponse.json(
+      { error: session.authed ? "Owners only." : "Not signed in." },
+      { status: session.authed ? 403 : 401 },
+    );
   }
 
   let body: { to?: string; message?: string };

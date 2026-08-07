@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import Link from "next/link";
 import LoginForm from "@/components/admin/LoginForm";
 import SmsComposer from "@/components/admin/SmsComposer";
@@ -18,6 +17,7 @@ import {
   type AdminOrder,
 } from "@/lib/integrations/shopify-admin";
 import { loadGuestBoard } from "@/lib/guest-board";
+import { getSession, passcodeIssues } from "@/lib/admin-session";
 
 export const metadata: Metadata = {
   title: "Command Center",
@@ -55,12 +55,9 @@ function statusChip(status: "live" | "pending") {
 }
 
 export default async function AdminPage() {
-  const jar = await cookies();
-  const authed =
-    !!process.env.ADMIN_PASSCODE &&
-    jar.get("lumanai_admin")?.value === process.env.ADMIN_PASSCODE;
+  const session = await getSession();
 
-  if (!authed) {
+  if (!session.authed) {
     return (
       <section className="mx-auto max-w-2xl px-6 py-24 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
@@ -72,7 +69,8 @@ export default async function AdminPage() {
     );
   }
 
-  const crewName = jar.get("lumanai_crew")?.value ?? "Crew";
+  const crewName = session.name;
+  const isOwner = session.isOwner;
   const calendarSynced = gcalConfigured();
   const ordersReady = shopifyAdminConfigured();
   const twilioReady = Boolean(
@@ -85,19 +83,21 @@ export default async function AdminPage() {
   const next = (await upcomingEventsSynced(new Date(), 4, { fresh: true })).slice(0, 6);
 
   let shopLine = "Shopify unreachable — using static fallback.";
-  try {
-    const { items, live } = await getCatalog();
-    const soldOut = items.filter((p) => !p.available).length;
-    shopLine = live
-      ? `${items.length} products live · ${soldOut} sold out`
-      : "Static fallback active (Shopify unreachable)";
-  } catch {
-    /* keep default */
+  if (isOwner) {
+    try {
+      const { items, live } = await getCatalog();
+      const soldOut = items.filter((p) => !p.available).length;
+      shopLine = live
+        ? `${items.length} products live · ${soldOut} sold out`
+        : "Static fallback active (Shopify unreachable)";
+    } catch {
+      /* keep default */
+    }
   }
 
   let orders: AdminOrder[] = [];
   let ordersError: string | null = null;
-  if (ordersReady) {
+  if (isOwner && ordersReady) {
     try {
       orders = await getRecentOrders(8);
     } catch (err) {
@@ -122,8 +122,19 @@ export default async function AdminPage() {
     payrollEntries = await readPayrollEntries();
   }
 
+  // Staff see only their own shifts. Filtered HERE, on the server, so the
+  // rest of the crew's pay is never sent to their browser at all — hiding
+  // it in the component would still ship it in the page payload.
+  if (!isOwner) {
+    payrollEntries = payrollEntries.filter((e) => e.employee === crewName);
+  }
+
   // Never let the party board take the whole dashboard down with it.
-  const guestBoard = await loadGuestBoard().catch(() => null);
+  const guestBoard = isOwner
+    ? await loadGuestBoard().catch(() => null)
+    : null;
+
+  const configIssues = isOwner ? passcodeIssues() : [];
 
   const automations: { name: string; status: "live" | "pending"; note: string }[] = [
     { name: "Booking form → GoHighLevel", status: "live", note: "Every quote request creates a lead" },
@@ -174,6 +185,57 @@ export default async function AdminPage() {
     },
   ];
 
+  /* ── Staff view ─────────────────────────────────────────────
+     Their own hours, and nothing else. Deliberately a separate,
+     much shorter page rather than the full dashboard with pieces
+     hidden — less to get wrong, and nothing extra to leak. */
+  if (!isOwner) {
+    return (
+      <section className="mx-auto max-w-3xl px-6 py-10">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+          My hours
+        </p>
+        <h1 className="h-sign mt-2 text-5xl text-shell">
+          Hey{crewName ? `, ${crewName}` : ""}.
+        </h1>
+        <p className="mt-3 text-sm text-shell/60">
+          Log your shifts here. Everything you submit goes straight to Ash
+          and Zach — you don&apos;t need to send it anywhere else.
+        </p>
+
+        <div className="mt-8">
+          <PayrollPanel
+            initialEntries={payrollEntries}
+            defaultEmployee={crewName}
+            lockedEmployee={crewName}
+          />
+        </div>
+
+        <div className="mt-10 rounded-3xl border border-shell/10 bg-lagoon/30 p-6">
+          <h2 className="h-sign-med text-xl text-shell">Next appearances</h2>
+          <ul className="mt-4 space-y-2.5">
+            {next.map((e) => {
+              const d = formatEventDate(e.date);
+              return (
+                <li key={e.date + e.title} className="flex gap-3 text-sm">
+                  <span
+                    className="w-20 shrink-0 font-semibold uppercase tracking-wide"
+                    style={{
+                      color: e.kind === "market" ? "#c9a7ee" : "#9ec5ea",
+                    }}
+                  >
+                    {d.weekday} {d.month} {d.day}
+                  </span>
+                  <span className="text-shell/80">{e.title}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="mx-auto max-w-6xl px-6 py-10">
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
@@ -182,6 +244,21 @@ export default async function AdminPage() {
       <h1 className="h-sign mt-2 text-5xl text-shell">
         Run the island{crewName !== "Crew" ? `, ${crewName}` : ""}.
       </h1>
+
+      {/* Roles are only as strong as the passcodes behind them. */}
+      {configIssues.map((issue) => (
+        <p
+          key={issue.message}
+          className={`mt-4 rounded-2xl border p-4 text-sm ${
+            issue.level === "critical"
+              ? "border-coconut/50 bg-coconut/10 text-coconut"
+              : "border-shell/15 bg-lagoon/30 text-shell/70"
+          }`}
+        >
+          <b>{issue.level === "critical" ? "Security: " : "Heads up: "}</b>
+          {issue.message}
+        </p>
+      ))}
 
       <div className="mt-8 grid gap-5 lg:grid-cols-3">
         {/* Upcoming */}

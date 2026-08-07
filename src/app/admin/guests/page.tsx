@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import Link from "next/link";
 import LoginForm from "@/components/admin/LoginForm";
 import GuestList from "@/components/admin/GuestList";
 import { loadGuestBoard } from "@/lib/guest-board";
+import { getSession } from "@/lib/admin-session";
 
 export const metadata: Metadata = {
   title: "Guest List",
@@ -13,19 +13,23 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function GuestsPage() {
-  const jar = await cookies();
-  const authed =
-    !!process.env.ADMIN_PASSCODE &&
-    jar.get("lumanai_admin")?.value === process.env.ADMIN_PASSCODE;
+  // Guest contact details are customer data — owners only.
+  const session = await getSession();
 
-  if (!authed) {
+  if (!session.isOwner) {
     return (
       <section className="mx-auto max-w-2xl px-6 py-24 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
-          Crew only
+          {session.authed ? "Owners only" : "Crew only"}
         </p>
         <h1 className="h-sign mt-3 text-5xl text-shell">Guest List</h1>
-        <LoginForm />
+        {session.authed ? (
+          <p className="mt-4 text-shell/70">
+            Ash or Zach can get you what you need from the list.
+          </p>
+        ) : (
+          <LoginForm />
+        )}
       </section>
     );
   }

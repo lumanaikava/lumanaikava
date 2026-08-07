@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import {
   getRecentOrders,
   ordersToFulfillmentCsv,
   shopifyAdminConfigured,
 } from "@/lib/integrations/shopify-admin";
+import { getSession } from "@/lib/admin-session";
 
 export const runtime = "nodejs";
 
@@ -14,11 +14,13 @@ export const runtime = "nodejs";
  * File → Import → Append to current sheet.
  */
 export async function GET() {
-  // Same cookie the Command Center login sets.
-  const jar = await cookies();
-  const auth = jar.get("lumanai_admin")?.value;
-  if (!auth || auth !== process.env.ADMIN_PASSCODE) {
-    return NextResponse.json({ error: "Not signed in." }, { status: 401 });
+  // Customer names, addresses and phone numbers — owners only.
+  const session = await getSession();
+  if (!session.isOwner) {
+    return NextResponse.json(
+      { error: session.authed ? "Owners only." : "Not signed in." },
+      { status: session.authed ? 403 : 401 },
+    );
   }
 
   if (!shopifyAdminConfigured()) {

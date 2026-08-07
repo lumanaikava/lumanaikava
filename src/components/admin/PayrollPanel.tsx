@@ -64,14 +64,24 @@ function entryToForm(e: PayrollEntry): FormValues {
 export default function PayrollPanel({
   initialEntries,
   defaultEmployee,
+  lockedEmployee,
 }: {
   initialEntries: PayrollEntry[];
   defaultEmployee: string;
+  /**
+   * Staff log only their own shifts, so the picker collapses to a name.
+   * This is a convenience, NOT the control — the API rejects a mismatched
+   * employee regardless of what the form sends.
+   */
+  lockedEmployee?: string;
 }) {
   const [entries, setEntries] = useState<PayrollEntry[]>(initialEntries);
   const [editingTimestamp, setEditingTimestamp] = useState<string | null>(null);
   const [form, setForm] = useState<FormValues>(
-    emptyForm(CREW.includes(defaultEmployee) ? defaultEmployee : CREW[0]),
+    emptyForm(
+      lockedEmployee ??
+        (CREW.includes(defaultEmployee) ? defaultEmployee : CREW[0]),
+    ),
   );
   // Ash doesn't work shifts himself — he takes whatever's left of an
   // event's sales after the bartender's commission. On by default for
@@ -139,6 +149,10 @@ export default function PayrollPanel({
       bonus: form.bonus,
       expenses: form.expenses,
       expenseNote: form.expenseNote,
+      // The server creates Ash's companion entry itself — staff aren't
+      // allowed to write entries for other people, and doing it in one
+      // request means it can't half-succeed across two round trips.
+      creditOwnerRemainder: showCreditAsh && creditAsh,
     };
     const res = await fetch("/api/admin/payroll", {
       method: editingTimestamp ? "PUT" : "POST",
@@ -152,40 +166,9 @@ export default function PayrollPanel({
       setStatus({ kind: "error", msg: body.error ?? "Couldn't save." });
       return;
     }
-    const { entry, warning } = await res.json();
-    const newEntries = [entry];
+    const { entry, entries: saved, warning } = await res.json();
+    const newEntries: PayrollEntry[] = saved ?? [entry];
     const warnings = warning ? [warning] : [];
-
-    // Auto-credit Ash the remaining % of the same event's sales.
-    if (showCreditAsh && creditAsh) {
-      const ashRes = await fetch("/api/admin/payroll", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          employee: "Ash",
-          kind: "event",
-          event: form.event,
-          eventDate: form.eventDate,
-          hours: 0,
-          sales: form.sales,
-          commissionPct: ashRemainderPct,
-          tips: 0,
-          bonus: 0,
-          expenses: 0,
-          expenseNote: `Owner's remainder — auto-credited from ${form.employee}'s ${form.pct}% commission`,
-        }),
-      });
-      if (ashRes.ok) {
-        const ashBody = await ashRes.json();
-        newEntries.push(ashBody.entry);
-        if (ashBody.warning) warnings.push(`Ash's credit: ${ashBody.warning}`);
-      } else {
-        const ashBody = await ashRes.json().catch(() => ({}));
-        warnings.push(
-          `Couldn't auto-credit Ash: ${ashBody.error ?? "unknown error"}`,
-        );
-      }
-    }
 
     setEntries((prev) =>
       editingTimestamp
@@ -236,26 +219,32 @@ export default function PayrollPanel({
         onSubmit={submit}
         className="rounded-3xl border border-shell/10 bg-lagoon/30 p-6"
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h3 className="h-sign-med text-xl text-shell">
             {editingTimestamp ? "Edit log" : "Log a shift"}
           </h3>
-          <div className="flex gap-1.5">
-            {CREW.map((c) => (
-              <button
-                key={c}
-                type="button"
-                onClick={() => set("employee", c)}
-                className={`rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] transition-colors ${
-                  form.employee === c
-                    ? "border-gold bg-gold/15 text-gold"
-                    : "border-shell/25 text-shell/60 hover:border-shell/50"
-                }`}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
+          {lockedEmployee ? (
+            <span className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-gold">
+              {lockedEmployee}
+            </span>
+          ) : (
+            <div className="flex flex-wrap gap-1.5">
+              {CREW.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => set("employee", c)}
+                  className={`rounded-full border px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] transition-colors ${
+                    form.employee === c
+                      ? "border-gold bg-gold/15 text-gold"
+                      : "border-shell/25 text-shell/60 hover:border-shell/50"
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Event vs hourly kitchen work */}
@@ -527,8 +516,12 @@ export default function PayrollPanel({
       {/* The ledger */}
       <div className="rounded-3xl border border-shell/10 bg-lagoon/20 p-6">
         <div className="flex items-center justify-between">
-          <h3 className="h-sign-med text-xl text-shell">Recent payouts</h3>
-          {entries.length > 0 && (
+          <h3 className="h-sign-med text-xl text-shell">
+            {lockedEmployee ? "My shifts" : "Recent payouts"}
+          </h3>
+          {/* The export is the WHOLE ledger, so it's owner-only server-side.
+              Hide it for staff rather than offering a button that 403s. */}
+          {entries.length > 0 && !lockedEmployee && (
             <a
               href="/api/admin/payroll/export"
               className="rounded-full border border-shell/25 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-shell hover:border-gold hover:text-gold"
