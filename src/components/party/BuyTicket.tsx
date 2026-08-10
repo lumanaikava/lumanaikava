@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import SmsConsent from "@/components/SmsConsent";
 
 export type Tier = {
   variantId: string;
@@ -40,6 +41,15 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
   const [qty, setQty] = useState(1);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // SMS opt-in, captured here rather than at Shopify's checkout so the
+  // consent lands in our CRM with our exact wording — and so a number is
+  // only ever asked for when someone actually wants texts.
+  const [smsConsent, setSmsConsent] = useState(false);
+  const [smsName, setSmsName] = useState("");
+  const [smsPhone, setSmsPhone] = useState("");
+
+  const digits = smsPhone.replace(/\D/g, "").length;
+  const phoneLooksReal = digits >= 10;
 
   const tier = tiers.find((t) => t.variantId === selected) ?? firstAvailable;
   // A single-variant product doesn't need a chooser — Shopify names that
@@ -48,13 +58,27 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
 
   async function buy() {
     if (!tier) return;
+
+    // A ticked box with no number isn't permission to anything — stop
+    // here rather than recording a consent we can't act on.
+    if (smsConsent && !phoneLooksReal) {
+      setError("Add a mobile number, or untick the text-message box.");
+      return;
+    }
+
     setBusy(true);
     setError(null);
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ variantId: tier.variantId, quantity: qty }),
+        body: JSON.stringify({
+          variantId: tier.variantId,
+          quantity: qty,
+          ...(smsConsent && phoneLooksReal
+            ? { smsConsent: "yes", name: smsName.trim(), phone: smsPhone.trim() }
+            : {}),
+        }),
       });
       const body = await res.json();
       if (!res.ok || !body.checkoutUrl) {
@@ -158,6 +182,46 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
             </option>
           ))}
         </select>
+      </div>
+
+      {/* SMS opt-in. Unchecked, optional, and it only asks for a number
+          once someone actually wants texts — no dead fields otherwise. */}
+      <div className="space-y-3 text-left">
+        <SmsConsent
+          checked={smsConsent}
+          onChange={setSmsConsent}
+          note="Optional — your ticket is the same either way."
+        />
+        {smsConsent && (
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="block">
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-shell/50">
+                Your name
+              </span>
+              <input
+                value={smsName}
+                onChange={(e) => setSmsName(e.target.value)}
+                autoComplete="name"
+                className="mt-1.5 w-full rounded-xl border border-shell/20 bg-abyss/60 px-4 py-2.5 text-sm text-shell outline-none focus:border-gold"
+              />
+            </label>
+            <label className="block">
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-shell/50">
+                Mobile number
+              </span>
+              <input
+                value={smsPhone}
+                onChange={(e) => setSmsPhone(e.target.value)}
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel"
+                placeholder="(702) 555-0123"
+                aria-invalid={smsPhone.length > 0 && !phoneLooksReal}
+                className="mt-1.5 w-full rounded-xl border border-shell/20 bg-abyss/60 px-4 py-2.5 text-sm text-shell outline-none placeholder:text-shell/30 focus:border-gold"
+              />
+            </label>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col items-center gap-3">

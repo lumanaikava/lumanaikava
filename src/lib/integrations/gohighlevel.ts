@@ -15,6 +15,13 @@ export type BookingPayload = {
   city?: string;
   guests?: string | number;
   message: string;
+  /**
+   * Which form this came from. Defaults to the booking form since that
+   * was the original caller — but anything recording SMS consent should
+   * set it, because "where did this consent come from" is a question you
+   * may have to answer precisely one day.
+   */
+  source?: string;
 };
 
 export async function forwardBookingToGhl(payload: BookingPayload) {
@@ -32,6 +39,7 @@ export async function forwardBookingToGhl(payload: BookingPayload) {
     body: JSON.stringify({
       source: "lumanai.com booking form",
       submitted_at: new Date().toISOString(),
+      // Spread last so an explicit `source` wins over the default.
       ...payload,
     }),
   });

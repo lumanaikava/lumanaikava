@@ -10,14 +10,33 @@
  *     and how to stop
  * The submitted value gets written into the lead's GHL notes with a
  * timestamp, so there's a record of when and how consent was given.
+ *
+ * Works uncontrolled inside a plain <form> (contact, booking) or
+ * controlled where the answer drives the UI (ticket checkout needs to
+ * ask for a number once the box is ticked). Either way it starts
+ * unchecked — that is the whole point and must never be defaulted on.
  */
-export default function SmsConsent() {
+export default function SmsConsent({
+  checked,
+  onChange,
+  note,
+}: {
+  checked?: boolean;
+  onChange?: (checked: boolean) => void;
+  /** Replaces the trailing reassurance line where "we'll answer you
+   *  either way" doesn't fit — e.g. during a purchase. */
+  note?: string;
+}) {
+  const controlled = onChange !== undefined;
   return (
     <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-shell/15 bg-abyss/40 p-4">
       <input
         type="checkbox"
         name="smsConsent"
         value="yes"
+        {...(controlled
+          ? { checked: Boolean(checked), onChange: (e) => onChange(e.target.checked) }
+          : {})}
         className="mt-0.5 h-4 w-4 shrink-0 accent-gold"
       />
       <span className="text-xs leading-relaxed text-shell/70">
@@ -36,7 +55,7 @@ export default function SmsConsent() {
         >
           Privacy Policy
         </a>
-        . Optional — we&apos;ll still answer you either way.
+        . {note ?? "Optional — we'll still answer you either way."}
       </span>
     </label>
   );
