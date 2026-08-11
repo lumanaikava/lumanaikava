@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import SmsConsent from "@/components/SmsConsent";
+import { tierFor } from "@/lib/party-tiers";
 
 export type Tier = {
   variantId: string;
@@ -11,28 +12,20 @@ export type Tier = {
   available: boolean;
 };
 
-/**
- * What every ticket gets you. This is the only promise the page makes
- * about what's included — keep it matched to what the crew actually
- * hands people at the door.
- */
-const INCLUDED = [
-  "Open kava bar all night",
-  "The full launch menu, exclusives included",
+/** Fallback for a variant with no tier config — better than a blank card. */
+const GENERIC_PERKS = [
+  "Entry to LUNA EKLIPTIKA",
+  "Hors d'oeuvres all night",
   "Live DJ",
 ];
 
-/**
- * Extra perks for named tiers, keyed by a lowercased fragment of the
- * Shopify variant title. Empty today — the launch sells one ticket. Add
- * a row here if a VIP variant goes up in Shopify later and the page picks
- * it up on its own.
- */
-const TIER_PERKS: { match: string; perks: string[] }[] = [];
-
 function perksFor(title: string): string[] {
-  const t = title.toLowerCase();
-  return TIER_PERKS.find((p) => t.includes(p.match))?.perks ?? INCLUDED;
+  return tierFor(title)?.perks ?? GENERIC_PERKS;
+}
+
+/** The tier's display name, falling back to whatever Shopify calls it. */
+function labelFor(title: string): string {
+  return tierFor(title)?.label ?? title;
 }
 
 export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
@@ -96,17 +89,18 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
   return (
     <div className="flex flex-col gap-6">
       {showTiers && (
-        <fieldset className="grid gap-3 sm:grid-cols-2">
+        <fieldset className="space-y-3">
           <legend className="sr-only">Choose your ticket</legend>
           {tiers.map((t) => {
             const active = t.variantId === tier.variantId;
+            const cfg = tierFor(t.title);
             return (
               <label
                 key={t.variantId}
-                className={`relative cursor-pointer rounded-2xl border p-5 text-left transition ${
+                className={`relative flex cursor-pointer flex-col gap-3 rounded-2xl border p-5 text-left transition sm:flex-row sm:items-start sm:gap-6 ${
                   active
                     ? "border-gold bg-gold/10"
-                    : "border-shell/20 bg-abyss/40 hover:border-shell/40"
+                    : "border-shell/15 bg-abyss/40 hover:border-shell/35"
                 } ${t.available ? "" : "cursor-not-allowed opacity-45"}`}
               >
                 <input
@@ -118,20 +112,29 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
                   onChange={() => setSelected(t.variantId)}
                   className="sr-only"
                 />
-                <span className="h-sign-med block text-xl text-shell">
-                  {t.title}
-                </span>
-                <span className="mt-1 block font-mono text-2xl font-bold text-gold">
-                  {t.priceLabel}
-                </span>
-                {!t.available && (
-                  <span className="mt-2 block font-mono text-[10px] uppercase tracking-[0.2em] text-coconut">
-                    Sold out
+
+                <div className="sm:w-44 sm:shrink-0">
+                  <span className="h-sign block text-2xl text-shell">
+                    {labelFor(t.title)}
                   </span>
-                )}
-                <ul className="mt-3 space-y-1">
+                  <span className="mt-0.5 block font-mono text-xl font-bold text-gold">
+                    {t.priceLabel}
+                  </span>
+                  {cfg?.note && (
+                    <span className="mt-1 block text-[11px] italic leading-snug text-shell/45">
+                      {cfg.note}
+                    </span>
+                  )}
+                  {!t.available && (
+                    <span className="mt-1.5 inline-block rounded-full bg-shell/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.2em] text-coconut">
+                      Sold out
+                    </span>
+                  )}
+                </div>
+
+                <ul className="flex-1 space-y-1">
                   {perksFor(t.title).map((p) => (
-                    <li key={p} className="text-xs leading-snug text-shell/70">
+                    <li key={p} className="text-xs leading-relaxed text-shell/70">
                       <span aria-hidden className="mr-1.5 text-gold">
                         ·
                       </span>
@@ -139,6 +142,15 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
                     </li>
                   ))}
                 </ul>
+
+                {/* The selected tier needs to be obvious at a glance when
+                    five of them are stacked. */}
+                <span
+                  aria-hidden
+                  className={`absolute right-4 top-4 h-3 w-3 rounded-full border transition ${
+                    active ? "border-gold bg-gold" : "border-shell/30"
+                  }`}
+                />
               </label>
             );
           })}
@@ -149,9 +161,10 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
           chooser with nothing to choose. */}
       {!showTiers && (
         <div className="text-center">
-          <p className="h-sign text-5xl text-gold">{tier.priceLabel}</p>
+          <p className="h-sign text-3xl text-shell">{labelFor(tier.title)}</p>
+          <p className="h-sign mt-1 text-5xl text-gold">{tier.priceLabel}</p>
           <ul className="mt-4 inline-flex flex-col gap-1.5 text-left">
-            {INCLUDED.map((p) => (
+            {perksFor(tier.title).map((p: string) => (
               <li key={p} className="text-sm text-shell/75">
                 <span aria-hidden className="mr-2 text-gold">
                   ·

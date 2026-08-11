@@ -7,6 +7,7 @@ import SplashDrink from "@/components/SplashDrink";
 import { getProductByHandle, formatPrice } from "@/lib/integrations/shopify";
 import { PARTY_TICKET_HANDLE } from "@/lib/catalog";
 import { secretDrinks } from "@/lib/drinks-db";
+import { isUnpublished, tierRank, crewLinkCode } from "@/lib/party-tiers";
 
 /**
  * LUMANAI LAUNCH — the invite-only launch party. Never linked in the nav;
@@ -20,14 +21,59 @@ import { secretDrinks } from "@/lib/drinks-db";
  */
 
 export const metadata: Metadata = {
-  title: "Invited",
+  title: "Luna Ekliptika",
   robots: { index: false, follow: false },
 };
 
+/**
+ * The eclipse. A gold corona around a dark disc — drawn rather than
+ * shipped as an image so it scales cleanly and costs nothing to load.
+ */
+function Eclipse({ className = "" }: { className?: string }) {
+  return (
+    <div className={`pointer-events-none relative ${className}`} aria-hidden>
+      <div
+        className="absolute inset-0 rounded-full blur-2xl"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(237,226,180,0.55) 0%, rgba(237,226,180,0.18) 45%, transparent 70%)",
+        }}
+      />
+      <div
+        className="absolute inset-0 rounded-full"
+        style={{
+          background: "var(--abyss)",
+          boxShadow:
+            "0 0 0 2px rgba(237,226,180,0.75), 0 0 60px 8px rgba(237,226,180,0.35)",
+        }}
+      />
+    </div>
+  );
+}
+
 export const dynamic = "force-dynamic";
 
-/** Doors: Aug 28 2026, 7:00 PM Las Vegas (PDT = UTC−7). */
+/** Golden Hour opens Aug 28 2026, 7:00 PM Las Vegas (PDT = UTC−7). */
 const DOORS_ISO = "2026-08-29T02:00:00Z";
+
+const RUN_OF_NIGHT = [
+  {
+    time: "7–8 PM",
+    title: "Golden Hour",
+    body: "A private reception for Meridian and above. Welcome champagne mocktail poured on arrival, before the room fills.",
+    gated: true,
+  },
+  {
+    time: "8 PM",
+    title: "Doors",
+    body: "The full bar opens. Hors d'oeuvres all night, live DJ, and the two pours nobody has tasted yet.",
+  },
+  {
+    time: "Late",
+    title: "Totality",
+    body: "Zach keeps pouring until the last person leaves.",
+  },
+];
 
 const OPEN_BAR = [
   {
@@ -101,7 +147,12 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default async function InvitedPage() {
+export default async function InvitedPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
   const jar = await cookies();
   const invited =
     !!process.env.PARTY_PASSCODE &&
@@ -124,6 +175,7 @@ export default async function InvitedPage() {
           aria-hidden
         />
         <div className="relative">
+          <Eclipse className="mx-auto mb-8 h-24 w-24" />
           <Eyebrow>08 · 28 · 26 — Las Vegas</Eyebrow>
           <h1 className="h-sign mt-5 text-6xl text-shell sm:text-8xl">
             Invite <span className="text-gold">only.</span>
@@ -138,6 +190,15 @@ export default async function InvitedPage() {
     );
   }
 
+  /**
+   * The Friends + Family rate is unpublished. Filtering happens HERE, on
+   * the server, so an unlisted $20 ticket is never in the HTML for anyone
+   * to find — hiding it in the component would still ship it to every
+   * browser. It unlocks with /invited?crew=<PARTY_CREW_CODE>.
+   */
+  const code = crewLinkCode();
+  const crewLink = Boolean(code) && params.crew === code;
+
   // Ticket product — lives in Shopify, hidden from the shop, sold only here.
   let tiers: Tier[] = [];
   let productFound = false;
@@ -145,16 +206,22 @@ export default async function InvitedPage() {
     const p = await getProductByHandle(PARTY_TICKET_HANDLE);
     if (p) {
       productFound = true;
-      tiers = p.variants.edges.map(({ node }) => ({
-        variantId: node.id,
-        title: node.title,
-        priceLabel: formatPrice(node.price.amount, node.price.currencyCode),
-        available: node.availableForSale,
-      }));
+      tiers = p.variants.edges
+        .map(({ node }) => ({
+          variantId: node.id,
+          title: node.title,
+          priceLabel: formatPrice(node.price.amount, node.price.currencyCode),
+          available: node.availableForSale,
+        }))
+        .filter((t) => crewLink || !isUnpublished(t.title))
+        // Shopify returns variants in its own order; show them cheapest
+        // tier first so the ladder reads the way it was designed.
+        .sort((a, b) => tierRank(a.title) - tierRank(b.title));
     }
   } catch {
     /* Shopify unreachable — the page still renders; the card explains. */
   }
+
   const anyAvailable = tiers.some((t) => t.available);
 
   return (
@@ -175,14 +242,20 @@ export default async function InvitedPage() {
           aria-hidden
         />
         <div className="relative mx-auto flex min-h-[92svh] max-w-4xl flex-col items-center justify-center px-6 py-20 text-center">
-          <Eyebrow>You're on the list</Eyebrow>
-          <h1 className="h-sign mt-5 text-[3.6rem] leading-[0.85] text-shell sm:text-8xl">
-            Lumanai
+          <Eclipse className="mb-9 h-28 w-28 sm:h-32 sm:w-32" />
+          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-shell/60">
+            Lumanai presents
+          </p>
+          <h1 className="h-sign mt-4 text-[3.2rem] leading-[0.86] text-shell sm:text-[6.5rem]">
+            Luna
             <br />
-            <span className="text-gold">Launch</span>
+            <span className="text-gold">Ekliptika</span>
           </h1>
           <p className="mt-6 font-mono text-sm uppercase tracking-[0.3em] text-shell/80">
-            Fri · Aug 28 · Doors 7PM
+            Fri · Aug 28 · Golden Hour 7PM · Doors 8PM
+          </p>
+          <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
+            Dress code — all black
           </p>
 
           {/* The address is the secret. Show its shape, not its content. */}
@@ -213,7 +286,7 @@ export default async function InvitedPage() {
       {/* ── What's launching ─────────────────────────────────── */}
       <section className="relative border-t border-shell/10 px-6 py-16">
         <div className="mx-auto max-w-4xl">
-          <Eyebrow>Two things go public that night</Eyebrow>
+          <Eyebrow>What we&apos;re celebrating</Eyebrow>
           <div className="mt-8 grid gap-8 sm:grid-cols-2">
             <div className="rounded-3xl border border-gold/30 bg-abyss/50 p-7">
               <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-gold">
@@ -248,13 +321,15 @@ export default async function InvitedPage() {
       {/* ── The open bar ─────────────────────────────────────── */}
       <section className="relative border-t border-shell/10 px-6 py-16">
         <div className="mx-auto max-w-5xl">
-          <Eyebrow>Open bar · all night · zero alcohol</Eyebrow>
+          <Eyebrow>The bar · all night · zero alcohol</Eyebrow>
           <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">
             Everything is poured.
           </h2>
           <p className="mt-3 max-w-xl text-shell/70">
-            No tabs, no tickets at the bar. Zach pours until the last
-            person leaves.
+            Hors d&apos;oeuvres all night and no tickets at the bar. Open
+            bar comes with Meridian and above; Obsidian includes a craft
+            drink and a traditional shot, with everything after at a
+            discount.
           </p>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -319,21 +394,42 @@ export default async function InvitedPage() {
       {/* ── The night ────────────────────────────────────────── */}
       <section className="relative border-t border-shell/10 px-6 py-16">
         <div className="mx-auto max-w-4xl">
-          <div className="grid gap-10 sm:grid-cols-[1.2fr_1fr]">
+          <Eyebrow>Run of the night</Eyebrow>
+          <h2 className="h-sign mt-4 text-5xl text-shell">
+            A mansion under
+            <br />
+            <span className="text-gold">a full moon.</span>
+          </h2>
+          <ol className="mt-8 space-y-5">
+            {RUN_OF_NIGHT.map((m) => (
+              <li key={m.title} className="flex gap-5 sm:gap-8">
+                <span className="w-20 shrink-0 pt-1 font-mono text-[11px] uppercase tracking-[0.18em] text-gold sm:w-24">
+                  {m.time}
+                </span>
+                <div className="border-l border-shell/15 pl-5 sm:pl-6">
+                  <p className="h-sign-med text-xl text-shell">
+                    {m.title}
+                    {m.gated && (
+                      <span className="ml-2 rounded-full bg-gold/15 px-2 py-0.5 align-middle font-mono text-[9px] uppercase tracking-[0.16em] text-gold">
+                        Meridian +
+                      </span>
+                    )}
+                  </p>
+                  <p className="mt-1 max-w-xl text-sm leading-relaxed text-shell/70">
+                    {m.body}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+
+          <div className="mt-12 grid gap-10 sm:grid-cols-[1.2fr_1fr]">
             <div>
-              <Eyebrow>The night</Eyebrow>
-              <h2 className="h-sign mt-4 text-5xl text-shell">
-                A mansion, a DJ,
-                <br />
-                and a room that
-                <br />
-                <span className="text-gold">doesn't repeat.</span>
-              </h2>
-              <p className="mt-5 max-w-md text-shell/75">
-                Live DJ all night. The people in this room are the ones
-                shaping what Vegas drinks next — hand-picked, invite
-                only, and capped on purpose. No lines, no wristbands, no
-                strangers.
+              <Eyebrow>The room</Eyebrow>
+              <p className="mt-4 max-w-md text-shell/75">
+                Hand-picked, invite only, and capped on purpose. The
+                people here are the ones shaping what Vegas drinks next.
+                No lines, no wristbands, no strangers.
               </p>
             </div>
             <div className="self-center">
@@ -365,12 +461,12 @@ export default async function InvitedPage() {
         id="tickets"
         className="relative border-t border-shell/10 px-6 py-16"
       >
-        <div className="mx-auto max-w-2xl text-center">
+        <div className="mx-auto max-w-3xl text-center">
           <Eyebrow>Admission</Eyebrow>
           <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">
-            Claim your spot.
+            Choose your orbit.
           </h2>
-          <p className="mx-auto mt-4 max-w-md text-shell/75">
+          <p className="mx-auto mt-4 max-w-lg text-shell/75">
             Your ticket arrives in the mail — a real, printed ticket. The
             address is printed on it, and nowhere else. Checkout asks
             where to send it.
@@ -400,10 +496,10 @@ export default async function InvitedPage() {
           </div>
 
           <p className="mx-auto mt-9 max-w-md text-xs leading-relaxed text-shell/40">
-            21+. Zero alcohol, all night — everyone drives home sharp.
-            Order early enough for the mail to reach you. Keep the
-            password and the address between friends; the room is capped
-            and the list is checked at the door.
+            All black. 21+. Zero alcohol, all night — everyone drives
+            home sharp. Order early enough for the mail to reach you.
+            Keep the password and the address between friends; the room
+            is capped and the list is checked at the door.
           </p>
         </div>
       </section>
