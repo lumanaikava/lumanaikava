@@ -11,7 +11,7 @@ import {
 
 const shortNames = [
   "Kava Ceremony",
-  "Full Open Bar",
+  "Open Bar",
   "Drink + Shot",
   "Paid Bar",
 ];
@@ -28,7 +28,7 @@ function money(n: number) {
 }
 
 export default function EventBuilder() {
-  const [pkgIdx, setPkgIdx] = useState(1); // Full Open Bar preselected
+  const [pkgIdx, setPkgIdx] = useState(1); // Open Bar preselected
   const [tierIdx, setTierIdx] = useState(0);
   const [upgrades, setUpgrades] = useState<Set<number>>(new Set());
   const [prefill, setPrefill] = useState<string | null>(null);

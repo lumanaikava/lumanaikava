@@ -160,18 +160,10 @@ export default async function InvitedPage({
 
   if (!invited) {
     return (
-      <section className="relative flex min-h-[85svh] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
+      <section className="luna relative flex min-h-[85svh] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
+        <div className="luna-bg pointer-events-none absolute inset-0" aria-hidden />
         <div
-          className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: "url(/images/roots-hero.webp)" }}
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(900px 600px at 50% 40%, rgba(107,58,156,0.35), transparent 70%)",
-          }}
+          className="luna-grain pointer-events-none absolute inset-0 opacity-70"
           aria-hidden
         />
         <div className="relative">
@@ -225,20 +217,15 @@ export default async function InvitedPage({
   const anyAvailable = tiers.some((t) => t.available);
 
   return (
-    <>
+    /* Scoped theme: black environment, earth tones, gold + silver.
+       Redefines the brand palette for this page only — the rest of
+       the site keeps its navy/purple. */
+    <div className="luna">
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
+        <div className="luna-bg pointer-events-none absolute inset-0" aria-hidden />
         <div
-          className="hero-roots pointer-events-none absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: "url(/images/roots-hero.webp)" }}
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(1000px 700px at 50% 0%, rgba(198,58,142,0.25), transparent 65%), radial-gradient(800px 600px at 10% 90%, rgba(24,92,124,0.35), transparent 65%)",
-          }}
+          className="luna-grain pointer-events-none absolute inset-0 opacity-80"
           aria-hidden
         />
         <div className="relative mx-auto flex min-h-[92svh] max-w-4xl flex-col items-center justify-center px-6 py-20 text-center">
@@ -503,6 +490,6 @@ export default async function InvitedPage({
           </p>
         </div>
       </section>
-    </>
+    </div>
   );
 }

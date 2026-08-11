@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Ripple from "@/components/Ripple";
 import BuyNowButton from "@/components/BuyNowButton";
 import { getCatalogProduct } from "@/lib/catalog";
+import { HIDE_PRICES } from "@/lib/shop-display";
 
 // Fetched from Shopify with 60s revalidation; falls back to static data.
 export const dynamic = "force-dynamic";
@@ -72,9 +73,13 @@ export default async function ProductPage({
               {product.description}
             </p>
           )}
-          <p className="mt-8 font-mono text-2xl text-gold">
-            {product.priceLabel}
-          </p>
+          {/* Hidden alongside the shop grid — a price here would
+              contradict the page the customer just came from. */}
+          {!HIDE_PRICES && (
+            <p className="mt-8 font-mono text-2xl text-gold">
+              {product.priceLabel}
+            </p>
+          )}
 
           <div className="mt-8">
             <BuyNowButton

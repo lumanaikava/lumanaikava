@@ -441,3 +441,68 @@ body {
 .prose-link:hover {
   background-size: 100% 200%;
 }
+
+/* ── LUNA EKLIPTIKA — scoped party theme ────────────────────────
+   Black environment with earth tones and pops of gold and silver.
+   Everything lives under .luna so it CANNOT leak into the rest of
+   the site: /invited overrides the brand palette by redefining the
+   same variables inside this scope only. */
+
+.luna {
+  --abyss: #050505;
+  --ocean: #0a0908;
+  --lagoon: #14110e;
+  --violet: #1c1713;
+  --amethyst: #3d3128; /* warm earth, replaces the purple */
+  --orchid: #7a5c3a;
+  --shell: #ece5da; /* bone */
+  --coconut: #c9b79c; /* clay */
+  --gold: #d4af6a;
+  --teal: #2b2620;
+  --silver: #c9ccd2;
+  background: #050505;
+  color: var(--shell);
+}
+
+/* The page sits on true black — kill the site's purple/magenta glow
+   and replace it with a low earth-lit horizon. */
+.luna .luna-bg {
+  background-image:
+    radial-gradient(
+      900px 620px at 50% -12%,
+      rgba(212, 175, 106, 0.16),
+      transparent 68%
+    ),
+    radial-gradient(
+      760px 520px at 12% 108%,
+      rgba(122, 92, 58, 0.16),
+      transparent 66%
+    ),
+    radial-gradient(
+      680px 480px at 92% 88%,
+      rgba(201, 204, 210, 0.06),
+      transparent 66%
+    );
+}
+
+/* Dust motes / far stars — barely there, keeps the black alive. */
+.luna .luna-grain {
+  background-image:
+    radial-gradient(1px 1px at 12% 22%, rgba(236, 229, 218, 0.35), transparent),
+    radial-gradient(1px 1px at 68% 14%, rgba(236, 229, 218, 0.25), transparent),
+    radial-gradient(1px 1px at 34% 61%, rgba(212, 175, 106, 0.30), transparent),
+    radial-gradient(1px 1px at 82% 47%, rgba(236, 229, 218, 0.22), transparent),
+    radial-gradient(1px 1px at 51% 83%, rgba(201, 204, 210, 0.28), transparent),
+    radial-gradient(1px 1px at 91% 71%, rgba(212, 175, 106, 0.22), transparent);
+  background-size: 100% 100%;
+}
+
+/* Silver is the second accent — used sparingly for hairlines. */
+.luna .rule-silver {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(201, 204, 210, 0.45),
+    transparent
+  );
+}

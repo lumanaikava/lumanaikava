@@ -1,8 +1,8 @@
 export const navLinks = [
   { label: "Book", href: "/events" },
+  { label: "Shop", href: "/products" },
   { label: "Find Us", href: "/find-us" },
   { label: "Menu", href: "/menu" },
-  { label: "Shop", href: "/products" },
   { label: "Ingredients", href: "/ingredients" },
   { label: "Rewards", href: "/rewards" },
   { label: "FAQ", href: "/faq" },

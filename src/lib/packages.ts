@@ -87,11 +87,10 @@ export const experienceUpgrades: ExperienceUpgrade[] = [
     name: "Ancient Plant Medicine",
     price: "$300",
     amount: 300,
+    // Kratom Leaf removed 2026-08-11 per Zach — not offered. Left as a
+    // single-item upgrade rather than substituting something we don't
+    // actually pour.
     items: [
-      {
-        name: "Kratom Leaf",
-        copy: "Smooth energy with a relaxed, euphoric edge (non-extract)",
-      },
       {
         name: "Kanna Leaf Extract",
         copy: "Brightened mood, emotional openness, and easygoing uplift",

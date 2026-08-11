@@ -68,21 +68,6 @@ export default function BookingForm({ prefill }: { prefill?: string }) {
           placeholder="Las Vegas, Summerlin, Henderson..."
         />
         <Field label="Guest count" name="guests" type="number" min="1" />
-        <label className="block">
-          <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
-            Your bartender
-          </span>
-          <select
-            name="bartender"
-            defaultValue=""
-            className="mt-2 w-full rounded-xl border border-shell/20 bg-abyss/60 px-4 py-3 text-shell outline-none focus:border-gold"
-          >
-            <option value="">No preference</option>
-            <option value="Ash">Ash</option>
-            <option value="Zach">Zach</option>
-            <option value="Karina">Karina</option>
-          </select>
-        </label>
       </div>
       <label className="block">
         <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">

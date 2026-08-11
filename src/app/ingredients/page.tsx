@@ -42,7 +42,6 @@ export default function IngredientsPage() {
               "All natural",
               "Gluten-free",
               "3rd party tested",
-              "Sugar-free",
             ].map((tag) => (
               <span
                 key={tag}

@@ -1,183 +1,100 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import ProductModel3D from "@/components/ProductModel3D";
-import Ripple from "@/components/Ripple";
 import { getCatalog } from "@/lib/catalog";
+import {
+  isHiddenFromShop,
+  shopRank,
+  artworkFor,
+  shortName,
+  subtitleFor,
+  HIDE_PRICES,
+} from "@/lib/shop-display";
 
 export const metadata: Metadata = {
   title: "Shop — Lumanai Kava",
   description:
-    "Lumanai Original Naktails, Growlers, and RUSH instant kava — bottled for one, poured for the table.",
+    "Lumanai Original Naktails and RUSH instant kava — bottled for one, poured for the table.",
 };
 
 // Catalog comes from Shopify with 60s revalidation.
 export const dynamic = "force-dynamic";
 
-const tabs = [
-  { label: "All", value: undefined },
-  { label: "Original Naktails", value: "premium" },
-  { label: "Growlers", value: "growler" },
-  { label: "RUSH", value: "rush" },
-] as const;
-
-export default async function ProductsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ category?: string }>;
-}) {
-  const { category } = await searchParams;
+/**
+ * Minimalist shop: artwork and a short name, nothing else.
+ *
+ * Prices are hidden while they're being finalised (see HIDE_PRICES), and
+ * with them gone the old category tabs and the RUSH hero had nothing to
+ * frame — so the page is one quiet grid instead.
+ */
+export default async function ProductsPage() {
   const { items } = await getCatalog();
 
-  // RUSH instant kava is the featured hero product; everything else grids below.
-  const featured = items.find((p) => p.category === "rush");
-  const rest = featured
-    ? items.filter((p) => p.handle !== featured.handle)
-    : items;
-
-  const filtered =
-    category === "premium" || category === "growler" || category === "rush"
-      ? items.filter((p) => p.category === category)
-      : rest;
-  const showFeatured = !category && featured;
+  const products = items
+    .filter((p) => !isHiddenFromShop(p.handle, p.name))
+    .sort((a, b) => shopRank(a.handle) - shopRank(b.handle));
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-10">
+    <section className="mx-auto max-w-6xl px-6 py-12">
       <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
         Shop
       </p>
       <h1 className="h-sign mt-3 text-4xl text-shell sm:text-5xl">
-        Lumanai Original Naktails{" "}
-        <span className="text-coconut">&amp; Growlers</span>
+        The lineup.
       </h1>
 
-      {showFeatured && (
-        <Link
-          href={`/products/${featured.handle}`}
-          className="group relative mt-8 block overflow-hidden rounded-3xl border border-gold/40 bg-abyss transition-colors hover:border-gold"
-        >
-          <div
-            className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-25"
-            style={{ backgroundImage: "url(/images/roots-texture.webp)" }}
-            aria-hidden
-          />
-          <div className="relative grid gap-8 p-8 sm:p-12 lg:grid-cols-[1fr_1.1fr] lg:items-center">
-            <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-2xl bg-shell sm:aspect-[4/3] lg:aspect-square">
-              {featured.image ? (
-                <Image
-                  src={featured.image}
-                  alt={featured.imageAlt ?? featured.name}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-contain object-center p-8 transition-transform duration-700 group-hover:scale-105"
-                />
-              ) : (
-                <Ripple
-                  className="h-1/2 w-1/2 text-abyss/60"
-                  rings={5}
-                  animated={false}
-                />
-              )}
-              {/* 3D model takes over this panel when the GLB lands in
-                  public/models/ — see the README there. */}
-              <ProductModel3D alt={featured.name} />
-            </div>
-            <div>
-              <p className="inline-block rounded-full border border-gold/50 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-gold">
-                Featured · New
-              </p>
-              <h2 className="h-sign mt-5 text-4xl text-shell sm:text-6xl">
-                {featured.name}
-              </h2>
-              <p className="mt-4 max-w-md text-shell/75">
-                Kava anywhere, in seconds — tear, pour, stir. Traditional
-                strength without the brew time.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center gap-6">
-                <span className="btn-brush font-mono text-xs font-bold uppercase tracking-[0.2em] text-shell">
-                  Shop RUSH
-                </span>
-                <span className="font-mono text-2xl text-gold">
-                  {featured.priceLabel}
-                </span>
-              </div>
-            </div>
-          </div>
-        </Link>
-      )}
-
-      <div className="mt-12 flex flex-wrap gap-3">
-        {tabs.map((tab) => {
-          const active = category === tab.value || (!category && !tab.value);
+      <div className="mt-14 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+        {products.map((p) => {
+          const art = artworkFor(p.handle) ?? p.image;
           return (
             <Link
-              key={tab.label}
-              href={tab.value ? `/products?category=${tab.value}` : "/products"}
-              className={`rounded-full border px-5 py-2 font-mono text-xs uppercase tracking-[0.2em] transition-colors ${
-                active
-                  ? "border-gold bg-gold text-abyss"
-                  : "border-shell/20 text-shell/70 hover:border-gold hover:text-gold"
-              }`}
+              key={p.handle}
+              href={`/products/${p.handle}`}
+              className="group block text-center"
             >
-              {tab.label}
+              {/* No card, no frame — the cutout sits straight on the
+                  page so the bottles are the only thing you look at. */}
+              <div className="relative mx-auto flex h-64 w-full items-end justify-center sm:h-72">
+                {art ? (
+                  <Image
+                    src={art}
+                    alt={p.imageAlt ?? p.name}
+                    width={340}
+                    height={900}
+                    sizes="(max-width: 640px) 60vw, (max-width: 1024px) 30vw, 22vw"
+                    className="h-full w-auto object-contain drop-shadow-[0_18px_30px_rgba(0,0,0,0.45)] transition-transform duration-500 group-hover:-translate-y-2"
+                  />
+                ) : (
+                  <div className="h-full w-full rounded-2xl border border-shell/10" />
+                )}
+                {!p.available && (
+                  <span className="absolute left-1/2 top-2 -translate-x-1/2 rounded-full bg-abyss/85 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-shell/80">
+                    Sold out
+                  </span>
+                )}
+              </div>
+
+              <h2 className="h-sign-med mt-6 text-xl text-shell transition-colors group-hover:text-gold">
+                {shortName(p.handle, p.name)}
+              </h2>
+              {subtitleFor(p.handle) && (
+                <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-shell/40">
+                  {subtitleFor(p.handle)}
+                </p>
+              )}
+              {!HIDE_PRICES && (
+                <p className="mt-2 font-mono text-sm text-gold">
+                  {p.priceLabel}
+                </p>
+              )}
             </Link>
           );
         })}
       </div>
 
-      <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((p) => (
-          <Link
-            key={p.handle}
-            href={`/products/${p.handle}`}
-            className="group block overflow-hidden rounded-3xl border border-shell/10 bg-lagoon/40 backdrop-blur transition-colors hover:border-gold"
-          >
-            <div className="relative aspect-[4/5] overflow-hidden bg-shell">
-              {p.image ? (
-                <Image
-                  src={p.image}
-                  alt={p.imageAlt ?? p.name}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-contain object-center p-6 transition-transform duration-500 group-hover:scale-105"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center">
-                  <Ripple
-                    className="h-1/2 w-1/2 text-abyss/60"
-                    rings={5}
-                    animated={false}
-                  />
-                </div>
-              )}
-              {!p.available && (
-                <p className="absolute left-4 top-4 rounded-full bg-abyss/85 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-shell">
-                  Sold out
-                </p>
-              )}
-            </div>
-            <div className="p-7">
-              <h2 className="h-sign-med text-2xl text-shell">{p.name}</h2>
-              {p.notes && (
-                <p className="mt-2 text-sm text-shell/60">{p.notes}</p>
-              )}
-              <p className="mt-6 font-mono text-sm text-gold">{p.priceLabel}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
-
-      {filtered.length === 0 && (
+      {products.length === 0 && (
         <p className="mt-16 text-shell/60">
-          Nothing in this category right now — check{" "}
-          <Link
-            href="/products"
-            className="prose-link text-shell hover:text-gold"
-          >
-            the full shop
-          </Link>
-          .
+          The shop is restocking — check back shortly.
         </p>
       )}
     </section>
