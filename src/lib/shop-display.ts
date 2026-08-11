@@ -16,35 +16,38 @@
 export const HIDE_PRICES = true;
 
 /**
- * Kept off the shop entirely. Growlers and BASE are sold by hand, not
- * browsed — BASE especially is a secret item.
+ * BASE only. It's a secret item, sold by hand and never browsed —
+ * growlers are back on the shop as of 2026-08-11.
  */
-const HIDDEN_HANDLES = new Set([
-  "64-oz-growler",
-  "raspberry-orange-spice-32-oz-growler",
-  "copy-of-raspberry-orange-spice-32-oz-growler",
-  "copy-of-raspberry-orange-spice-32-oz-growler-1",
-  "base-64-oz",
-]);
+const HIDDEN_HANDLES = new Set(["base-64-oz"]);
 
-/** Anything whose handle or title looks like a growler, defensively. */
-function looksLikeGrowler(handle: string, name: string): boolean {
-  return /growler/i.test(handle) || /growler/i.test(name) || /^base\b/i.test(name);
+/**
+ * BASE also matched by name, in case the handle ever changes. Careful:
+ * this must NOT catch "Basic Batch", hence the word boundary and the
+ * exclusion of anything containing "basic".
+ */
+function isBase(name: string): boolean {
+  return /^\s*base\b/i.test(name) && !/basic/i.test(name);
 }
 
 export function isHiddenFromShop(handle: string, name: string): boolean {
-  return HIDDEN_HANDLES.has(handle) || looksLikeGrowler(handle, name);
+  return HIDDEN_HANDLES.has(handle) || isBase(name);
 }
 
 /**
- * Display order. Basic Batch leads the 8 oz bottles; RUSH sits last as
- * the newest thing rather than competing with the core lineup.
+ * Display order. Basic Batch leads the 8 oz bottles, then the rest of
+ * the flavours, then their growlers, with RUSH last as the newest thing
+ * rather than competing with the core lineup.
  */
 const ORDER = [
   "basic-batch",
   "the-kolada",
   "raspberry-orange-spice",
   "ginger-honey-lemon",
+  "64-oz-growler", // Basic Batch Growler
+  "copy-of-raspberry-orange-spice-32-oz-growler", // The Kolada Growler
+  "raspberry-orange-spice-32-oz-growler",
+  "copy-of-raspberry-orange-spice-32-oz-growler-1", // Ginger Honey Lemon Growler
   "untitled-may21_11-42-27", // RUSH
 ];
 
@@ -64,6 +67,12 @@ const ARTWORK: Record<string, string> = {
   "raspberry-orange-spice": "/images/products/raspberry-orange-spice.png",
   "ginger-honey-lemon": "/images/products/ginger-honey-lemon.png",
   "untitled-may21_11-42-27": "/images/products/rush.png",
+  "64-oz-growler": "/images/products/growler-basic-batch.png",
+  "raspberry-orange-spice-32-oz-growler":
+    "/images/products/growler-raspberry-orange-spice.png",
+  // Kolada and Ginger growlers have no cutout in the brand assets yet, so
+  // they fall through to Shopify's own image rather than borrowing a
+  // bottle that shows the wrong label.
 };
 
 export function artworkFor(handle: string): string | undefined {
@@ -77,6 +86,10 @@ const SHORT_NAMES: Record<string, string> = {
   "raspberry-orange-spice": "Raspberry Orange Spice",
   "ginger-honey-lemon": "Ginger Honey Lemon",
   "untitled-may21_11-42-27": "RUSH",
+  "64-oz-growler": "Basic Batch",
+  "copy-of-raspberry-orange-spice-32-oz-growler": "The Kolada",
+  "raspberry-orange-spice-32-oz-growler": "Raspberry Orange Spice",
+  "copy-of-raspberry-orange-spice-32-oz-growler-1": "Ginger Honey Lemon",
 };
 
 export function shortName(handle: string, fallback: string): string {
@@ -90,6 +103,10 @@ const SUBTITLES: Record<string, string> = {
   "raspberry-orange-spice": "8 oz · raspberry orange",
   "ginger-honey-lemon": "8 oz · ginger honey lemon",
   "untitled-may21_11-42-27": "Instant kava",
+  "64-oz-growler": "Growler",
+  "copy-of-raspberry-orange-spice-32-oz-growler": "Growler",
+  "raspberry-orange-spice-32-oz-growler": "Growler",
+  "copy-of-raspberry-orange-spice-32-oz-growler-1": "Growler",
 };
 
 export function subtitleFor(handle: string): string | undefined {
