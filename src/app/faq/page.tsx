@@ -1,11 +1,45 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { faqs } from "@/lib/faq";
+import { faqs as builtIn } from "@/lib/faq";
+import {
+  readFaqSafe,
+  contentSheetConfigured,
+} from "@/lib/integrations/content-sheet";
 
 export const metadata: Metadata = { title: "FAQ — Lumanai Kava" };
 
+export const revalidate = 60;
 
-export default function FaqPage() {
+export default async function FaqPage() {
+  /**
+   * Questions added in the Command Center append to the built-in list.
+   * A managed entry with the same question REPLACES the built-in one, so
+   * an answer can be corrected without me redeploying — but the safety
+   * answers stay present even if the sheet is empty or unreachable.
+   */
+  const managed = contentSheetConfigured() ? await readFaqSafe() : [];
+  const overrides = new Map(
+    managed
+      .filter((m) => !m.hidden && m.q && m.a.length)
+      .map((m) => [m.q.trim().toLowerCase(), m]),
+  );
+
+  const faqs = [
+    ...builtIn.map((b) => overrides.get(b.q.trim().toLowerCase()) ?? b),
+    ...managed.filter(
+      (m) =>
+        !m.hidden &&
+        m.a.length &&
+        !builtIn.some(
+          (b) => b.q.trim().toLowerCase() === m.q.trim().toLowerCase(),
+        ),
+    ),
+  ];
+
+  return <FaqView faqs={faqs} />;
+}
+
+function FaqView({ faqs }: { faqs: { q: string; a: string[] }[] }) {
   return (
     <>
       <section className="relative overflow-hidden">

@@ -397,12 +397,20 @@ export default async function AdminPage() {
             <h2 className="h-sign-med text-2xl text-shell">
               Guest list · Lumanai Launch
             </h2>
-            <Link
-              href="/admin/guests"
-              className="rounded-full border border-gold/40 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-gold hover:bg-gold/10"
-            >
-              Manage list →
-            </Link>
+            <div className="flex gap-2">
+              <Link
+                href="/admin/content"
+                className="rounded-full border border-shell/25 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-shell hover:border-gold hover:text-gold"
+              >
+                Site content →
+              </Link>
+              <Link
+                href="/admin/guests"
+                className="rounded-full border border-gold/40 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-gold hover:bg-gold/10"
+              >
+                Manage list →
+              </Link>
+            </div>
           </div>
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[

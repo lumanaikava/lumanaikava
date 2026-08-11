@@ -136,8 +136,33 @@ export async function upcomingEventsSynced(
     const d = new Date(`${e.date}T23:59:59`);
     return d >= today && d <= horizon;
   });
+  // Appearances the crew added in the Command Center. Last in the merge
+  // so a hand-edited entry beats the code list or the Google Calendar
+  // for the same date+title — the person who typed it most recently is
+  // the one who knows.
+  const { readEventsSafe, contentSheetConfigured } = await import(
+    "@/lib/integrations/content-sheet"
+  );
+  const managed: CalendarEvent[] = contentSheetConfigured()
+    ? (await readEventsSafe())
+        .filter((e) => {
+          if (e.hidden || !e.date || !e.title) return false;
+          const d = new Date(`${e.date}T23:59:59`);
+          return d >= today && d <= horizon;
+        })
+        .map((e) => ({
+          date: e.date,
+          title: e.title,
+          location: e.location || undefined,
+          time: e.time || undefined,
+          // SiteEvent calls it "event"; the calendar has always called
+          // that same thing "special".
+          kind: e.kind === "event" ? "special" : e.kind,
+        }))
+    : [];
+
   const merged = new Map<string, CalendarEvent>();
-  for (const e of [...upcomingEvents(now, weeksAhead), ...synced]) {
+  for (const e of [...upcomingEvents(now, weeksAhead), ...synced, ...managed]) {
     merged.set(`${e.date}|${e.title.toLowerCase()}`, e);
   }
   return [...merged.values()].sort((a, b) => a.date.localeCompare(b.date));
