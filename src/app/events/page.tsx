@@ -1,105 +1,56 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import EventBuilder from "@/components/EventBuilder";
-import { eventImages } from "@/lib/images";
+import ExperienceBuilder from "@/components/ExperienceBuilder";
 import { team } from "@/lib/team";
 
 export const metadata: Metadata = {
-  title: "Build Your Event",
+  title: "Build an Experience",
   description:
-    "Build your own kava bar event — pick an experience, guest count, and upgrades, and get a live estimate. Las Vegas.",
+    "Build your own kava bar experience — choose the format, the room, and the add-ons, and we'll reach out to talk it through. Las Vegas.",
 };
 
-const included = [
-  "Full bar setup + signature fabric",
-  "Trained kava bartenders",
-  "Custom menu for your event",
-  "Glassware, ice, garnishes",
-  "NA spirits for mixed crowds",
-];
-
+/**
+ * Booking — "build an experience".
+ *
+ * No prices anywhere: every event is quoted after a conversation, and a
+ * number on the page either anchors the wrong figure or forces a fake
+ * one. The photo strip and the "full bar setup · trained bartenders ·"
+ * ticker that used to sit above the builder are gone — those photos now
+ * live inside the choice buttons, where they do actual work.
+ */
 export default function EventsPage() {
   return (
     <>
-      {/* Compact hero */}
-      <section className="relative overflow-hidden">
-        <Image
-          src={eventImages.bartenderIndoor}
-          alt="Bartender shaking a Lumanai kava cocktail at a private event"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center opacity-40"
+      <section className="relative overflow-hidden border-b border-shell/10">
+        <div
+          className="ether-drift pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-amethyst/20 blur-3xl"
+          aria-hidden
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-abyss/70 via-abyss/70 to-ocean" />
-        <div className="relative mx-auto max-w-6xl px-6 pb-10 pt-16 sm:pt-20">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
-            Events · Las Vegas
+        <div className="relative mx-auto max-w-5xl px-6 py-14 sm:py-20">
+          <p className="ether-in font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
+            Private events · Las Vegas
           </p>
-          <h1 className="h-sign mt-4 max-w-3xl text-5xl text-shell sm:text-6xl">
-            Build your own <span className="text-coconut">event.</span>
+          <h1 className="h-sign ether-in mt-4 max-w-3xl text-5xl leading-[0.92] text-shell sm:text-7xl">
+            Build an
+            <br />
+            <span className="text-coconut">experience.</span>
           </h1>
+          <p className="ether-in mt-6 max-w-xl text-lg text-shell/70">
+            Pick the shape of your night. Tell us who it&apos;s for. We&apos;ll
+            reach out and build the rest together — the menu, the pours, the
+            room.
+          </p>
         </div>
       </section>
 
-      {/* What's always included — one compact strip */}
-      <section className="border-y border-shell/10 bg-abyss/70">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-6 gap-y-2.5 px-6 py-5 font-mono text-[11px] uppercase tracking-[0.2em] text-shell/70">
-          {included.map((t, i) => (
-            <span key={t} className="flex items-center gap-3">
-              <span>{t}</span>
-              {i < included.length - 1 && (
-                <span className="h-1 w-1 rounded-full bg-gold" aria-hidden />
-              )}
-            </span>
-          ))}
-        </div>
-      </section>
-
-      {/* What shows up with us — proof, not promises */}
-      <section className="border-b border-shell/10">
-        <div className="mx-auto max-w-6xl px-6 py-10">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {[
-              { src: eventImages.boothWide, label: "The full bar setup" },
-              { src: eventImages.bartenderShaker, label: "Trained crew" },
-              { src: eventImages.menuOnBar, label: "Custom menus" },
-              { src: eventImages.drinkClose, label: "Craft glassware" },
-              { src: eventImages.pouring, label: "Live pours" },
-              { src: eventImages.poolside, label: "Any venue" },
-            ].map((p, i) => (
-              <figure key={p.label} className="text-center">
-                <div
-                  className={`relative aspect-square overflow-hidden ${
-                    i % 2 === 0 ? "brush-mask" : "rounded-2xl"
-                  }`}
-                >
-                  <Image
-                    src={p.src}
-                    alt={p.label}
-                    fill
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 17vw"
-                    className="object-cover transition-transform duration-500 hover:scale-105"
-                  />
-                </div>
-                <figcaption className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-shell/60">
-                  {p.label}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* The builder (includes the booking form) */}
-      <section className="py-10">
-        <EventBuilder />
+      <section className="mx-auto max-w-5xl px-6 py-14">
+        <ExperienceBuilder />
       </section>
 
       {/* Meet your bartenders */}
       <section className="border-t border-shell/10">
-        <div className="mx-auto max-w-6xl px-6 py-12">
+        <div className="mx-auto max-w-4xl px-6 py-14">
           <h2 className="h-sign text-4xl text-shell sm:text-5xl">
             Meet your <span className="text-coconut">bartenders.</span>
           </h2>
@@ -107,31 +58,33 @@ export default function EventsPage() {
             {team.map((t) => (
               <div
                 key={t.name}
-                className="flex gap-6 overflow-hidden rounded-3xl border border-shell/10 bg-lagoon/30"
+                className="flex gap-5 overflow-hidden rounded-3xl border border-shell/10 bg-lagoon/30"
               >
-                <div className="relative aspect-[3/4] w-36 shrink-0 bg-abyss/50 sm:w-48">
+                <div className="relative aspect-[3/4] w-36 shrink-0 bg-abyss/50 sm:w-44">
                   {t.photo ? (
                     <Image
                       src={t.photo}
                       alt={`${t.name} behind the Lumanai bar`}
                       fill
-                      sizes="192px"
+                      sizes="176px"
+                      // Top-anchored: object-cover alone centres on torsos
+                      // and cuts their heads off.
                       className="object-cover object-top"
                     />
                   ) : (
-                    <div className="flex h-full min-h-44 items-center justify-center">
-                      <span className="h-sign text-7xl text-shell/20">
+                    <div className="flex h-full items-center justify-center">
+                      <span className="h-sign text-6xl text-shell/20">
                         {t.name[0]}
                       </span>
                     </div>
                   )}
                 </div>
-                <div className="py-6 pr-6">
-                  <h3 className="h-sign text-3xl text-shell">{t.name}</h3>
-                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+                <div className="py-6 pr-5">
+                  <h3 className="h-sign text-2xl text-shell">{t.name}</h3>
+                  <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-gold">
                     {t.role}
                   </p>
-                  <p className="mt-3 text-sm leading-relaxed text-shell/70">
+                  <p className="mt-3 text-sm leading-relaxed text-shell/65">
                     {t.bio}
                   </p>
                 </div>
@@ -151,7 +104,7 @@ export default function EventsPage() {
             href="/find-us"
             className="prose-link mt-2 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-gold"
           >
-            Find the bar at a market this weekend →
+            Find the bar at a market →
           </Link>
         </div>
       </section>

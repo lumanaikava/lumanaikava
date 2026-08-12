@@ -577,3 +577,43 @@ body {
     transparent
   );
 }
+
+/* ── Booking flow — ethereal motion ─────────────────────────────
+   Slow, low-amplitude, and few. The point is calm, not spectacle,
+   so nothing here is fast enough to notice mid-scroll. Disabled
+   entirely under prefers-reduced-motion. */
+
+@keyframes ether-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ether-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(1); box-shadow: 0 0 0 0 rgba(237,226,180,0.25); }
+  50%      { opacity: 1;    transform: scale(1.04); box-shadow: 0 0 40px 6px rgba(237,226,180,0.18); }
+}
+
+@keyframes ether-drift {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(-18px, 14px, 0); }
+}
+
+@keyframes ether-glow {
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(1.14); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Sections settle in as you reach them. `both` holds the start
+     state so nothing flashes at full opacity before it animates. */
+  .ether-in {
+    animation: ether-rise 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .ether-in:nth-of-type(2) { animation-delay: 90ms; }
+  .ether-in:nth-of-type(3) { animation-delay: 180ms; }
+  .ether-in:nth-of-type(4) { animation-delay: 270ms; }
+
+  .ether-pulse { animation: ether-pulse 4.5s ease-in-out infinite; }
+  .ether-drift { animation: ether-drift 18s ease-in-out infinite; }
+  .ether-glow  { animation: ether-glow 5s ease-in-out infinite; }
+}
