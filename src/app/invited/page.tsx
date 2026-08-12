@@ -3,14 +3,12 @@ import { cookies } from "next/headers";
 import PartyGate from "@/components/party/PartyGate";
 import BuyTicket, { type Tier } from "@/components/party/BuyTicket";
 import Countdown from "@/components/party/Countdown";
-import SplashDrink from "@/components/SplashDrink";
 import { getProductByHandle, formatPrice } from "@/lib/integrations/shopify";
 import { PARTY_TICKET_HANDLE } from "@/lib/catalog";
-import { secretDrinks } from "@/lib/drinks-db";
 import { isUnpublished, tierRank, crewLinkCode } from "@/lib/party-tiers";
 
 /**
- * LUMANAI LAUNCH — the invite-only launch party. Never linked in the nav;
+ * LUNA EKLIPTIKA — the invite-only launch party. Never linked in the nav;
  * the URL travels by word of mouth with the password.
  *
  * The venue address appears NOWHERE in this file, in the repo, or in any
@@ -66,7 +64,7 @@ const RUN_OF_NIGHT = [
   {
     time: "8 PM",
     title: "Doors",
-    body: "The full bar opens. Hors d'oeuvres all night, live DJ, and the two pours nobody has tasted yet.",
+    body: "The full bar opens, the menu is revealed, and the kitchen starts sending. Live DJ until late.",
   },
   {
     time: "Late",
@@ -75,26 +73,24 @@ const RUN_OF_NIGHT = [
   },
 ];
 
-const OPEN_BAR = [
+/**
+ * What's being kept back on purpose.
+ *
+ * The drink lineup used to be listed here. It isn't anymore — Ash is
+ * building a secret cocktail menu and Zach a matching spread, and naming
+ * either would spend the surprise before anyone walks in. Tease the
+ * shape, never the contents.
+ */
+const SEALED = [
   {
-    name: "Kava Shots",
-    note: "Traditional. Straight from the tanoa.",
-    image: null,
+    label: "The menu",
+    by: "Ash",
+    line: "A kava cocktail list written for one night and never served again.",
   },
   {
-    name: "Hive Mind",
-    note: "Manuka honey, ginger, lemon.",
-    image: "/images/drinks/clear/hive-mind.png",
-  },
-  {
-    name: "Pacific Rim",
-    note: "Pineapple, coconut, Madagascar vanilla.",
-    image: "/images/drinks/clear/pacific-rim.png",
-  },
-  {
-    name: "Adapterol Spritz",
-    note: "Damiana, schisandra, raspberry rose.",
-    image: "/images/drinks/clear/adapterol-spritz.png",
+    label: "The table",
+    by: "Zach",
+    line: "Hors d'oeuvres built to sit against it, course by course.",
   },
 ];
 
@@ -103,41 +99,6 @@ const CREW = [
   { name: "Ash", role: "Your host" },
   { name: "Karina", role: "Running the night" },
 ];
-
-/**
- * The traditional pour has no product photo — the other three tiles use
- * real glasses, so a drawn shot glass keeps the row from having one
- * obviously empty slot.
- */
-function ShotGlass() {
-  return (
-    <div
-      className="flex h-20 w-14 shrink-0 items-center justify-center sm:h-24"
-      aria-hidden
-    >
-      <svg viewBox="0 0 40 50" className="h-14 w-11">
-        <defs>
-          <linearGradient id="kava-pour" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#a2814f" />
-            <stop offset="100%" stopColor="#5f4526" />
-          </linearGradient>
-        </defs>
-        {/* the pour, filling most of the glass */}
-        <path d="M8.1 18 H31.9 L27.4 45.4 H12.6 Z" fill="url(#kava-pour)" />
-        {/* surface highlight */}
-        <ellipse cx="20" cy="18" rx="11.9" ry="1.7" fill="#c9a978" opacity="0.7" />
-        {/* glass */}
-        <path
-          d="M6 6 H34 L28.6 45.6 A2.4 2.4 0 0 1 26.2 47.6 H13.8 A2.4 2.4 0 0 1 11.4 45.6 Z"
-          fill="none"
-          stroke="rgba(244,236,220,0.4)"
-          strokeWidth="1.7"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </div>
-  );
-}
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
@@ -167,7 +128,7 @@ export default async function InvitedPage({
           aria-hidden
         />
         <div className="relative">
-          <Eclipse className="mx-auto mb-8 h-24 w-24" />
+          <Eclipse className="luna-corona luna-float mx-auto mb-8 h-24 w-24" />
           <Eyebrow>08 · 28 · 26 — Las Vegas</Eyebrow>
           <h1 className="h-sign mt-5 text-6xl text-shell sm:text-8xl">
             Invite <span className="text-gold">only.</span>
@@ -222,26 +183,26 @@ export default async function InvitedPage({
        the site keeps its navy/purple. */
     <div className="luna">
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden">
+      <section className="luna-sweep relative overflow-hidden">
         <div className="luna-bg pointer-events-none absolute inset-0" aria-hidden />
         <div
           className="luna-grain pointer-events-none absolute inset-0 opacity-80"
           aria-hidden
         />
         <div className="relative mx-auto flex min-h-[92svh] max-w-4xl flex-col items-center justify-center px-6 py-20 text-center">
-          <Eclipse className="mb-9 h-28 w-28 sm:h-32 sm:w-32" />
-          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-shell/60">
+          <Eclipse className="luna-corona luna-float mb-9 h-28 w-28 sm:h-32 sm:w-32" />
+          <p className="luna-in font-mono text-[11px] uppercase tracking-[0.35em] text-shell/60">
             Lumanai presents
           </p>
-          <h1 className="h-sign mt-4 text-[3.2rem] leading-[0.86] text-shell sm:text-[6.5rem]">
+          <h1 className="h-sign luna-in luna-d1 mt-4 text-[3.2rem] leading-[0.86] text-shell sm:text-[6.5rem]">
             Luna
             <br />
             <span className="text-gold">Ekliptika</span>
           </h1>
-          <p className="mt-6 font-mono text-sm uppercase tracking-[0.3em] text-shell/80">
+          <p className="luna-in luna-d2 mt-6 font-mono text-sm uppercase tracking-[0.3em] text-shell/80">
             Fri · Aug 28 · Golden Hour 7PM · Doors 8PM
           </p>
-          <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
+          <p className="luna-in luna-d3 mt-2 font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
             Dress code — all black
           </p>
 
@@ -256,13 +217,13 @@ export default async function InvitedPage({
             <span>· Las Vegas</span>
           </p>
 
-          <div className="mt-10">
+          <div className="luna-in luna-d4 mt-10">
             <Countdown target={DOORS_ISO} />
           </div>
 
           <a
             href="#tickets"
-            className="btn-brush mt-12 font-mono text-sm font-bold uppercase tracking-[0.2em] text-shell"
+            className="btn-brush luna-in luna-d5 mt-12 font-mono text-sm font-bold uppercase tracking-[0.2em] text-shell"
             style={{ "--brush-bg": "var(--amethyst)" } as React.CSSProperties}
           >
             Get on the list
@@ -270,174 +231,79 @@ export default async function InvitedPage({
         </div>
       </section>
 
-      {/* ── What's launching ─────────────────────────────────── */}
-      <section className="relative border-t border-shell/10 px-6 py-16">
-        <div className="mx-auto max-w-4xl">
-          <Eyebrow>What we&apos;re celebrating</Eyebrow>
-          <div className="mt-8 grid gap-8 sm:grid-cols-2">
-            <div className="rounded-3xl border border-gold/30 bg-abyss/50 p-7">
-              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-gold">
-                01 — The product
-              </p>
-              <h2 className="h-sign mt-3 text-4xl text-shell">
-                Lumanai Rush
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-shell/75">
-                Sun-dried kava root juice, milled to an instant powder.
-                Ceremonial kava in about ten seconds, no straining, no
-                grit. You'll be the first room in the world to taste it.
-              </p>
-            </div>
-            <div className="rounded-3xl border border-shell/15 bg-abyss/40 p-7">
-              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-shell/50">
-                02 — The house
-              </p>
-              <h2 className="h-sign mt-3 text-4xl text-shell">
-                lumanai.com
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-shell/75">
-                The website goes live to the public the same night —
-                menu, booking, the whole bar. You're seeing the inside of
-                it before anyone else does.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── The open bar ─────────────────────────────────────── */}
-      <section className="relative border-t border-shell/10 px-6 py-16">
+      {/* ── One panel: what's sealed, and how the night runs ── */}
+      <section className="luna-sweep relative overflow-hidden border-t border-shell/10 px-6 py-14">
         <div className="mx-auto max-w-5xl">
-          <Eyebrow>The bar · all night · zero alcohol</Eyebrow>
-          <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">
-            Everything is poured.
-          </h2>
-          <p className="mt-3 max-w-xl text-shell/70">
-            Hors d&apos;oeuvres all night and no tickets at the bar. Open
-            bar comes with Meridian and above; Obsidian includes a craft
-            drink and a traditional shot, with everything after at a
-            discount.
-          </p>
-
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {OPEN_BAR.map((d) => (
-              <div
-                key={d.name}
-                className="flex items-center gap-4 rounded-2xl border border-shell/12 bg-abyss/40 p-4 sm:flex-col sm:items-start sm:p-5"
-              >
-                {d.image ? (
-                  <SplashDrink
-                    src={d.image}
-                    alt={d.name}
-                    accent="#185c7c"
-                    imgClassName="h-20 w-auto object-contain sm:h-24"
-                  />
-                ) : (
-                  <ShotGlass />
-                )}
-                <div>
-                  <p className="h-sign-med text-lg text-shell">{d.name}</p>
-                  <p className="mt-0.5 text-xs leading-snug text-shell/60">
-                    {d.note}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* The exclusives — the actual reason to show up. */}
-          <div className="mt-10 rounded-3xl border border-gold/40 bg-gradient-to-br from-amethyst/25 to-abyss/60 p-7 sm:p-9">
-            <Eyebrow>Never served · never on a menu</Eyebrow>
-            <p className="mt-3 max-w-lg text-sm text-shell/75">
-              Two pours built for this room only. After the 28th, nobody
-              can order them anywhere.
-            </p>
-            <div className="mt-7 grid gap-7 sm:grid-cols-2">
-              {secretDrinks.map((d) => (
-                <div key={d.slug} className="flex items-center gap-5">
-                  {d.image && (
-                    <SplashDrink
-                      src={d.image}
-                      alt={d.name}
-                      accent={d.accent}
-                      imgClassName="h-28 w-auto object-contain sm:h-32"
-                    />
-                  )}
-                  <div>
-                    <h3 className="h-sign text-2xl text-gold sm:text-3xl">
-                      {d.name}
-                    </h3>
-                    <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-shell/45">
-                      Recipe classified
+          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+            {/* Deliberately vague. The menu is the surprise. */}
+            <div className="luna-in luna-d1">
+              <Eyebrow>Sealed until the doors</Eyebrow>
+              <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
+                Nobody sees
+                <br />
+                <span className="text-gold">the menu early.</span>
+              </h2>
+              <ul className="mt-7 space-y-5">
+                {SEALED.map((s) => (
+                  <li key={s.label} className="border-l border-gold/30 pl-5">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-gold">
+                      {s.label} · {s.by}
                     </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── The night ────────────────────────────────────────── */}
-      <section className="relative border-t border-shell/10 px-6 py-16">
-        <div className="mx-auto max-w-4xl">
-          <Eyebrow>Run of the night</Eyebrow>
-          <h2 className="h-sign mt-4 text-5xl text-shell">
-            A mansion under
-            <br />
-            <span className="text-gold">a full moon.</span>
-          </h2>
-          <ol className="mt-8 space-y-5">
-            {RUN_OF_NIGHT.map((m) => (
-              <li key={m.title} className="flex gap-5 sm:gap-8">
-                <span className="w-20 shrink-0 pt-1 font-mono text-[11px] uppercase tracking-[0.18em] text-gold sm:w-24">
-                  {m.time}
-                </span>
-                <div className="border-l border-shell/15 pl-5 sm:pl-6">
-                  <p className="h-sign-med text-xl text-shell">
-                    {m.title}
-                    {m.gated && (
-                      <span className="ml-2 rounded-full bg-gold/15 px-2 py-0.5 align-middle font-mono text-[9px] uppercase tracking-[0.16em] text-gold">
-                        Meridian +
-                      </span>
-                    )}
-                  </p>
-                  <p className="mt-1 max-w-xl text-sm leading-relaxed text-shell/70">
-                    {m.body}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ol>
-
-          <div className="mt-12 grid gap-10 sm:grid-cols-[1.2fr_1fr]">
-            <div>
-              <Eyebrow>The room</Eyebrow>
-              <p className="mt-4 max-w-md text-shell/75">
-                Hand-picked, invite only, and capped on purpose. The
-                people here are the ones shaping what Vegas drinks next.
-                No lines, no wristbands, no strangers.
-              </p>
-            </div>
-            <div className="self-center">
-              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-shell/40">
-                Your crew
-              </p>
-              <ul className="mt-4 space-y-4">
-                {CREW.map((c) => (
-                  <li
-                    key={c.name}
-                    className="border-l-2 border-gold/50 pl-4"
-                  >
-                    <p className="h-sign-med text-2xl text-shell">
-                      {c.name}
-                    </p>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-shell/50">
-                      {c.role}
+                    <p className="mt-1.5 text-sm leading-relaxed text-shell/70">
+                      {s.line}
                     </p>
                   </li>
                 ))}
               </ul>
+              <p className="mt-7 text-xs leading-relaxed text-shell/35">
+                Open bar comes with Meridian and above. Obsidian includes a
+                craft drink and a traditional shot, with everything after
+                at a discount. Zero alcohol, all night.
+              </p>
+            </div>
+
+            <div className="luna-in luna-d2">
+              <Eyebrow>Run of the night</Eyebrow>
+              <ol className="mt-6 space-y-5">
+                {RUN_OF_NIGHT.map((m) => (
+                  <li key={m.title} className="flex gap-4">
+                    <span className="w-16 shrink-0 pt-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-gold">
+                      {m.time}
+                    </span>
+                    <div>
+                      <p className="h-sign-med text-lg text-shell">
+                        {m.title}
+                        {m.gated && (
+                          <span className="ml-2 rounded-full bg-gold/15 px-2 py-0.5 align-middle font-mono text-[9px] uppercase tracking-[0.14em] text-gold">
+                            Meridian +
+                          </span>
+                        )}
+                      </p>
+                      <p className="mt-1 text-xs leading-relaxed text-shell/60">
+                        {m.body}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+
+              <div className="luna-rule my-7" />
+
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-shell/35">
+                Your crew
+              </p>
+              <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
+                {CREW.map((c) => (
+                  <span key={c.name} className="text-sm text-shell/70">
+                    <span className="h-sign-med text-shell">{c.name}</span>
+                    <span className="text-shell/40"> · {c.role}</span>
+                  </span>
+                ))}
+              </div>
+              <p className="mt-6 text-xs leading-relaxed text-shell/35">
+                Hand-picked, invite only, capped on purpose. No lines, no
+                wristbands, no strangers.
+              </p>
             </div>
           </div>
         </div>

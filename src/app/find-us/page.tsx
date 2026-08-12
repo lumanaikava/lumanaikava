@@ -71,7 +71,7 @@ export default function FindUsPage() {
       <section>
         <div className="mx-auto max-w-4xl px-6 py-10">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-coconut">
-            Next four weeks
+            The months ahead
           </p>
           <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">
             Upcoming appearances.

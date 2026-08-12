@@ -35,15 +35,11 @@ export default async function ProductsPage() {
     .sort((a, b) => shopRank(a.handle) - shopRank(b.handle));
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-12">
-      <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
-        Shop
-      </p>
-      <h1 className="h-sign mt-3 text-4xl text-shell sm:text-5xl">
-        The lineup.
-      </h1>
-
-      <div className="mt-14 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+    /* Sized so the whole lineup lands in one screen — no title, no
+       eyebrow, no tabs. Three across on a phone, five on a desktop,
+       which puts nine products in three short rows or two. */
+    <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+      <div className="grid grid-cols-3 gap-x-2 gap-y-5 sm:gap-x-4 sm:gap-y-7 lg:grid-cols-5">
         {products.map((p) => {
           const art = artworkFor(p.handle) ?? p.image;
           return (
@@ -54,36 +50,36 @@ export default async function ProductsPage() {
             >
               {/* No card, no frame — the cutout sits straight on the
                   page so the bottles are the only thing you look at. */}
-              <div className="relative mx-auto flex h-64 w-full items-end justify-center sm:h-72">
+              <div className="relative flex h-28 items-end justify-center sm:h-36 lg:h-40">
                 {art ? (
                   <Image
                     src={art}
                     alt={p.imageAlt ?? p.name}
                     width={340}
                     height={900}
-                    sizes="(max-width: 640px) 60vw, (max-width: 1024px) 30vw, 22vw"
-                    className="h-full w-auto object-contain drop-shadow-[0_18px_30px_rgba(0,0,0,0.45)] transition-transform duration-500 group-hover:-translate-y-2"
+                    sizes="(max-width: 640px) 30vw, (max-width: 1024px) 22vw, 16vw"
+                    className="h-full w-auto object-contain drop-shadow-[0_12px_22px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:-translate-y-1.5"
                   />
                 ) : (
-                  <div className="h-full w-full rounded-2xl border border-shell/10" />
+                  <div className="h-full w-full rounded-xl border border-shell/10" />
                 )}
                 {!p.available && (
-                  <span className="absolute left-1/2 top-2 -translate-x-1/2 rounded-full bg-abyss/85 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-shell/80">
+                  <span className="absolute left-1/2 top-0 -translate-x-1/2 rounded-full bg-abyss/85 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.15em] text-shell/80">
                     Sold out
                   </span>
                 )}
               </div>
 
-              <h2 className="h-sign-med mt-6 text-xl text-shell transition-colors group-hover:text-gold">
+              <h2 className="h-sign-med mt-2.5 text-[13px] leading-tight text-shell transition-colors group-hover:text-gold sm:text-base">
                 {shortName(p.handle, p.name)}
               </h2>
               {subtitleFor(p.handle) && (
-                <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.2em] text-shell/40">
+                <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.15em] text-shell/35 sm:text-[10px]">
                   {subtitleFor(p.handle)}
                 </p>
               )}
               {!HIDE_PRICES && (
-                <p className="mt-2 font-mono text-sm text-gold">
+                <p className="mt-1 font-mono text-xs text-gold">
                   {p.priceLabel}
                 </p>
               )}

@@ -70,9 +70,13 @@ const ARTWORK: Record<string, string> = {
   "64-oz-growler": "/images/products/growler-basic-batch.png",
   "raspberry-orange-spice-32-oz-growler":
     "/images/products/growler-raspberry-orange-spice.png",
-  // Kolada and Ginger growlers have no cutout in the brand assets yet, so
-  // they fall through to Shopify's own image rather than borrowing a
-  // bottle that shows the wrong label.
+  // Kolada and Ginger have no growler cutout of their own — Zach okayed
+  // reusing the Basic Batch growler, since the vessel is what's being
+  // shown and the flavour is named underneath it.
+  "copy-of-raspberry-orange-spice-32-oz-growler":
+    "/images/products/growler-basic-batch.png",
+  "copy-of-raspberry-orange-spice-32-oz-growler-1":
+    "/images/products/growler-basic-batch.png",
 };
 
 export function artworkFor(handle: string): string | undefined {
