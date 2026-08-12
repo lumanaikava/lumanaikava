@@ -195,6 +195,13 @@ export async function saveMenus(items: EventMenuOverride[]): Promise<void> {
 /** Header row first, then the data — the events parser reads by column name. */
 export async function readMainListRows(): Promise<string[][]> {
   const { headers, rows } = await readGrid("MAIN LIST");
+  // An older deployment of the script returns rows without headers.
+  // Say so, rather than letting the calendar quietly come back empty.
+  if (headers.length === 0) {
+    throw new Error(
+      "MAIN LIST returned no headers — the deployed Apps Script is an older version. Re-paste it and deploy a NEW VERSION of the existing deployment.",
+    );
+  }
   const clean = (r: unknown[]) => r.map((c) => String(c ?? "").trim());
   return [clean(headers), ...rows.map(clean)];
 }
