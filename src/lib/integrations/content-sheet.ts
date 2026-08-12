@@ -9,11 +9,16 @@ import {
   type SiteFaq,
   type SiteStory,
 } from "@/lib/site-content";
+import {
+  overrideToValues,
+  valuesToOverride,
+  type EventMenuOverride,
+} from "@/lib/event-menu";
 
 /**
  * Site content → Google Sheet, via a bound Apps Script Web App.
  *
- * ONE spreadsheet, three tabs — "Events", "FAQ" and "Story" — behind one script,
+ * ONE spreadsheet, four tabs — Events, FAQ, Story and Menus — behind one script,
  * addressed by a `tab` parameter. That's the difference from the payroll
  * and guest scripts, which each own their whole spreadsheet: a third
  * separate script would be a third setup and a third thing to break.
@@ -32,7 +37,7 @@ export function contentSheetConfigured(): boolean {
   return Boolean(URL);
 }
 
-export type ContentTab = "Events" | "FAQ" | "Story";
+export type ContentTab = "Events" | "FAQ" | "Story" | "Menus";
 
 /**
  * An Apps Script web app answers HTTP 200 even when the script itself is
@@ -137,4 +142,23 @@ export async function readStorySafe(): Promise<SiteStory[]> {
 
 export async function saveStory(blocks: SiteStory[]): Promise<void> {
   await writeRows("Story", blocks.map(storyToValues));
+}
+
+/* ── Per-event menus ───────────────────────────────────────── */
+
+export async function readMenusStrict(): Promise<EventMenuOverride[]> {
+  return (await readRows("Menus")).map(valuesToOverride).filter((m) => m.key);
+}
+
+export async function readMenusSafe(): Promise<EventMenuOverride[]> {
+  try {
+    return await readMenusStrict();
+  } catch (err) {
+    console.error("[content] menus unreadable:", err);
+    return [];
+  }
+}
+
+export async function saveMenus(items: EventMenuOverride[]): Promise<void> {
+  await writeRows("Menus", items.map(overrideToValues));
 }

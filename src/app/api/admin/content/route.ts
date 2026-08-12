@@ -7,6 +7,8 @@ import {
   saveFaq,
   readStoryStrict,
   saveStory,
+  readMenusStrict,
+  saveMenus,
   contentSheetConfigured,
 } from "@/lib/integrations/content-sheet";
 import {
@@ -17,6 +19,7 @@ import {
   type SiteStory,
   type EventKind,
 } from "@/lib/site-content";
+import { type EventMenuOverride } from "@/lib/event-menu";
 
 export const runtime = "nodejs";
 
@@ -47,15 +50,16 @@ export async function GET() {
   const denied = await requireOwner();
   if (denied) return refuse(denied);
   if (!contentSheetConfigured()) {
-    return NextResponse.json({ ready: false, events: [], faq: [], story: [] });
+    return NextResponse.json({ ready: false, events: [], faq: [], story: [], menus: [] });
   }
   try {
-    const [events, faq, story] = await Promise.all([
+    const [events, faq, story, menus] = await Promise.all([
       readEventsStrict(),
       readFaqStrict(),
       readStoryStrict(),
+      readMenusStrict(),
     ]);
-    return NextResponse.json({ ready: true, events, faq, story });
+    return NextResponse.json({ ready: true, events, faq, story, menus });
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Couldn't read the sheet." },
@@ -82,7 +86,13 @@ export async function POST(req: Request) {
   }
 
   const kind =
-    b.kind === "faq" ? "faq" : b.kind === "story" ? "story" : "events";
+    b.kind === "faq"
+      ? "faq"
+      : b.kind === "story"
+        ? "story"
+        : b.kind === "menus"
+          ? "menus"
+          : "events";
   const op = String(b.op ?? "");
   const item = (b.item ?? {}) as Record<string, unknown>;
 
@@ -95,6 +105,14 @@ export async function POST(req: Request) {
       if (!next) return NextResponse.json({ error: "Unknown op." }, { status: 400 });
       await saveEvents(next);
       return NextResponse.json({ ok: true, events: next });
+    }
+    if (kind === "menus") {
+      const menuAll = await readMenusStrict();
+      const menuNext = applyMenu(menuAll, op, item);
+      if (!menuNext)
+        return NextResponse.json({ error: "Unknown op." }, { status: 400 });
+      await saveMenus(menuNext);
+      return NextResponse.json({ ok: true, menus: menuNext });
     }
     if (kind === "story") {
       const storyAll = await readStoryStrict();
@@ -188,5 +206,43 @@ function applyStory(
   if (op === "add") return [...all, built];
   if (op === "update") return all.map((b) => (b.id === built.id ? built : b));
   if (op === "delete") return all.filter((b) => b.id !== str(raw.id, 40));
+  return null;
+}
+
+function applyMenu(
+  all: EventMenuOverride[],
+  op: string,
+  raw: Record<string, unknown>,
+): EventMenuOverride[] | null {
+  const key = str(raw.key, 80);
+  if (!key) return null;
+
+  const built: EventMenuOverride = {
+    key,
+    headline: str(raw.headline, 120),
+    hide: String(raw.hide ?? "")
+      .split(",")
+      .map((x) => x.trim())
+      .filter(Boolean)
+      .slice(0, 40),
+    add: String(raw.add ?? "")
+      .split(";")
+      .map((chunk) => {
+        const [name, ...rest] = chunk.split("::");
+        return { name: name.trim(), ingredients: rest.join("::").trim() };
+      })
+      .filter((a) => a.name)
+      .slice(0, 20),
+    note: str(raw.note, 200),
+  };
+
+  // Keyed by event, so saving twice for the same night edits rather than
+  // stacking two conflicting menus for it.
+  if (op === "add" || op === "update") {
+    return all.some((m) => m.key === key)
+      ? all.map((m) => (m.key === key ? built : m))
+      : [...all, built];
+  }
+  if (op === "delete") return all.filter((m) => m.key !== key);
   return null;
 }

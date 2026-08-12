@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import type { CalendarEvent } from "@/lib/calendar";
+import { eventSlug } from "@/lib/event-menu";
 
 /**
  * Month grid + agenda, the same shape as the Grizzly Health events page.
@@ -180,10 +182,11 @@ export default function FindUsCalendar({
         {events.map((e) => {
           const d = parseDay(e.date);
           return (
-            <li
-              key={`${e.date}-${e.title}`}
-              className="flex items-center gap-4 px-5 py-4"
-            >
+            <li key={`${e.date}-${e.title}`}>
+              <Link
+                href={`/menu/${eventSlug(e.date, e.title)}`}
+                className="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-shell/[0.04]"
+              >
               <div className="w-14 shrink-0 text-center">
                 <p
                   className="font-mono text-[10px] uppercase tracking-[0.15em]"
@@ -208,6 +211,13 @@ export default function FindUsCalendar({
                     .join(" · ")}
                 </p>
               </div>
+              <span
+                aria-hidden
+                className="shrink-0 font-mono text-[10px] uppercase tracking-[0.16em] text-shell/35"
+              >
+                Menu →
+              </span>
+              </Link>
             </li>
           );
         })}

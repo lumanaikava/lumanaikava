@@ -12,16 +12,28 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-shell/10 bg-abyss/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/" onClick={() => setOpen(false)} aria-label="Lumanai home">
-          <Image
-            src="/lumanai-wordmark.svg"
-            alt="LUMANAI"
-            width={132}
-            height={53}
-            priority
-            className="h-auto w-[120px] sm:w-[132px]"
-          />
-        </Link>
+        {/* Logo and the booking CTA travel together — Book is the one
+            action worth putting beside the brand, not stranded at the
+            far edge where it reads as an afterthought. */}
+        <div className="flex items-center gap-4">
+          <Link href="/" onClick={() => setOpen(false)} aria-label="Lumanai home">
+            <Image
+              src="/lumanai-wordmark.svg"
+              alt="LUMANAI"
+              width={132}
+              height={53}
+              priority
+              className="h-auto w-[120px] sm:w-[132px]"
+            />
+          </Link>
+          <Link
+            href="/events"
+            onClick={() => setOpen(false)}
+            className="hidden rounded-full bg-gold px-5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-abyss transition-colors hover:bg-shell lg:inline-block"
+          >
+            Book the Bar
+          </Link>
+        </div>
 
         <nav className="hidden items-center gap-6 lg:flex">
           {navLinks.map((link) => (
@@ -41,12 +53,6 @@ export default function Header() {
             className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/70 transition-colors hover:text-gold"
           >
             Contact
-          </Link>
-          <Link
-            href="/events#book"
-            className="rounded-full bg-gold px-5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-abyss transition-colors hover:bg-shell"
-          >
-            Book the Bar
           </Link>
           <CartButton />
         </div>

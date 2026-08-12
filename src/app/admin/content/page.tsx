@@ -7,8 +7,11 @@ import {
   readEventsSafe,
   readFaqSafe,
   readStorySafe,
+  readMenusSafe,
   contentSheetConfigured,
 } from "@/lib/integrations/content-sheet";
+import { upcomingEventsSynced, formatEventDate } from "@/lib/calendar";
+import { eventSlug } from "@/lib/event-menu";
 
 export const metadata: Metadata = {
   title: "Site Content",
@@ -39,9 +42,25 @@ export default async function ContentPage() {
   }
 
   const ready = contentSheetConfigured();
-  const [events, faq, story] = ready
-    ? await Promise.all([readEventsSafe(), readFaqSafe(), readStorySafe()])
-    : [[], [], []];
+  const [events, faq, story, menus] = ready
+    ? await Promise.all([
+        readEventsSafe(),
+        readFaqSafe(),
+        readStorySafe(),
+        readMenusSafe(),
+      ])
+    : [[], [], [], []];
+
+  // The menu picker offers real upcoming events so a key is chosen, not
+  // typed — a mistyped key silently produces a menu nobody can reach.
+  const upcoming = await upcomingEventsSynced(new Date(), 12);
+  const menuTargets = upcoming.map((e) => {
+    const d = formatEventDate(e.date);
+    return {
+      slug: eventSlug(e.date, e.title),
+      label: `${d.month} ${d.day} — ${e.title}`,
+    };
+  });
 
   return (
     <section className="mx-auto max-w-5xl px-6 py-10">
@@ -71,6 +90,8 @@ export default async function ContentPage() {
           initialEvents={events}
           initialFaq={faq}
           initialStory={story}
+          initialMenus={menus}
+          menuTargets={menuTargets}
           ready={ready}
         />
       </div>

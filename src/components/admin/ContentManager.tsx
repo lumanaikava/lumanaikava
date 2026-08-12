@@ -7,6 +7,7 @@ import {
   type SiteFaq,
   type SiteStory,
 } from "@/lib/site-content";
+import type { EventMenuOverride } from "@/lib/event-menu";
 
 /**
  * Edit the calendar and the FAQ without a deploy.
@@ -33,23 +34,29 @@ export default function ContentManager({
   initialEvents,
   initialFaq,
   initialStory,
+  initialMenus,
+  menuTargets,
   ready,
 }: {
   initialEvents: SiteEvent[];
   initialFaq: SiteFaq[];
   initialStory: SiteStory[];
+  initialMenus: EventMenuOverride[];
+  /** Real upcoming events, so a menu key is picked and never typed. */
+  menuTargets: { slug: string; label: string }[];
   ready: boolean;
 }) {
-  const [tab, setTab] = useState<"events" | "faq" | "story">("events");
+  const [tab, setTab] = useState<"events" | "faq" | "story" | "menus">("events");
   const [events, setEvents] = useState(initialEvents);
   const [faq, setFaq] = useState(initialFaq);
   const [story, setStory] = useState(initialStory);
+  const [menus, setMenus] = useState(initialMenus);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<string | null>(null);
 
   async function send(
-    kind: "events" | "faq" | "story",
+    kind: "events" | "faq" | "story" | "menus",
     op: "add" | "update" | "delete",
     item: Record<string, unknown>,
   ) {
@@ -66,6 +73,7 @@ export default function ContentManager({
       if (body.events) setEvents(body.events);
       if (body.faq) setFaq(body.faq);
       if (body.story) setStory(body.story);
+      if (body.menus) setMenus(body.menus);
       setEditing(null);
       return true;
     } catch (err) {
@@ -81,7 +89,7 @@ export default function ContentManager({
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-2">
-        {(["events", "faq", "story"] as const).map((t) => (
+        {(["events", "faq", "story", "menus"] as const).map((t) => (
           <button
             key={t}
             onClick={() => {
@@ -98,7 +106,9 @@ export default function ContentManager({
               ? `Appearances ${events.length}`
               : t === "faq"
                 ? `FAQ ${faq.length}`
-                : `Our Story ${story.length}`}
+                : t === "story"
+                  ? `Our Story ${story.length}`
+                  : `Event menus ${menus.length}`}
           </button>
         ))}
       </div>
@@ -240,7 +250,7 @@ export default function ContentManager({
             ))}
           </ul>
         </>
-      ) : (
+      ) : tab === "story" ? (
         <>
           <StoryForm
             key={editing ?? "new-story"}
@@ -293,6 +303,73 @@ export default function ContentManager({
                 </button>
               </li>
             ))}
+          </ul>
+        </>
+      ) : (
+        <>
+          <MenuForm
+            key={editing ?? "new-menu"}
+            disabled={!ready || busy}
+            targets={menuTargets}
+            existing={menus.find((m) => m.key === editing)}
+            onCancel={() => setEditing(null)}
+            onSubmit={(item) => send("menus", "update", item)}
+          />
+
+          <ul className="divide-y divide-shell/10 rounded-3xl border border-shell/10 bg-lagoon/20">
+            {menus.length === 0 && (
+              <li className="px-5 py-6 text-sm text-shell/55">
+                Every event shows the live Base Menu until you edit it
+                here. Only the differences are stored, so changing the base
+                menu still flows through to every event.
+              </li>
+            )}
+            {menus.map((m) => {
+              const target = menuTargets.find((t) => t.slug === m.key);
+              return (
+                <li key={m.key} className="flex items-center gap-4 px-5 py-3.5">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-shell">
+                      {target?.label ?? m.key}
+                    </p>
+                    <p className="truncate text-xs text-shell/50">
+                      {[
+                        m.hide.length ? `${m.hide.length} hidden` : "",
+                        m.add.length ? `${m.add.length} added` : "",
+                        m.headline,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ") || "no changes yet"}
+                    </p>
+                  </div>
+                  <a
+                    href={`/menu/${m.key}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[10px] font-bold uppercase tracking-[0.16em] text-shell/50 hover:text-gold"
+                  >
+                    View
+                  </a>
+                  <button
+                    onClick={() => setEditing(m.key)}
+                    disabled={!ready || busy}
+                    className="text-[10px] font-bold uppercase tracking-[0.16em] text-shell/60 hover:text-gold disabled:opacity-40"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm("Reset this event to the base menu?"))
+                        send("menus", "delete", { key: m.key });
+                    }}
+                    disabled={!ready || busy}
+                    className="text-[10px] font-bold uppercase tracking-[0.16em] text-shell/35 hover:text-coconut disabled:opacity-40"
+                  >
+                    Reset
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </>
       )}
@@ -576,6 +653,128 @@ function StoryForm({
           className="ml-auto rounded-full bg-gold px-6 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-abyss hover:bg-shell disabled:opacity-50"
         >
           {existing ? "Save changes" : "Save"}
+        </button>
+        {existing && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="text-[11px] font-bold uppercase tracking-[0.16em] text-shell/50 hover:text-shell"
+          >
+            Cancel
+          </button>
+        )}
+      </div>
+    </form>
+  );
+}
+
+function MenuForm({
+  existing,
+  targets,
+  disabled,
+  onSubmit,
+  onCancel,
+}: {
+  existing?: EventMenuOverride;
+  targets: { slug: string; label: string }[];
+  disabled: boolean;
+  onSubmit: (item: Record<string, unknown>) => Promise<boolean>;
+  onCancel: () => void;
+}) {
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget);
+    const ok = await onSubmit({
+      key: existing?.key || f.get("key"),
+      headline: f.get("headline"),
+      hide: f.get("hide"),
+      add: f.get("add"),
+      note: f.get("note"),
+    });
+    if (ok && !existing) e.currentTarget.reset();
+  }
+
+  return (
+    <form
+      onSubmit={submit}
+      className="rounded-3xl border border-shell/10 bg-lagoon/30 p-5"
+    >
+      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-gold">
+        {existing ? "Edit this event's menu" : "Customise an event's menu"}
+      </p>
+      <p className="mt-2 text-xs text-shell/50">
+        Starts from the live Base Menu. You only record the differences, so
+        editing the base still flows through everywhere.
+      </p>
+
+      {!existing && (
+        <label className="mt-4 block">
+          <span className={label}>Which event</span>
+          <select name="key" required defaultValue="" className={input}>
+            <option value="" disabled>
+              Pick an event…
+            </option>
+            {targets.map((t) => (
+              <option key={t.slug} value={t.slug}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+
+      <label className="mt-3 block">
+        <span className={label}>Menu headline (optional)</span>
+        <input
+          name="headline"
+          placeholder="Leave blank to use the event name"
+          defaultValue={existing?.headline}
+          className={input}
+        />
+      </label>
+
+      <label className="mt-3 block">
+        <span className={label}>Take off the menu — comma separated</span>
+        <input
+          name="hide"
+          placeholder="Hive Mind, Pacific Rim"
+          defaultValue={existing?.hide.join(", ")}
+          className={input}
+        />
+      </label>
+
+      <label className="mt-3 block">
+        <span className={label}>
+          Add for this event — Name :: ingredients, separated by ;
+        </span>
+        <textarea
+          name="add"
+          rows={3}
+          placeholder="Purple Pulse :: Butterfly pea, cucumber, mint, lime"
+          defaultValue={existing?.add
+            .map((a) => `${a.name} :: ${a.ingredients}`)
+            .join(" ; ")}
+          className={`${input} resize-y`}
+        />
+      </label>
+
+      <label className="mt-3 block">
+        <span className={label}>Note under the header (optional)</span>
+        <input
+          name="note"
+          placeholder="Cash or card · last pour 10pm"
+          defaultValue={existing?.note}
+          className={input}
+        />
+      </label>
+
+      <div className="mt-4 flex items-center gap-4">
+        <button
+          type="submit"
+          disabled={disabled}
+          className="ml-auto rounded-full bg-gold px-6 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-abyss hover:bg-shell disabled:opacity-50"
+        >
+          {existing ? "Save changes" : "Save menu"}
         </button>
         {existing && (
           <button
