@@ -25,19 +25,23 @@ export default async function Home() {
       {/* Everything important in one viewport: logo, slogan, drinks, dates */}
       <Archipelago events={tickerEvents} />
 
-      {/* The word we own — dictionary entry */}
+      {/* The word we own — dictionary entry, wording set by Ash */}
       <section className="border-b border-shell/10 bg-abyss/60">
         <div className="mx-auto max-w-3xl px-6 py-14 text-center">
-          <p className="h-sign text-5xl text-shell sm:text-6xl">
-            nak·tail
-          </p>
+          <p className="h-sign text-5xl text-shell sm:text-6xl">NAKTAIL</p>
           <p className="mt-2 text-sm tracking-[0.2em] text-shell/50">
-            /ˈnak-tāl/ · noun
+            (nak-TAYL) <span className="italic">n.</span>
           </p>
-          <p className="mx-auto mt-4 max-w-xl text-lg text-shell/85">
-            A craft cocktail built on kava instead of alcohol — shaken with
-            adaptogens, botanicals, and real bar technique. Invented behind
-            our bar. Only pours in Las Vegas.
+          <p className="mx-auto mt-5 max-w-xl text-shell/70">
+            From <span className="italic text-shell">nakamal</span> — the
+            traditional gathering house where kava is consumed in Vanuatu.
+          </p>
+          <p className="mx-auto mt-4 max-w-xl text-lg text-shell/90">
+            A cocktail built on kava, not alcohol. Mixologist-formulated,
+            built with real craft cocktail technique. Zero proof.
+          </p>
+          <p className="mx-auto mt-4 max-w-xl text-sm text-shell/50">
+            Coined behind the bar at LUMANAI.
           </p>
         </div>
       </section>

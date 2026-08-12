@@ -45,6 +45,17 @@ export type CatalogProduct = {
   variantPriceLabel: string;
   /** Variant title, when the product has a real one to show. */
   variantName?: string;
+  /**
+   * Every purchasable variant, for products sold in more than one size.
+   * The page picks one; the cart line follows whichever is chosen.
+   */
+  variants: {
+    variantId: string;
+    title: string;
+    amount: number;
+    priceLabel: string;
+    available: boolean;
+  }[];
   live: boolean;
 };
 
@@ -95,6 +106,15 @@ function fromShopify(p: ShopifyProduct): CatalogProduct {
       firstAvailable && firstAvailable.title !== DEFAULT_VARIANT_TITLE
         ? firstAvailable.title
         : undefined,
+    variants: p.variants.edges
+      .filter(({ node }) => node.title !== DEFAULT_VARIANT_TITLE)
+      .map(({ node }) => ({
+        variantId: node.id,
+        title: node.title,
+        amount: Number(node.price.amount),
+        priceLabel: formatPrice(node.price.amount, node.price.currencyCode),
+        available: node.availableForSale,
+      })),
     live: true,
   };
 }
@@ -115,6 +135,7 @@ function fromStatic(p: (typeof staticProducts)[number]): CatalogProduct {
     // cart line. Nothing static is buyable (no variantId), but the
     // number is the honest one either way.
     variantPriceLabel: formatPrice(String(p.price)),
+    variants: [],
     live: false,
   };
 }

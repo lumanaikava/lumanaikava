@@ -85,7 +85,32 @@ const ARTWORK: Record<string, string> = {
     "/images/products/growler-basic-batch.png",
 };
 
-export function artworkFor(handle: string): string | undefined {
+/**
+ * Artwork for a specific size, where one exists. Kolada and Ginger have
+ * no growler cutouts of their own, so they borrow Basic Batch's in both
+ * sizes — the vessel is what's being shown and the flavour is named
+ * beside it.
+ */
+const SIZE_ARTWORK: Record<string, Record<string, string>> = {
+  "64-oz-growler": {
+    "32 oz": "/images/products/growler-basic-batch-32.png",
+  },
+  "copy-of-raspberry-orange-spice-32-oz-growler": {
+    "32 oz": "/images/products/growler-basic-batch-32.png",
+  },
+  "copy-of-raspberry-orange-spice-32-oz-growler-1": {
+    "32 oz": "/images/products/growler-basic-batch-32.png",
+  },
+  "raspberry-orange-spice-32-oz-growler": {
+    "32 oz": "/images/products/growler-raspberry-orange-spice-32.png",
+  },
+};
+
+export function artworkFor(handle: string, variantTitle?: string): string | undefined {
+  if (variantTitle) {
+    const sized = SIZE_ARTWORK[handle]?.[variantTitle.trim()];
+    if (sized) return sized;
+  }
   return ARTWORK[handle];
 }
 
