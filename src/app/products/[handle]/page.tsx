@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Ripple from "@/components/Ripple";
-import BuyNowButton from "@/components/BuyNowButton";
+import AddToCartButton from "@/components/AddToCartButton";
 import { getCatalogProduct } from "@/lib/catalog";
 import { HIDE_PRICES, artworkFor, shortName } from "@/lib/shop-display";
 
@@ -91,8 +91,22 @@ export default async function ProductPage({
           )}
 
           <div className="mt-6">
-            <BuyNowButton
-              variantId={product.variantId}
+            <AddToCartButton
+              // The cart shows the same artwork and short name this page
+              // does, so the line the buyer sees matches what they clicked.
+              item={
+                product.variantId
+                  ? {
+                      variantId: product.variantId,
+                      handle: product.handle,
+                      name: shortName(product.handle, product.name),
+                      variantName: product.variantName,
+                      priceLabel: product.variantPriceLabel,
+                      amount: product.amount,
+                      image: artworkFor(product.handle) ?? product.image,
+                    }
+                  : undefined
+              }
               available={product.available && product.live}
               productName={product.name}
             />

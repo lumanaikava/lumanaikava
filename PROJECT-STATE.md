@@ -101,9 +101,11 @@ refile. A ready-to-run tool exists outside the repo; it **refuses to
 submit** unless the opt-in URL actually serves an unchecked checkbox.
 
 **TCPA:** the ~1,200 existing CRM contacts never opted in. Do not text
-them. Consent is captured at ticket checkout (unchecked box, reveals a
-number field, records who/when/exact wording) — that's the only
-legitimate list.
+them. Consent is captured at checkout — ticket and shop both (unchecked
+box, reveals a number field, records who/when/exact wording). That's the
+only legitimate list. `/api/checkout` stamps each record with which
+checkout it came from, so a consent can always be traced to the moment
+it was given.
 
 ---
 
@@ -122,11 +124,12 @@ legitimate list.
 
 ## Outstanding work
 
-- **MY CART** — cart state, multi-item Shopify checkout, SMS opt-in
 - **Booking revamp** — no prices, choose-your-experience, one seamless
   form, remove the feature ticker, ethereal animations
 - **32oz growler selector** — variants already exist in Shopify; needs a
-  size toggle that swaps price and image
+  size toggle that swaps price and image. The catalog currently picks the
+  first available variant; the toggle just has to feed a different one
+  into the same cart item shape
 - **Our Story** page, content pulled from lumanai.com, editable
 - **Per-event live menu**
 - **Naktail definition** on the home page
@@ -135,6 +138,19 @@ legitimate list.
   Real profiles are a later, separate project.
 
 ---
+
+## The cart
+
+Lives in `localStorage` only (`src/components/CartProvider.tsx`) and
+becomes a real Shopify cart at the moment of checkout, not before — so
+it's instant, works signed out, and an abandoned cart costs nothing.
+Two open tabs stay in step via the `storage` event.
+
+Add to Cart replaced Buy Now: one path to checkout, so the SMS opt-in in
+the drawer can't be skipped. Shopify drops sold-out lines from a
+`cartCreate` instead of failing it, so `/api/checkout` compares the
+quantity it asked for against the cart it got back and the drawer says
+so **before** sending anyone to a quietly shorter order.
 
 ## Conventions
 

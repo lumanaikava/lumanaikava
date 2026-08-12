@@ -68,6 +68,9 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
         body: JSON.stringify({
           variantId: tier.variantId,
           quantity: qty,
+          // Names the moment for the consent record — the shop checkout
+          // files the same opt-in under different wording.
+          context: "ticket",
           ...(smsConsent && phoneLooksReal
             ? { smsConsent: "yes", name: smsName.trim(), phone: smsPhone.trim() }
             : {}),

@@ -1,22 +1,32 @@
 "use client";
 
 import { useState } from "react";
+import type { CartItem } from "@/components/CartProvider";
+import { useCart } from "@/components/CartProvider";
 
 type Props = {
-  variantId?: string;
+  /** Absent when the product isn't live in Shopify, so nothing can be added. */
+  item?: Omit<CartItem, "quantity">;
   available: boolean;
   productName: string;
 };
 
-export default function BuyNowButton({
-  variantId,
+/**
+ * Add to Cart — the only way a shop product reaches checkout.
+ *
+ * The old Buy Now went straight to Shopify with one line, which skipped
+ * both the cart and the SMS opt-in that now lives in it. One path in,
+ * one place the order is assembled.
+ */
+export default function AddToCartButton({
+  item,
   available,
   productName,
 }: Props) {
-  const [state, setState] = useState<"idle" | "loading" | "error">("idle");
+  const { add, openCart } = useCart();
   const [qty, setQty] = useState(1);
 
-  if (!available || !variantId) {
+  if (!available || !item) {
     return (
       <div>
         <button
@@ -49,23 +59,6 @@ export default function BuyNowButton({
     );
   }
 
-  async function buy() {
-    setState("loading");
-    try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ variantId, quantity: qty }),
-      });
-      const body = await res.json();
-      if (!res.ok || !body.checkoutUrl) throw new Error(body.error);
-      window.location.href = body.checkoutUrl;
-    } catch (err) {
-      console.error(err);
-      setState("error");
-    }
-  }
-
   return (
     <div>
       <div className="flex flex-wrap items-center gap-4">
@@ -88,25 +81,20 @@ export default function BuyNowButton({
         </label>
         <button
           type="button"
-          onClick={buy}
-          disabled={state === "loading"}
-          className="rounded-full bg-gold px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss transition-colors hover:bg-shell disabled:opacity-60"
+          onClick={() => {
+            add(item, qty);
+            // The drawer sliding open IS the confirmation — no toast, and
+            // the buyer lands one tap from checking out.
+            openCart();
+          }}
+          className="rounded-full bg-gold px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss transition-colors hover:bg-shell"
         >
-          {state === "loading" ? "Opening checkout..." : "Buy Now"}
+          Add to Cart
         </button>
       </div>
       <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.2em] text-shell/40">
         Secure checkout via Shopify
       </p>
-      {state === "error" && (
-        <p className="mt-3 text-sm text-coconut">
-          Checkout hiccuped — try again, or order via{" "}
-          <a href="/contact" className="underline underline-offset-2">
-            the contact page
-          </a>
-          .
-        </p>
-      )}
     </div>
   );
 }

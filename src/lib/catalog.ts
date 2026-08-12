@@ -34,8 +34,22 @@ export type CatalogProduct = {
   available: boolean;
   /** Shopify variant GID — present only when the product came from the live catalog. */
   variantId?: string;
+  /**
+   * The chosen variant's own price, as a number and as a label.
+   *
+   * `priceLabel` above is the range's minimum — right for a grid that
+   * says "from $35" — but the cart has to total what will actually be
+   * charged for the variant going into it.
+   */
+  amount: number;
+  variantPriceLabel: string;
+  /** Variant title, when the product has a real one to show. */
+  variantName?: string;
   live: boolean;
 };
+
+/** Shopify's name for the lone variant of a single-variant product. */
+const DEFAULT_VARIANT_TITLE = "Default Title";
 
 function inferCategory(title: string): CatalogProduct["category"] {
   const t = title.toLowerCase();
@@ -56,6 +70,8 @@ function fromShopify(p: ShopifyProduct): CatalogProduct {
   const firstAvailable =
     p.variants.edges.find((v) => v.node.availableForSale)?.node ??
     p.variants.edges[0]?.node;
+  const variantPrice =
+    firstAvailable?.price ?? p.priceRange.minVariantPrice;
   return {
     handle: p.handle,
     name: p.title,
@@ -70,6 +86,15 @@ function fromShopify(p: ShopifyProduct): CatalogProduct {
     imageAlt: p.featuredImage?.altText ?? p.title,
     available: p.availableForSale,
     variantId: firstAvailable?.id,
+    amount: Number(variantPrice.amount),
+    variantPriceLabel: formatPrice(
+      variantPrice.amount,
+      variantPrice.currencyCode,
+    ),
+    variantName:
+      firstAvailable && firstAvailable.title !== DEFAULT_VARIANT_TITLE
+        ? firstAvailable.title
+        : undefined,
     live: true,
   };
 }
@@ -85,6 +110,11 @@ function fromStatic(p: (typeof staticProducts)[number]): CatalogProduct {
     image: p.image,
     imageAlt: p.name,
     available: true,
+    amount: p.price,
+    // The static labels read "From $35.00", which would be a lie on a
+    // cart line. Nothing static is buyable (no variantId), but the
+    // number is the honest one either way.
+    variantPriceLabel: formatPrice(String(p.price)),
     live: false,
   };
 }

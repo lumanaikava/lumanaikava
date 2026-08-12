@@ -18,6 +18,13 @@ export function shopifyConfig() {
 export async function shopifyFetch<T>(
   query: string,
   variables?: Record<string, unknown>,
+  /**
+   * Mutations opt out of the data cache. Every Storefront call is an
+   * HTTP POST, catalog reads included, so the method alone can't be
+   * trusted to keep a cached cartCreate from handing two buyers the
+   * same checkout URL.
+   */
+  options: { mutation?: boolean } = {},
 ): Promise<T> {
   const { domain, token, configured } = shopifyConfig();
   if (!configured) {
@@ -34,7 +41,9 @@ export async function shopifyFetch<T>(
     body: JSON.stringify({ query, variables }),
     // Revalidate the catalog every minute so price/stock edits in the
     // Shopify admin show up without a redeploy.
-    next: { revalidate: 60 },
+    ...(options.mutation
+      ? { cache: "no-store" as const }
+      : { next: { revalidate: 60 } }),
   });
   if (!res.ok) throw new Error(`Shopify ${res.status}`);
   const json = (await res.json()) as { data: T; errors?: unknown };
@@ -143,18 +152,46 @@ export async function getProductByHandle(
   return data.product;
 }
 
+export type CartLine = { variantId: string; quantity: number };
+
+export type Checkout = {
+  url: string;
+  /**
+   * True when Shopify built a smaller cart than we asked for — a line
+   * sold out between the buyer adding it and checking out. The caller
+   * has to say so; a quietly shorter order is exactly the kind of silent
+   * failure this codebase refuses to ship.
+   */
+  adjusted: boolean;
+};
+
+/** Per-line ceiling, matching MAX_PER_LINE in the cart provider. */
+const MAX_LINE_QUANTITY = 20;
+
 /**
- * Create a Shopify cart with one line item and return the hosted
- * checkout URL. The buyer finishes payment on Shopify's checkout,
- * so we never touch card data.
+ * Nothing the buyer chose is still for sale. Separate from a transport
+ * failure because "sold out" and "try again in a minute" are opposite
+ * instructions.
  */
-export async function createCheckout(
-  variantId: string,
-  quantity = 1,
-): Promise<string> {
+export class SoldOutError extends Error {}
+
+/**
+ * Create a Shopify cart from one or more lines and return the hosted
+ * checkout URL. The buyer finishes payment on Shopify, so we never touch
+ * card data.
+ */
+export async function createCheckout(lines: CartLine[]): Promise<Checkout> {
+  if (lines.length === 0) throw new Error("No lines to check out");
+
+  const input = lines.map((l) => ({
+    merchandiseId: l.variantId,
+    quantity: Math.min(Math.max(Math.round(l.quantity) || 1, 1), MAX_LINE_QUANTITY),
+  }));
+  const requested = input.reduce((n, l) => n + l.quantity, 0);
+
   const data = await shopifyFetch<{
     cartCreate: {
-      cart: { checkoutUrl: string } | null;
+      cart: { checkoutUrl: string; totalQuantity: number } | null;
       userErrors: { message: string }[];
     };
   }>(
@@ -163,6 +200,7 @@ export async function createCheckout(
         cartCreate(input: { lines: $lines }) {
           cart {
             checkoutUrl
+            totalQuantity
           }
           userErrors {
             message
@@ -170,10 +208,19 @@ export async function createCheckout(
         }
       }
     `,
-    { lines: [{ merchandiseId: variantId, quantity }] },
+    { lines: input },
+    { mutation: true },
   );
   const err = data.cartCreate.userErrors[0]?.message;
   if (err) throw new Error(err);
-  if (!data.cartCreate.cart) throw new Error("Cart creation failed");
-  return data.cartCreate.cart.checkoutUrl;
+  const cart = data.cartCreate.cart;
+  if (!cart) throw new Error("Cart creation failed");
+  // Shopify drops unavailable lines rather than failing the mutation, so
+  // an empty cart means nothing the buyer chose is still for sale.
+  if (cart.totalQuantity === 0) {
+    throw new SoldOutError(
+      "Everything in your cart just sold out. Nothing has been charged.",
+    );
+  }
+  return { url: cart.checkoutUrl, adjusted: cart.totalQuantity < requested };
 }

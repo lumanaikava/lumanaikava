@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { navLinks } from "@/lib/nav";
+import CartButton from "@/components/CartButton";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -47,22 +48,28 @@ export default function Header() {
           >
             Book the Bar
           </Link>
+          <CartButton />
         </div>
 
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-          className="flex h-9 w-9 flex-col items-center justify-center gap-1.5 lg:hidden"
-        >
-          <span
-            className={`h-px w-6 bg-shell transition-transform ${open ? "translate-y-[3.5px] rotate-45" : ""}`}
-          />
-          <span
-            className={`h-px w-6 bg-shell transition-transform ${open ? "-translate-y-[3.5px] -rotate-45" : ""}`}
-          />
-        </button>
+        {/* The cart sits outside the mobile menu — it has to be one tap
+            away, not behind the hamburger. */}
+        <div className="flex items-center gap-1 lg:hidden">
+          <CartButton />
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            className="flex h-9 w-9 flex-col items-center justify-center gap-1.5"
+          >
+            <span
+              className={`h-px w-6 bg-shell transition-transform ${open ? "translate-y-[3.5px] rotate-45" : ""}`}
+            />
+            <span
+              className={`h-px w-6 bg-shell transition-transform ${open ? "-translate-y-[3.5px] -rotate-45" : ""}`}
+            />
+          </button>
+        </div>
       </div>
 
       {open && (

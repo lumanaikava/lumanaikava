@@ -3,6 +3,8 @@ import { Barlow, Barlow_Semi_Condensed } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { CartProvider } from "@/components/CartProvider";
+import CartDrawer from "@/components/CartDrawer";
 
 // Bar-sign headlines: Barlow Semi Condensed, heavy weights.
 const barlow = Barlow_Semi_Condensed({
@@ -98,11 +100,16 @@ export default function RootLayout({
         <a href="#main" className="skip-link">
           Skip to content
         </a>
-        <Header />
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        {/* Wraps the header too — the cart badge lives up there, so the
+            provider can't sit any deeper than this. */}
+        <CartProvider>
+          <Header />
+          <main id="main" className="flex-1">
+            {children}
+          </main>
+          <Footer />
+          <CartDrawer />
+        </CartProvider>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(businessJsonLd) }}
