@@ -119,3 +119,31 @@ export function newId(prefix: string): string {
     .toString(36)
     .slice(2, 6)}`;
 }
+
+/* ── Our Story ─────────────────────────────────────────────── */
+
+export type SiteStory = {
+  id: string;
+  heading: string;
+  /** Paragraphs, stored in one cell split on blank lines. */
+  body: string[];
+  hidden: boolean;
+};
+
+export const STORY_COLUMNS = ["Id", "Heading", "Body", "Hidden"] as const;
+
+export function storyToValues(b: SiteStory): (string | number)[] {
+  return [b.id, b.heading, b.body.join("\n\n"), b.hidden ? "yes" : ""];
+}
+
+export function valuesToStory(c: (string | number)[]): SiteStory {
+  return {
+    id: s(c[0]),
+    heading: s(c[1]),
+    body: s(c[2])
+      .split(/\n\s*\n/)
+      .map((p) => p.trim())
+      .filter(Boolean),
+    hidden: /^(yes|true|y|1)$/i.test(s(c[3])),
+  };
+}

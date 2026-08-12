@@ -6,6 +6,7 @@ import { getSession } from "@/lib/admin-session";
 import {
   readEventsSafe,
   readFaqSafe,
+  readStorySafe,
   contentSheetConfigured,
 } from "@/lib/integrations/content-sheet";
 
@@ -38,9 +39,9 @@ export default async function ContentPage() {
   }
 
   const ready = contentSheetConfigured();
-  const [events, faq] = ready
-    ? await Promise.all([readEventsSafe(), readFaqSafe()])
-    : [[], []];
+  const [events, faq, story] = ready
+    ? await Promise.all([readEventsSafe(), readFaqSafe(), readStorySafe()])
+    : [[], [], []];
 
   return (
     <section className="mx-auto max-w-5xl px-6 py-10">
@@ -59,7 +60,7 @@ export default async function ContentPage() {
         </Link>
       </div>
       <p className="mt-3 max-w-2xl text-sm text-shell/60">
-        Add, edit and remove upcoming appearances and FAQ answers. Changes
+        Add, edit and remove upcoming appearances, FAQ answers and Our Story. Changes
         go live within a minute — no deploy, nothing to ask me for. The
         weekly markets are generated automatically and don&apos;t need
         adding here.
@@ -69,6 +70,7 @@ export default async function ContentPage() {
         <ContentManager
           initialEvents={events}
           initialFaq={faq}
+          initialStory={story}
           ready={ready}
         />
       </div>

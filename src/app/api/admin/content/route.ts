@@ -5,6 +5,8 @@ import {
   saveEvents,
   readFaqStrict,
   saveFaq,
+  readStoryStrict,
+  saveStory,
   contentSheetConfigured,
 } from "@/lib/integrations/content-sheet";
 import {
@@ -12,6 +14,7 @@ import {
   EVENT_KINDS,
   type SiteEvent,
   type SiteFaq,
+  type SiteStory,
   type EventKind,
 } from "@/lib/site-content";
 
@@ -44,14 +47,15 @@ export async function GET() {
   const denied = await requireOwner();
   if (denied) return refuse(denied);
   if (!contentSheetConfigured()) {
-    return NextResponse.json({ ready: false, events: [], faq: [] });
+    return NextResponse.json({ ready: false, events: [], faq: [], story: [] });
   }
   try {
-    const [events, faq] = await Promise.all([
+    const [events, faq, story] = await Promise.all([
       readEventsStrict(),
       readFaqStrict(),
+      readStoryStrict(),
     ]);
-    return NextResponse.json({ ready: true, events, faq });
+    return NextResponse.json({ ready: true, events, faq, story });
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Couldn't read the sheet." },
@@ -77,7 +81,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const kind = b.kind === "faq" ? "faq" : "events";
+  const kind =
+    b.kind === "faq" ? "faq" : b.kind === "story" ? "story" : "events";
   const op = String(b.op ?? "");
   const item = (b.item ?? {}) as Record<string, unknown>;
 
@@ -90,6 +95,14 @@ export async function POST(req: Request) {
       if (!next) return NextResponse.json({ error: "Unknown op." }, { status: 400 });
       await saveEvents(next);
       return NextResponse.json({ ok: true, events: next });
+    }
+    if (kind === "story") {
+      const storyAll = await readStoryStrict();
+      const storyNext = applyStory(storyAll, op, item);
+      if (!storyNext)
+        return NextResponse.json({ error: "Unknown op." }, { status: 400 });
+      await saveStory(storyNext);
+      return NextResponse.json({ ok: true, story: storyNext });
     }
     const all = await readFaqStrict();
     const next = applyFaq(all, op, item);
@@ -150,5 +163,30 @@ function applyFaq(
   if (op === "add") return [...all, built];
   if (op === "update") return all.map((f) => (f.id === built.id ? built : f));
   if (op === "delete") return all.filter((f) => f.id !== str(raw.id, 40));
+  return null;
+}
+
+function applyStory(
+  all: SiteStory[],
+  op: string,
+  raw: Record<string, unknown>,
+): SiteStory[] | null {
+  const built: SiteStory = {
+    // The id is what lets an edit REPLACE a built-in block rather than
+    // appending a near-duplicate beneath it — so it's preserved, and a
+    // brand-new block gets a fresh one.
+    id: str(raw.id, 40) || newId("s"),
+    heading: str(raw.heading, 120),
+    body: String(raw.body ?? "")
+      .split(/\n\s*\n/)
+      .map((p) => p.trim())
+      .filter(Boolean)
+      .slice(0, 20),
+    hidden: raw.hidden === true,
+  };
+
+  if (op === "add") return [...all, built];
+  if (op === "update") return all.map((b) => (b.id === built.id ? built : b));
+  if (op === "delete") return all.filter((b) => b.id !== str(raw.id, 40));
   return null;
 }

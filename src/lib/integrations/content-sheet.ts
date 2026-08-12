@@ -3,14 +3,17 @@ import {
   valuesToEvent,
   faqToValues,
   valuesToFaq,
+  storyToValues,
+  valuesToStory,
   type SiteEvent,
   type SiteFaq,
+  type SiteStory,
 } from "@/lib/site-content";
 
 /**
  * Site content → Google Sheet, via a bound Apps Script Web App.
  *
- * ONE spreadsheet, two tabs — "Events" and "FAQ" — behind one script,
+ * ONE spreadsheet, three tabs — "Events", "FAQ" and "Story" — behind one script,
  * addressed by a `tab` parameter. That's the difference from the payroll
  * and guest scripts, which each own their whole spreadsheet: a third
  * separate script would be a third setup and a third thing to break.
@@ -29,7 +32,7 @@ export function contentSheetConfigured(): boolean {
   return Boolean(URL);
 }
 
-export type ContentTab = "Events" | "FAQ";
+export type ContentTab = "Events" | "FAQ" | "Story";
 
 /**
  * An Apps Script web app answers HTTP 200 even when the script itself is
@@ -115,4 +118,23 @@ export async function readFaqSafe(): Promise<SiteFaq[]> {
 
 export async function saveFaq(items: SiteFaq[]): Promise<void> {
   await writeRows("FAQ", items.map(faqToValues));
+}
+
+/* ── Our Story ─────────────────────────────────────────────── */
+
+export async function readStoryStrict(): Promise<SiteStory[]> {
+  return (await readRows("Story")).map(valuesToStory).filter((b) => b.id);
+}
+
+export async function readStorySafe(): Promise<SiteStory[]> {
+  try {
+    return await readStoryStrict();
+  } catch (err) {
+    console.error("[content] story unreadable:", err);
+    return [];
+  }
+}
+
+export async function saveStory(blocks: SiteStory[]): Promise<void> {
+  await writeRows("Story", blocks.map(storyToValues));
 }

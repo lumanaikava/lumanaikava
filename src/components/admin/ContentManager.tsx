@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { EVENT_KINDS, type SiteEvent, type SiteFaq } from "@/lib/site-content";
+import {
+  EVENT_KINDS,
+  type SiteEvent,
+  type SiteFaq,
+  type SiteStory,
+} from "@/lib/site-content";
 
 /**
  * Edit the calendar and the FAQ without a deploy.
@@ -27,21 +32,24 @@ const todayISO = () => new Date().toISOString().slice(0, 10);
 export default function ContentManager({
   initialEvents,
   initialFaq,
+  initialStory,
   ready,
 }: {
   initialEvents: SiteEvent[];
   initialFaq: SiteFaq[];
+  initialStory: SiteStory[];
   ready: boolean;
 }) {
-  const [tab, setTab] = useState<"events" | "faq">("events");
+  const [tab, setTab] = useState<"events" | "faq" | "story">("events");
   const [events, setEvents] = useState(initialEvents);
   const [faq, setFaq] = useState(initialFaq);
+  const [story, setStory] = useState(initialStory);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<string | null>(null);
 
   async function send(
-    kind: "events" | "faq",
+    kind: "events" | "faq" | "story",
     op: "add" | "update" | "delete",
     item: Record<string, unknown>,
   ) {
@@ -57,6 +65,7 @@ export default function ContentManager({
       if (!res.ok) throw new Error(body.error ?? "Couldn't save.");
       if (body.events) setEvents(body.events);
       if (body.faq) setFaq(body.faq);
+      if (body.story) setStory(body.story);
       setEditing(null);
       return true;
     } catch (err) {
@@ -72,7 +81,7 @@ export default function ContentManager({
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-2">
-        {(["events", "faq"] as const).map((t) => (
+        {(["events", "faq", "story"] as const).map((t) => (
           <button
             key={t}
             onClick={() => {
@@ -85,7 +94,11 @@ export default function ContentManager({
                 : "border border-shell/20 text-shell/70 hover:border-gold hover:text-gold"
             }`}
           >
-            {t === "events" ? `Appearances ${events.length}` : `FAQ ${faq.length}`}
+            {t === "events"
+              ? `Appearances ${events.length}`
+              : t === "faq"
+                ? `FAQ ${faq.length}`
+                : `Our Story ${story.length}`}
           </button>
         ))}
       </div>
@@ -176,7 +189,7 @@ export default function ContentManager({
             })}
           </ul>
         </>
-      ) : (
+      ) : tab === "faq" ? (
         <>
           <FaqForm
             key={editing ?? "new-faq"}
@@ -217,6 +230,61 @@ export default function ContentManager({
                   onClick={() => {
                     if (confirm(`Delete "${f.q}"?`))
                       send("faq", "delete", { id: f.id });
+                  }}
+                  disabled={!ready || busy}
+                  className="text-[10px] font-bold uppercase tracking-[0.16em] text-shell/35 hover:text-coconut disabled:opacity-40"
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <>
+          <StoryForm
+            key={editing ?? "new-story"}
+            disabled={!ready || busy}
+            existing={story.find((b) => b.id === editing)}
+            onCancel={() => setEditing(null)}
+            onSubmit={(item) => send("story", editing ? "update" : "add", item)}
+          />
+
+          <ul className="divide-y divide-shell/10 rounded-3xl border border-shell/10 bg-lagoon/20">
+            {story.length === 0 && (
+              <li className="px-5 py-6 text-sm text-shell/55">
+                Our Story is showing Ash&apos;s original text. Adding a block
+                here with the same id replaces that section; anything with a
+                new id is appended to the end.
+              </li>
+            )}
+            {story.map((b) => (
+              <li
+                key={b.id}
+                className={`flex items-center gap-4 px-5 py-3.5 ${b.hidden ? "opacity-45" : ""}`}
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-shell">
+                    {b.heading || "(no heading)"}
+                    <span className="ml-2 font-mono text-[9px] uppercase tracking-[0.14em] text-shell/35">
+                      {b.id}
+                    </span>
+                  </p>
+                  <p className="truncate text-xs text-shell/50">
+                    {b.body[0] ?? "(empty)"}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setEditing(b.id)}
+                  disabled={!ready || busy}
+                  className="text-[10px] font-bold uppercase tracking-[0.16em] text-shell/60 hover:text-gold disabled:opacity-40"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm(`Delete "${b.heading || b.id}"?`))
+                      send("story", "delete", { id: b.id });
                   }}
                   disabled={!ready || busy}
                   className="text-[10px] font-bold uppercase tracking-[0.16em] text-shell/35 hover:text-coconut disabled:opacity-40"
@@ -420,6 +488,94 @@ function FaqForm({
           className="ml-auto rounded-full bg-gold px-6 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-abyss hover:bg-shell disabled:opacity-50"
         >
           {existing ? "Save changes" : "Add"}
+        </button>
+        {existing && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="text-[11px] font-bold uppercase tracking-[0.16em] text-shell/50 hover:text-shell"
+          >
+            Cancel
+          </button>
+        )}
+      </div>
+    </form>
+  );
+}
+
+function StoryForm({
+  existing,
+  disabled,
+  onSubmit,
+  onCancel,
+}: {
+  existing?: SiteStory;
+  disabled: boolean;
+  onSubmit: (item: Record<string, unknown>) => Promise<boolean>;
+  onCancel: () => void;
+}) {
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget);
+    const ok = await onSubmit({
+      id: existing?.id || f.get("id"),
+      heading: f.get("heading"),
+      body: f.get("body"),
+      hidden: f.get("hidden") === "on",
+    });
+    if (ok && !existing) e.currentTarget.reset();
+  }
+
+  return (
+    <form
+      onSubmit={submit}
+      className="rounded-3xl border border-shell/10 bg-lagoon/30 p-5"
+    >
+      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-gold">
+        {existing ? "Edit section" : "Add or replace a section"}
+      </p>
+      {!existing && (
+        <label className="mt-3 block">
+          <span className={label}>
+            Section id — use an existing one to replace it
+          </span>
+          <input
+            name="id"
+            placeholder="name · discovery · craft · mission · tradition"
+            className={input}
+          />
+        </label>
+      )}
+      <label className="mt-3 block">
+        <span className={label}>Heading (optional)</span>
+        <input name="heading" defaultValue={existing?.heading} className={input} />
+      </label>
+      <label className="mt-3 block">
+        <span className={label}>Body — blank line starts a new paragraph</span>
+        <textarea
+          name="body"
+          rows={7}
+          required
+          defaultValue={existing?.body.join("\n\n")}
+          className={`${input} resize-y`}
+        />
+      </label>
+      <div className="mt-4 flex flex-wrap items-center gap-4">
+        <label className="flex items-center gap-2 text-xs text-shell/70">
+          <input
+            type="checkbox"
+            name="hidden"
+            defaultChecked={existing?.hidden}
+            className="h-4 w-4 accent-gold"
+          />
+          Hide this section
+        </label>
+        <button
+          type="submit"
+          disabled={disabled}
+          className="ml-auto rounded-full bg-gold px-6 py-2 text-[11px] font-bold uppercase tracking-[0.2em] text-abyss hover:bg-shell disabled:opacity-50"
+        >
+          {existing ? "Save changes" : "Save"}
         </button>
         {existing && (
           <button

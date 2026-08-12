@@ -1,10 +1,42 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { eventImages } from "@/lib/images";
+import { storyBlocks, STORY_LEDE, STORY_SIGNOFF } from "@/lib/story";
+import {
+  readStorySafe,
+  contentSheetConfigured,
+} from "@/lib/integrations/content-sheet";
 
 export const metadata: Metadata = { title: "Our Story — Lumanai Kava" };
 
-export default function OurStoryPage() {
+export const revalidate = 60;
+
+/**
+ * Our Story — Ash's own account, lifted from lumanai.com.
+ *
+ * Blocks edited in the Command Center override the built-in ones BY ID
+ * and anything new is appended, so an empty or unreachable sheet leaves
+ * the real story standing rather than blanking the page.
+ */
+export default async function OurStoryPage() {
+  const managed = contentSheetConfigured() ? await readStorySafe() : [];
+  const overrides = new Map(
+    managed.filter((b) => !b.hidden && b.body.length).map((b) => [b.id, b]),
+  );
+  const hidden = new Set(managed.filter((b) => b.hidden).map((b) => b.id));
+
+  const blocks = [
+    ...storyBlocks
+      .filter((b) => !hidden.has(b.id))
+      .map((b) => overrides.get(b.id) ?? b),
+    ...managed.filter(
+      (m) =>
+        !m.hidden &&
+        m.body.length &&
+        !storyBlocks.some((b) => b.id === m.id),
+    ),
+  ];
+
   return (
     <>
       <section className="relative overflow-hidden">
@@ -14,55 +46,55 @@ export default function OurStoryPage() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center opacity-35"
+          className="object-cover object-center opacity-30"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-abyss/70 via-abyss/70 to-abyss" />
-        <div className="relative mx-auto max-w-4xl px-6 pb-16 pt-40 text-center sm:pt-48">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
-            Our Story
+        <div className="absolute inset-0 bg-gradient-to-b from-abyss/75 via-abyss/80 to-abyss" />
+        <div className="relative mx-auto max-w-3xl px-6 pb-14 pt-32 text-center sm:pt-40">
+          <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
+            Our story
           </p>
-          <h1 className="h-sign mt-6 text-6xl text-shell sm:text-8xl">
-            Lumana&apos;i.
-            <span className="block text-coconut">
-              Samoan for &ldquo;the future.&rdquo;
-            </span>
+          <h1 className="h-sign mt-4 text-4xl leading-[0.95] text-shell sm:text-6xl">
+            Making kava a
+            <br />
+            <span className="text-coconut">mainstream</span> beverage.
           </h1>
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-shell/70">
+            {STORY_LEDE}
+          </p>
         </div>
       </section>
 
       <section className="border-t border-shell/10">
-        <div className="mx-auto max-w-3xl space-y-6 px-6 py-20 text-shell/80">
-          <p>
-            Founder Etienne Asher first ran into kava in 2015, after coming
-            across it as a wellness product long before he understood it as a
-            beverage tradition. Two years earlier, in 2013, he&apos;d trained
-            under Julian Cox — at the time, LA&apos;s top mixologist — learning
-            cocktail craft in the city&apos;s best bars.
-          </p>
-          <p>
-            Traditional kava&apos;s flavor is an acquired taste. Etienne saw
-            that as the real barrier to it ever going mainstream. So he applied
-            what he&apos;d learned behind the bar: a strong, water-extracted
-            kava — no solvents, no CO₂ — built into recipes designed to work
-            with the plant&apos;s natural flavor instead of covering it up.
-          </p>
-          <p>
-            Time in Fiji also showed him how modest conditions are for the
-            farmers kava depends on. He believes wider adoption, done right,
-            means more revenue reaching those growing communities directly.
-            It&apos;s why Lumanai donates a share of every order to the South
-            Pacific Islander Organization, supporting Pacific Islander education
-            — 1% today, with plans to grow that as margins allow.
-          </p>
-        </div>
-      </section>
+        <div className="mx-auto max-w-2xl px-6 py-14">
+          <div className="space-y-11">
+            {blocks.map((b) => (
+              <div key={b.id}>
+                {b.heading && (
+                  <h2 className="h-sign-med text-xl text-gold">{b.heading}</h2>
+                )}
+                <div className="mt-3 space-y-4">
+                  {b.body.map((para) => (
+                    <p
+                      key={para.slice(0, 40)}
+                      className="leading-relaxed text-shell/75"
+                    >
+                      {para}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
 
-      <section className="border-t border-shell/10 bg-abyss">
-        <div className="mx-auto max-w-3xl px-6 py-20 text-center">
-          <p className="text-3xl text-shell sm:text-4xl">Drink Different.</p>
-          <p className="mt-4 font-mono text-xs uppercase tracking-[0.2em] text-gold">
-            All the buzz — none of the booze.
-          </p>
+          <div className="mt-14 border-t border-shell/10 pt-8">
+            <p className="h-sign text-3xl text-coconut">
+              {STORY_SIGNOFF.farewell}
+            </p>
+            <p className="mt-3 text-shell">— {STORY_SIGNOFF.name}</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-shell/45">
+              {STORY_SIGNOFF.title}
+            </p>
+          </div>
         </div>
       </section>
     </>
