@@ -40,7 +40,8 @@ missing rather than erroring.
 ### Why three Apps Scripts and one CSV
 
 Payroll and the guest list each own a whole spreadsheet. Site content
-uses one spreadsheet with two tabs behind one script (a `tab` param).
+uses one spreadsheet with THREE tabs behind one script (a `tab` param):
+Events, FAQ, Story.
 Events 2026 is **read-only for the site**, so it needs no script at all —
 publish-to-web CSV.
 
@@ -124,18 +125,17 @@ it was given.
 
 ## Outstanding work
 
-- **Booking revamp** — no prices, choose-your-experience, one seamless
-  form, remove the feature ticker, ethereal animations
-- **32oz growler selector** — variants already exist in Shopify; needs a
-  size toggle that swaps price and image. The catalog currently picks the
-  first available variant; the toggle just has to feed a different one
-  into the same cart item shape
-- **Our Story** page, content pulled from lumanai.com, editable
-- **Per-event live menu**
-- **Naktail definition** on the home page
-- **Event menu prices removed** (part of the booking revamp)
+- **Per-event live menu** — attach a menu to each event the way the
+  Grizzly Health event menu works, driven off the Events 2026 rows. Not
+  started; needs the event→menu relationship decided first (one shared
+  menu per event type, or a menu named per row?).
 - Rewards: points stay in Joy on Shopify. Site links to the balance.
   Real profiles are a later, separate project.
+
+### Done since this file was written
+Cart, booking revamp (no prices, build-an-experience), 32oz selector,
+Our Story (editable), Naktail definition, Events 2026 as the calendar
+source.
 
 ---
 
