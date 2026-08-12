@@ -8,6 +8,7 @@ import {
   artworkFor,
   shortName,
   subtitleFor,
+  isNew,
   HIDE_PRICES,
 } from "@/lib/shop-display";
 
@@ -62,6 +63,11 @@ export default async function ProductsPage() {
                   />
                 ) : (
                   <div className="h-full w-full rounded-xl border border-shell/10" />
+                )}
+                {isNew(p.handle) && p.available && (
+                  <span className="absolute left-1/2 top-0 -translate-x-1/2 rounded-full bg-gold px-2.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-abyss">
+                    New
+                  </span>
                 )}
                 {!p.available && (
                   <span className="absolute left-1/2 top-0 -translate-x-1/2 rounded-full bg-abyss/85 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.15em] text-shell/80">

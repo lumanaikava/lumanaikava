@@ -103,20 +103,20 @@ export default function EventsPage() {
           <h2 className="h-sign text-4xl text-shell sm:text-5xl">
             Meet your <span className="text-coconut">bartenders.</span>
           </h2>
-          <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-8 grid gap-6 sm:grid-cols-2">
             {team.map((t) => (
               <div
                 key={t.name}
                 className="flex gap-6 overflow-hidden rounded-3xl border border-shell/10 bg-lagoon/30"
               >
-                <div className="relative w-36 shrink-0 bg-abyss/50 sm:w-44">
+                <div className="relative aspect-[3/4] w-36 shrink-0 bg-abyss/50 sm:w-48">
                   {t.photo ? (
                     <Image
                       src={t.photo}
                       alt={`${t.name} behind the Lumanai bar`}
                       fill
-                      sizes="176px"
-                      className="object-cover"
+                      sizes="192px"
+                      className="object-cover object-top"
                     />
                   ) : (
                     <div className="flex h-full min-h-44 items-center justify-center">

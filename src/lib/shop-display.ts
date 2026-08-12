@@ -9,11 +9,11 @@
  */
 
 /**
- * PRICES ARE HIDDEN SITE-WIDE while the real ones are being finalised
- * (Zach, 2026-08-11). Flip this back to false and prices return
- * everywhere at once — grid and product pages both read it.
+ * Product prices. Hidden briefly on 2026-08-11 while they were being
+ * finalised, restored 2026-08-12. One flag drives the grid and the
+ * product pages together so they can never disagree.
  */
-export const HIDE_PRICES = true;
+export const HIDE_PRICES = false;
 
 /**
  * BASE only. It's a secret item, sold by hand and never browsed —
@@ -40,6 +40,7 @@ export function isHiddenFromShop(handle: string, name: string): boolean {
  * rather than competing with the core lineup.
  */
 const ORDER = [
+  "untitled-may21_11-42-27", // RUSH — newest product, leads the grid
   "basic-batch",
   "the-kolada",
   "raspberry-orange-spice",
@@ -48,8 +49,13 @@ const ORDER = [
   "copy-of-raspberry-orange-spice-32-oz-growler", // The Kolada Growler
   "raspberry-orange-spice-32-oz-growler",
   "copy-of-raspberry-orange-spice-32-oz-growler-1", // Ginger Honey Lemon Growler
-  "untitled-may21_11-42-27", // RUSH
 ];
+
+/** Handles that wear a NEW badge on the shop grid. */
+const NEW_HANDLES = new Set(["untitled-may21_11-42-27"]);
+export function isNew(handle: string): boolean {
+  return NEW_HANDLES.has(handle);
+}
 
 export function shopRank(handle: string): number {
   const i = ORDER.indexOf(handle);

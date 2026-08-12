@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Ripple from "@/components/Ripple";
 import BuyNowButton from "@/components/BuyNowButton";
 import { getCatalogProduct } from "@/lib/catalog";
-import { HIDE_PRICES } from "@/lib/shop-display";
+import { HIDE_PRICES, artworkFor, shortName } from "@/lib/shop-display";
 
 // Fetched from Shopify with 60s revalidation; falls back to static data.
 export const dynamic = "force-dynamic";
@@ -35,7 +35,7 @@ export default async function ProductPage({
   if (!product) notFound();
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20">
+    <section className="mx-auto max-w-5xl px-6 py-8 sm:py-10">
       <Link
         href="/products"
         className="font-mono text-xs uppercase tracking-[0.2em] text-shell/50 hover:text-gold"
@@ -43,15 +43,16 @@ export default async function ProductPage({
         ← All Products
       </Link>
 
-      <div className="mt-8 grid gap-16 lg:grid-cols-2">
-        <div className="relative aspect-square overflow-hidden rounded-3xl border border-shell/10 bg-shell">
-          {product.image ? (
+      <div className="mt-5 grid items-center gap-8 lg:grid-cols-2 lg:gap-14">
+        <div className="relative flex h-64 items-center justify-center sm:h-80 lg:h-[420px]">
+          {artworkFor(product.handle) ?? product.image ? (
             <Image
-              src={product.image}
+              src={artworkFor(product.handle) ?? product.image!}
               alt={product.imageAlt ?? product.name}
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-contain object-center p-10"
+              width={420}
+              height={900}
+              sizes="(max-width: 1024px) 70vw, 40vw"
+              className="h-full w-auto object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.5)]"
               priority
             />
           ) : (
@@ -65,23 +66,31 @@ export default async function ProductPage({
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
             {categoryLabel[product.category]}
           </p>
-          <h1 className="h-sign mt-3 text-5xl text-shell sm:text-6xl">
-            {product.name}
+          <h1 className="h-sign mt-2 text-4xl text-shell sm:text-5xl">
+            {shortName(product.handle, product.name)}
           </h1>
           {product.description && (
-            <p className="mt-6 max-w-md whitespace-pre-line text-shell/70">
-              {product.description}
-            </p>
+            <details className="group mt-5 max-w-md">
+              <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-shell/55 hover:text-gold">
+                Details
+                <span className="transition-transform group-open:rotate-45">
+                  +
+                </span>
+              </summary>
+              <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-shell/70">
+                {product.description}
+              </p>
+            </details>
           )}
           {/* Hidden alongside the shop grid — a price here would
               contradict the page the customer just came from. */}
           {!HIDE_PRICES && (
-            <p className="mt-8 font-mono text-2xl text-gold">
+            <p className="mt-5 font-mono text-2xl text-gold">
               {product.priceLabel}
             </p>
           )}
 
-          <div className="mt-8">
+          <div className="mt-6">
             <BuyNowButton
               variantId={product.variantId}
               available={product.available && product.live}

@@ -1,10 +1,10 @@
 export const navLinks = [
-  { label: "Book", href: "/events" },
+  // Book and Rewards are covered by the gold "Book the Bar" button and
+  // the footer; Menu now lives per-event rather than as one static page.
   { label: "Shop", href: "/products" },
   { label: "Find Us", href: "/find-us" },
-  { label: "Menu", href: "/menu" },
+  { label: "Our Story", href: "/our-story" },
   { label: "Ingredients", href: "/ingredients" },
-  { label: "Rewards", href: "/rewards" },
   { label: "FAQ", href: "/faq" },
 ];
 
