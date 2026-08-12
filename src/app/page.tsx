@@ -6,7 +6,8 @@ import { galleryImages } from "@/lib/images";
 import { upcomingEventsSynced, formatEventDate } from "@/lib/calendar";
 
 // The appearances ticker rolls forward — refresh hourly.
-export const revalidate = 3600;
+// See find-us: the sheet pings /api/revalidate, this is the fallback.
+export const revalidate = 60;
 
 export default async function Home() {
   const tickerEvents = (await upcomingEventsSynced(new Date(), 8))

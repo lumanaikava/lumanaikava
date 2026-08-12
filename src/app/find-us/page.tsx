@@ -12,7 +12,10 @@ export const metadata: Metadata = {
 };
 
 // Re-render hourly so the rolling calendar stays current.
-export const revalidate = 3600;
+// A minute, not an hour. The Apps Script pings /api/revalidate on every
+// sheet edit so the usual case is instant; this is the fallback for when
+// that trigger isn't installed.
+export const revalidate = 60;
 
 export default function FindUsPage() {
   return (
