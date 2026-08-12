@@ -136,8 +136,9 @@ export default function RewardsPage() {
         <div className="mx-auto max-w-3xl px-6 py-20 text-center">
           <h2 className="text-3xl sm:text-4xl">Start collecting.</h2>
           <p className="mt-3 text-shell/70">
-            Your coconut balance links to your email at checkout. First order
-            gets you 5 coconuts on the house.
+            Your coconut balance follows the email you check out with —
+            nothing to sign up for. First order gets you 5 coconuts on the
+            house.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
@@ -153,6 +154,25 @@ export default function RewardsPage() {
               Book &amp; Earn
             </Link>
           </div>
+
+          {/*
+            Balances live in the Joy rewards app on the Shopify store,
+            where every customer already has an account. Sending people
+            there beats standing up a second login on this site that
+            would only mirror it.
+          */}
+          <p className="mt-10 text-sm text-shell/55">
+            Already collecting?{" "}
+            <a
+              href="https://lumanai.com/account"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="prose-link text-shell hover:text-gold"
+            >
+              Check your coconut balance
+            </a>{" "}
+            — same email you order with.
+          </p>
         </div>
       </section>
     </>
