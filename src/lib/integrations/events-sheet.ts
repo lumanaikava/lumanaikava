@@ -1,13 +1,19 @@
 import type { CalendarEvent } from "@/lib/calendar";
 
 /**
- * The Events 2026 spreadsheet — the single source of truth for what the
- * site says we're doing.
+ * The crew's event spreadsheet — the single source of truth for what the
+ * site says we're doing. Read-only here: the crew edits it in Sheets, the
+ * site just reports it.
  *
- * Read as a published CSV rather than through an Apps Script. This sheet
- * is read-only for the website (the crew edits it in Sheets, the site
- * just reports it), and publish-to-web needs no script, no deploy and no
- * token — one less thing to break.
+ * TWO ways in, preferred in this order:
+ *
+ *  1. The Site Content Apps Script, tab "MAIN LIST". Preferred because
+ *     the `/exec` URL is a secret. Publish-to-web is not — it makes the
+ *     whole tab readable by anyone with the link, and that tab carries
+ *     Fee and Net Sales columns. Revenue is not something to hand out
+ *     for the sake of a calendar.
+ *  2. EVENTS_SHEET_CSV_URL, a published CSV, for when the events live in
+ *     a different workbook from the site content.
  *
  * Setup: "Events Sheet Setup.md" in the Lumanai Business folder.
  */
@@ -15,7 +21,7 @@ import type { CalendarEvent } from "@/lib/calendar";
 const URL = process.env.EVENTS_SHEET_CSV_URL;
 
 export function eventsSheetConfigured(): boolean {
-  return Boolean(URL);
+  return Boolean(URL) || Boolean(process.env.CONTENT_SHEET_WEBHOOK_URL);
 }
 
 /** Split one CSV line, honouring quoted cells. */
@@ -98,6 +104,18 @@ function displayName(raw: string): string {
 }
 
 export async function readEventsSheet(): Promise<CalendarEvent[]> {
+  // The webhook first — see the note at the top of this file on why a
+  // published CSV is the fallback and not the default.
+  if (process.env.CONTENT_SHEET_WEBHOOK_URL) {
+    try {
+      const { readMainListRows } = await import("@/lib/integrations/content-sheet");
+      return parseEventRows(await readMainListRows());
+    } catch (err) {
+      console.error("[events-sheet] MAIN LIST unreadable:", err);
+      // Fall through to the CSV if one is configured.
+    }
+  }
+
   if (!URL) return [];
   let text: string;
   try {
@@ -109,7 +127,11 @@ export async function readEventsSheet(): Promise<CalendarEvent[]> {
     return [];
   }
 
-  const rows = text.split(/\r?\n/).map(splitCsv);
+  return parseEventRows(text.split(/\r?\n/).map(splitCsv));
+}
+
+/** Shared by both sources: find the header row, then read by column name. */
+export function parseEventRows(rows: string[][]): CalendarEvent[] {
   const header = rows.findIndex((r) =>
     r.some((c) => /^date$/i.test(c)) && r.some((c) => /^event$/i.test(c)),
   );

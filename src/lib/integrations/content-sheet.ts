@@ -37,7 +37,16 @@ export function contentSheetConfigured(): boolean {
   return Boolean(URL);
 }
 
-export type ContentTab = "Events" | "FAQ" | "Story" | "Menus";
+/**
+ * "MAIN LIST" is the crew's own event spreadsheet, living in the same
+ * workbook. The site READS it and must never write to it — see
+ * `writeRows`, which refuses. It's here so the calendar can come through
+ * the (secret) webhook instead of publish-to-web, which would put the
+ * Net Sales and Fee columns on the open internet.
+ */
+export type ContentTab = "Events" | "FAQ" | "Story" | "Menus" | "MAIN LIST";
+
+const READ_ONLY_TABS: ContentTab[] = ["MAIN LIST"];
 
 /**
  * An Apps Script web app answers HTTP 200 even when the script itself is
@@ -60,7 +69,15 @@ async function parse(res: Response, what: string): Promise<Record<string, unknow
   return data;
 }
 
-async function readRows(tab: ContentTab): Promise<(string | number)[][]> {
+/**
+ * `rows` excludes the header row — every tab the site owns has a fixed
+ * column order, so the headers carry no information. `headers` is
+ * returned separately for MAIN LIST, which the crew reorders freely and
+ * which therefore has to be read by column name.
+ */
+async function readGrid(
+  tab: ContentTab,
+): Promise<{ headers: string[]; rows: (string | number)[][] }> {
   if (!URL) throw new Error("Content sheet webhook not configured.");
   const sep = URL.includes("?") ? "&" : "?";
   const res = await fetch(`${URL}${sep}list=1&tab=${encodeURIComponent(tab)}`, {
@@ -68,7 +85,14 @@ async function readRows(tab: ContentTab): Promise<(string | number)[][]> {
     redirect: "follow",
   });
   const data = await parse(res, `Content sheet (${tab})`);
-  return (data.rows as (string | number)[][]) ?? [];
+  return {
+    headers: ((data.headers as unknown[]) ?? []).map((h) => String(h ?? "")),
+    rows: (data.rows as (string | number)[][]) ?? [],
+  };
+}
+
+async function readRows(tab: ContentTab): Promise<(string | number)[][]> {
+  return (await readGrid(tab)).rows;
 }
 
 async function writeRows(
@@ -76,6 +100,9 @@ async function writeRows(
   rows: (string | number)[][],
 ): Promise<void> {
   if (!URL) throw new Error("Content sheet webhook not configured.");
+  if (READ_ONLY_TABS.includes(tab)) {
+    throw new Error(`${tab} is read-only — the crew maintains it by hand.`);
+  }
   const res = await fetch(URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -161,4 +188,13 @@ export async function readMenusSafe(): Promise<EventMenuOverride[]> {
 
 export async function saveMenus(items: EventMenuOverride[]): Promise<void> {
   await writeRows("Menus", items.map(overrideToValues));
+}
+
+/* ── The crew's own event list (read-only) ─────────────────── */
+
+/** Header row first, then the data — the events parser reads by column name. */
+export async function readMainListRows(): Promise<string[][]> {
+  const { headers, rows } = await readGrid("MAIN LIST");
+  const clean = (r: unknown[]) => r.map((c) => String(c ?? "").trim());
+  return [clean(headers), ...rows.map(clean)];
 }
