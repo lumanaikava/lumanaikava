@@ -105,17 +105,24 @@ function generateResidencyDates(
 }
 
 /** Events from today forward, soonest first: residencies + one-offs merged. */
+/**
+ * Upcoming dates from the CODE list only.
+ *
+ * The weekly residencies used to be generated here for every Saturday
+ * and Sunday. They no longer are: markets are paused until September
+ * (Zach, 2026-08-12), and generating them was putting booths on the
+ * public calendar that nobody was going to show up to. The Events 2026
+ * sheet is the source of truth now — see upcomingEventsSynced.
+ */
 export function upcomingEvents(
   now = new Date(),
   weeksAhead = 4,
 ): CalendarEvent[] {
+  void weeksAhead;
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const oneOffs = oneOffEvents.filter(
-    (e) => new Date(`${e.date}T23:59:59`) >= today,
-  );
-  return [...generateResidencyDates(now, weeksAhead), ...oneOffs].sort((a, b) =>
-    a.date.localeCompare(b.date),
-  );
+  return oneOffEvents
+    .filter((e) => new Date(`${e.date}T23:59:59`) >= today)
+    .sort((a, b) => a.date.localeCompare(b.date));
 }
 
 /**
@@ -161,8 +168,21 @@ export async function upcomingEventsSynced(
         }))
     : [];
 
+  // The Events 2026 spreadsheet — the crew's own working document and
+  // the authority on what's actually booked. Merged LAST so it beats
+  // every other source on a date+title collision.
+  const { readEventsSheet, eventsSheetConfigured } = await import(
+    "@/lib/integrations/events-sheet"
+  );
+  const fromSheet: CalendarEvent[] = eventsSheetConfigured()
+    ? (await readEventsSheet()).filter((e) => {
+        const d = new Date(`${e.date}T23:59:59`);
+        return d >= today && d <= horizon;
+      })
+    : [];
+
   const merged = new Map<string, CalendarEvent>();
-  for (const e of [...upcomingEvents(now, weeksAhead), ...synced, ...managed]) {
+  for (const e of [...upcomingEvents(now, weeksAhead), ...synced, ...managed, ...fromSheet]) {
     merged.set(`${e.date}|${e.title.toLowerCase()}`, e);
   }
   return [...merged.values()].sort((a, b) => a.date.localeCompare(b.date));
@@ -181,16 +201,25 @@ export function formatEventDate(iso: string): {
   };
 }
 
-/** The standing weekly schedule, for display as "every Saturday/Sunday" cards. */
+/**
+ * The standing weekly schedule.
+ *
+ * PAUSED until September 2026 (Zach, 2026-08-12). Left here rather than
+ * deleted because they return — but the cards say so plainly instead of
+ * implying a booth that isn't there. Individual dates in the meantime
+ * come from the Events 2026 sheet.
+ */
+export const residenciesPaused = true;
+
 export const weeklyResidencies = [
   {
-    day: "Every Saturday",
+    day: residenciesPaused ? "Returns in September" : "Every Saturday",
     title: "Downtown Summerlin Farmers Market",
     location: "Downtown Summerlin",
     time: "9am–2pm",
   },
   {
-    day: "Every Sunday",
+    day: residenciesPaused ? "Returns in September" : "Every Sunday",
     title: "UnCommons Farmers Market",
     location: "UnCommons, Las Vegas",
     time: "10am–2pm",
