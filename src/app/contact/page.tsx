@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import ContactForm from "@/components/ContactForm";
 import Ripple from "@/components/Ripple";
+import { CONTACT_EMAIL, CONTACT_MAILTO } from "@/lib/contact";
 
 export const metadata: Metadata = { title: "Contact — Lumanai Kava" };
 
@@ -38,10 +39,10 @@ export default function ContactPage() {
                   Email
                 </p>
                 <a
-                  href="mailto:lumanai.events@gmail.com"
+                  href={CONTACT_MAILTO}
                   className="mt-1 block text-2xl text-shell hover:text-gold"
                 >
-                  lumanai.events@gmail.com
+                  {CONTACT_EMAIL}
                 </a>
               </div>
               <div>

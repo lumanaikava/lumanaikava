@@ -1,3 +1,5 @@
+import { CONTACT_EMAIL, CONTACT_MAILTO } from "@/lib/contact";
+
 export const metadata = { title: "Privacy Policy — Lumanai Kava" };
 
 /**
@@ -163,10 +165,10 @@ export default function Page() {
           Lumanai Kava · Terra Incognita LLC — Las Vegas, Nevada
           <br />
           <a
-            href="mailto:lumanai.events@gmail.com"
+            href={CONTACT_MAILTO}
             className="prose-link text-shell hover:text-gold"
           >
-            lumanai.events@gmail.com
+            {CONTACT_EMAIL}
           </a>
           <br />
           <a

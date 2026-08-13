@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/components/CartProvider";
 import CartDrawer from "@/components/CartDrawer";
+import { CONTACT_EMAIL } from "@/lib/contact";
 
 // Bar-sign headlines: Barlow Semi Condensed, heavy weights.
 const barlow = Barlow_Semi_Condensed({
@@ -72,7 +73,7 @@ const businessJsonLd = {
     "Craft kava + functional mocktail bar. Alcohol-free social beverages bartended at events across Las Vegas.",
   url: "https://lumanai.com",
   telephone: "+17026260858",
-  email: "lumanai.events@gmail.com",
+  email: CONTACT_EMAIL,
   servesCuisine: "Kava, non-alcoholic cocktails",
   address: {
     "@type": "PostalAddress",

@@ -8,6 +8,7 @@ import {
   experienceUpgrades,
   upgradeBundle,
 } from "@/lib/packages";
+import { CONTACT_EMAIL, CONTACT_MAILTO } from "@/lib/contact";
 
 const shortNames = [
   "Kava Ceremony",
@@ -316,10 +317,10 @@ export default function EventBuilder() {
             <div className="mt-8 space-y-3 text-shell/70">
               <p>
                 <a
-                  href="mailto:lumanai.events@gmail.com"
+                  href={CONTACT_MAILTO}
                   className="prose-link text-shell hover:text-gold"
                 >
-                  lumanai.events@gmail.com
+                  {CONTACT_EMAIL}
                 </a>
               </p>
               <p>

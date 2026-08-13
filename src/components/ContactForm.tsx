@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import SmsConsent from "./SmsConsent";
+import { CONTACT_EMAIL, CONTACT_MAILTO } from "@/lib/contact";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
@@ -106,10 +107,10 @@ export default function ContactForm() {
         <p className="font-mono text-xs text-coconut">
           {errorMsg} — or email us at{" "}
           <a
-            href="mailto:lumanai.events@gmail.com"
+            href={CONTACT_MAILTO}
             className="underline underline-offset-2"
           >
-            lumanai.events@gmail.com
+            {CONTACT_EMAIL}
           </a>
           .
         </p>

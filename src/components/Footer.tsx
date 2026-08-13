@@ -4,6 +4,7 @@ import CoconutSecret from "./CoconutSecret";
 import NewsletterForm from "./NewsletterForm";
 import Ripple from "./Ripple";
 import { navLinks, footerLinks } from "@/lib/nav";
+import { CONTACT_EMAIL, CONTACT_MAILTO } from "@/lib/contact";
 
 export default function Footer() {
   return (
@@ -94,10 +95,10 @@ export default function Footer() {
             <ul className="mt-4 space-y-3 text-sm text-shell/80">
               <li>
                 <a
-                  href="mailto:lumanai.events@gmail.com"
+                  href={CONTACT_MAILTO}
                   className="transition-colors hover:text-gold"
                 >
-                  lumanai.events@gmail.com
+                  {CONTACT_EMAIL}
                 </a>
               </li>
               <li>

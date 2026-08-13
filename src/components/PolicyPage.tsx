@@ -1,3 +1,5 @@
+import { CONTACT_EMAIL, CONTACT_MAILTO } from "@/lib/contact";
+
 export default function PolicyPage({ title }: { title: string }) {
   return (
     <section className="mx-auto max-w-2xl px-6 py-12">
@@ -9,10 +11,10 @@ export default function PolicyPage({ title }: { title: string }) {
         This policy is being migrated from our previous site. For the current,
         binding version — or any questions in the meantime — reach us at{" "}
         <a
-          href="mailto:lumanai.events@gmail.com"
+          href={CONTACT_MAILTO}
           className="prose-link text-shell hover:text-gold"
         >
-          lumanai.events@gmail.com
+          {CONTACT_EMAIL}
         </a>
         .
       </p>
