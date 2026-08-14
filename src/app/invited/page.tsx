@@ -326,8 +326,8 @@ export default async function InvitedPage({
           <p className="mx-auto mt-9 max-w-md text-xs leading-relaxed text-shell/40">
             All black. 21+. Zero alcohol, all night — everyone drives
             home sharp. Order early enough for the mail to reach you.
-            Keep the password and the address between friends; the room
-            is capped and the list is checked at the door.
+            Keep the address between friends; the room is capped and the
+            list is checked at the door.
           </p>
         </div>
       </section>

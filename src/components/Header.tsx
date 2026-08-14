@@ -26,12 +26,15 @@ export default function Header() {
               className="h-auto w-[120px] sm:w-[132px]"
             />
           </Link>
+          {/* Book rides beside the wordmark on every size. On a phone it
+              shortens rather than disappearing — booking is the whole
+              business, and it shouldn't be hidden behind a hamburger. */}
           <Link
             href="/events"
             onClick={() => setOpen(false)}
-            className="hidden rounded-full bg-gold px-5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-abyss transition-colors hover:bg-shell lg:inline-block"
+            className="rounded-full bg-gold px-3.5 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-abyss transition-colors hover:bg-shell sm:px-5 sm:py-2.5 sm:text-[11px] sm:tracking-[0.2em]"
           >
-            Book the Bar
+            Book<span className="hidden sm:inline"> the Bar</span>
           </Link>
         </div>
 
