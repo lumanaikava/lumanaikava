@@ -43,11 +43,11 @@ export default function FindUsPage() {
 
       {/* Weekly residencies */}
       <section className="border-y border-shell/10 bg-abyss/70">
-        <div className="mx-auto grid max-w-6xl gap-6 px-6 py-8 md:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl gap-3 px-6 py-6 md:grid-cols-2 md:gap-6 md:py-8">
           {weeklyResidencies.map((r) => (
             <div
               key={r.title}
-              className="relative overflow-hidden rounded-3xl border border-gold/30 p-8"
+              className="relative overflow-hidden rounded-3xl border border-gold/30 p-5 md:p-8"
             >
               <div
                 className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-20"
@@ -58,10 +58,10 @@ export default function FindUsPage() {
                 <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
                   {r.day}
                 </p>
-                <h2 className="h-sign-med mt-3 text-3xl text-shell">
+                <h2 className="h-sign-med mt-2 text-2xl text-shell md:mt-3 md:text-3xl">
                   {r.title}
                 </h2>
-                <p className="mt-3 font-mono text-sm text-shell/70">
+                <p className="mt-2 font-mono text-sm text-shell/70 md:mt-3">
                   {r.location} · {r.time}
                 </p>
               </div>
@@ -76,10 +76,10 @@ export default function FindUsPage() {
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-coconut">
             The months ahead
           </p>
-          <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">
+          <h2 className="h-sign mt-3 text-4xl text-shell sm:mt-4 sm:text-6xl">
             Upcoming appearances.
           </h2>
-          <div className="mt-8">
+          <div className="mt-6 sm:mt-8">
             <EventsCalendar />
           </div>
         </div>

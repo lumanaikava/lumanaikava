@@ -207,19 +207,24 @@ export function formatEventDate(iso: string): {
  * PAUSED until September 2026 (Zach, 2026-08-12). Left here rather than
  * deleted because they return — but the cards say so plainly instead of
  * implying a booth that isn't there. Individual dates in the meantime
- * come from the Events 2026 sheet.
+ * come from the EventCalendar sheet.
+ *
+ * The wording matters: DTS IS booked for some August Saturdays, so
+ * "Returns in September" beside an August DTS date on the same page
+ * reads as a contradiction. "Weekly again from September" says the
+ * standing slot is what's paused, not the market.
  */
 export const residenciesPaused = true;
 
 export const weeklyResidencies = [
   {
-    day: residenciesPaused ? "Returns in September" : "Every Saturday",
+    day: residenciesPaused ? "Weekly again from September" : "Every Saturday",
     title: "Downtown Summerlin Farmers Market",
     location: "Downtown Summerlin",
     time: "9am–2pm",
   },
   {
-    day: residenciesPaused ? "Returns in September" : "Every Sunday",
+    day: residenciesPaused ? "Weekly again from September" : "Every Sunday",
     title: "UnCommons Farmers Market",
     location: "UnCommons, Las Vegas",
     time: "10am–2pm",
