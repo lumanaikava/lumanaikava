@@ -9,13 +9,19 @@
  * that's the broken thumbnail in every invitation someone forwards.
  *
  * Resolution order:
- *   1. SITE_ORIGIN — an explicit override, for when the other two lie.
- *   2. VERCEL_PROJECT_PRODUCTION_URL — Vercel's own name for this
- *      project's production domain. It reads lumanaikava.vercel.app
- *      today and flips to lumanai.com by itself once the custom domain
- *      is added, which is exactly the signal we want and needs nobody
- *      to remember anything.
+ *   1. SITE_ORIGIN — set this. It is the only one that is certainly true.
+ *   2. VERCEL_PROJECT_PRODUCTION_URL — Vercel's name for the project's
+ *      production domain.
  *   3. lumanai.com — where this ends up.
+ *
+ * ⚠️ Step 2 is a trap worth knowing about. It reports whatever domain
+ * is attached in Vercel, INCLUDING one whose DNS record was never
+ * created. This project had join.lumanai.com left over from an
+ * abandoned plan, so it confidently returned a hostname that resolves
+ * nowhere — which is worse than a wrong-but-live domain, because the
+ * link preview then fetches from a host that doesn't answer at all.
+ *
+ * So: set SITE_ORIGIN, and delete dead domains from the Vercel project.
  */
 
 const FALLBACK = "https://lumanai.com";
