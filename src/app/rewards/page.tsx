@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { shopifyOrigin } from "@/lib/site-origin";
 
 export const metadata: Metadata = {
   title: "Coconut Rewards — Lumanai Kava",
@@ -160,11 +161,15 @@ export default function RewardsPage() {
             where every customer already has an account. Sending people
             there beats standing up a second login on this site that
             would only mirror it.
+
+            Pointed at the myshopify domain, not lumanai.com: the moment
+            lumanai.com points at Vercel, this site has no /account
+            route and the link would 404.
           */}
           <p className="mt-7 text-sm text-shell/55">
             Already collecting?{" "}
             <a
-              href="https://lumanai.com/account"
+              href={`${shopifyOrigin()}/account`}
               target="_blank"
               rel="noopener noreferrer"
               className="prose-link text-shell hover:text-gold"

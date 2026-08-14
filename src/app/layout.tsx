@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { CartProvider } from "@/components/CartProvider";
 import CartDrawer from "@/components/CartDrawer";
 import { CONTACT_EMAIL } from "@/lib/contact";
+import { SITE_ORIGIN } from "@/lib/site-origin";
 
 // Bar-sign headlines: Barlow Semi Condensed, heavy weights.
 const barlow = Barlow_Semi_Condensed({
@@ -24,7 +25,7 @@ const barlowBody = Barlow({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://lumanai.com"),
+  metadataBase: new URL(SITE_ORIGIN),
   title: {
     default: "Lumanai Kava — Craft Kava + Functional Mocktail Bar",
     template: "%s — Lumanai Kava",
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
     title: "Lumanai Kava — Craft Kava + Functional Mocktail Bar",
     description:
       "All the buzz — without the booze. Craft kava naktails and functional mocktails, bartended at your event.",
-    url: "https://lumanai.com",
+    url: SITE_ORIGIN,
     siteName: "Lumanai Kava",
     locale: "en_US",
     type: "website",
@@ -66,7 +67,7 @@ const businessJsonLd = {
   name: "Lumanai Kava",
   description:
     "Craft kava + functional mocktail bar. Alcohol-free social beverages bartended at events across Las Vegas.",
-  url: "https://lumanai.com",
+  url: SITE_ORIGIN,
   telephone: "+17026260858",
   email: CONTACT_EMAIL,
   servesCuisine: "Kava, non-alcoholic cocktails",

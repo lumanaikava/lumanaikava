@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import { getCatalog } from "@/lib/catalog";
+import { SITE_ORIGIN } from "@/lib/site-origin";
 
-const base = "https://lumanai.com";
+const base = SITE_ORIGIN;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
