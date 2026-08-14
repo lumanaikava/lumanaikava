@@ -5,8 +5,11 @@ import { useState } from "react";
 
 /**
  * The secret door. A quiet little coconut at the bottom of the footer —
- * double-click it and it rolls you to /invited. Single clicks give a
- * tiny wobble so the curious get a hint that it's alive.
+ * click it and it rolls you to /invited.
+ *
+ * It used to need a double-click. On a phone that's a zoom gesture, not
+ * a door, so the easter egg was effectively desktop-only. One tap now,
+ * with a wobble on the way out so it still feels like a find.
  */
 export default function CoconutSecret() {
   const router = useRouter();
@@ -18,11 +21,10 @@ export default function CoconutSecret() {
       aria-label="A coconut"
       onClick={() => {
         setWobble(true);
-        window.setTimeout(() => setWobble(false), 450);
+        window.setTimeout(() => router.push("/invited"), 260);
       }}
-      onDoubleClick={() => router.push("/invited")}
       className={`inline-block cursor-default select-none opacity-40 transition-all duration-300 hover:opacity-80 ${
-        wobble ? "rotate-12" : ""
+        wobble ? "rotate-12 scale-110 opacity-90" : ""
       }`}
     >
       <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden>

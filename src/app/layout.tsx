@@ -48,19 +48,14 @@ export const metadata: Metadata = {
     siteName: "Lumanai Kava",
     locale: "en_US",
     type: "website",
-    images: [
-      {
-        url: "/og.jpg",
-        width: 1200,
-        height: 630,
-        alt: "The Lumanai craft kava bar at an event",
-      },
-    ],
+    // Images come from src/app/opengraph-image.png, which Next picks up
+    // by filename. Listing one here as well would override it — and the
+    // old /og.jpg was a dim photo that read as nothing at thumbnail size
+    // in an iMessage bubble. Regenerate with scripts/build-brand-images.mjs.
   },
   twitter: {
     card: "summary_large_image",
     site: "@lumanaikava",
-    images: ["/og.jpg"],
   },
 };
 

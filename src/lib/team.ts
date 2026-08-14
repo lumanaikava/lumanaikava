@@ -2,6 +2,10 @@
  * The bartenders — edit bios here. Photos live in public/images/team/;
  * leave `photo` undefined until a headshot exists and the card shows a
  * branded placeholder instead of a broken image.
+ *
+ * The *-portrait.webp files are hand-cropped 3:4 around each face. The
+ * originals framed both men off-centre with a lot of tent above them, so
+ * any square-ish crop landed on a torso.
  */
 
 export type TeamMember = {
@@ -15,13 +19,13 @@ export const team: TeamMember[] = [
   {
     name: "Ash",
     role: "Founder & Master Mixologist",
-    photo: "/images/team/ash.webp",
+    photo: "/images/team/ash-portrait.webp",
     bio: "Trained under LA's top mixologist in the city's best cocktail bars, Ash found kava in 2015 and spent the next decade perfecting how to build real cocktails around it. Every recipe on the menu is his.",
   },
   {
     name: "Zach",
     role: "Lead Bartender & Operations Manager",
-    photo: "/images/team/zach.webp",
+    photo: "/images/team/zach-portrait.webp",
     bio: "The hands behind the bar at markets and private events across Vegas. Fast shaker, easy conversation, and the guy who'll find your new favorite drink on the first try.",
   },
 ];

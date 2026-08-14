@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
-import PartyGate from "@/components/party/PartyGate";
 import BuyTicket, { type Tier } from "@/components/party/BuyTicket";
 import Countdown from "@/components/party/Countdown";
 import { getProductByHandle, formatPrice } from "@/lib/integrations/shopify";
@@ -8,8 +6,13 @@ import { PARTY_TICKET_HANDLE } from "@/lib/catalog";
 import { isUnpublished, tierRank, crewLinkCode } from "@/lib/party-tiers";
 
 /**
- * LUNA EKLIPTIKA — the invite-only launch party. Never linked in the nav;
- * the URL travels by word of mouth with the password.
+ * LUNA EKLIPTIKA — the launch party.
+ *
+ * No password. The page is `noindex`, unlinked from the nav, and reached
+ * either by a link you were sent or by finding the coconut in the footer.
+ * A passcode on top of that only ever stopped invited people who'd
+ * forgotten the word — the exclusivity is the guest list and the ticket
+ * tiers, not a gate that annoys the people you actually invited.
  *
  * The venue address appears NOWHERE in this file, in the repo, or in any
  * response this route sends. It is printed on the physical ticket that
@@ -114,34 +117,6 @@ export default async function InvitedPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
-  const jar = await cookies();
-  const invited =
-    !!process.env.PARTY_PASSCODE &&
-    jar.get("lumanai_invited")?.value === process.env.PARTY_PASSCODE;
-
-  if (!invited) {
-    return (
-      <section className="luna relative flex min-h-[85svh] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
-        <div className="luna-bg pointer-events-none absolute inset-0" aria-hidden />
-        <div
-          className="luna-grain pointer-events-none absolute inset-0 opacity-70"
-          aria-hidden
-        />
-        <div className="relative">
-          <Eclipse className="luna-corona luna-float mx-auto mb-8 h-24 w-24" />
-          <Eyebrow>08 · 28 · 26 — Las Vegas</Eyebrow>
-          <h1 className="h-sign mt-5 text-6xl text-shell sm:text-8xl">
-            Invite <span className="text-gold">only.</span>
-          </h1>
-          <p className="mx-auto mt-5 max-w-sm text-shell/70">
-            One night. One address. If you're supposed to be here, you
-            already know the word.
-          </p>
-          <PartyGate />
-        </div>
-      </section>
-    );
-  }
 
   /**
    * The Friends + Family rate is unpublished. Filtering happens HERE, on

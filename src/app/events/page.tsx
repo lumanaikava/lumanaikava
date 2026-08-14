@@ -67,9 +67,9 @@ export default function EventsPage() {
                       alt={`${t.name} behind the Lumanai bar`}
                       fill
                       sizes="176px"
-                      // Top-anchored: object-cover alone centres on torsos
-                      // and cuts their heads off.
-                      className="object-cover object-top"
+                      // The source files are already cropped 3:4 around
+                      // the face, so this frame matches them exactly.
+                      className="object-cover"
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center">
