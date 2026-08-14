@@ -27,7 +27,7 @@ export default function EventsPage() {
           className="ether-drift pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-amethyst/20 blur-3xl"
           aria-hidden
         />
-        <div className="relative mx-auto max-w-5xl px-6 py-14 sm:py-20">
+        <div className="relative mx-auto max-w-5xl px-6 py-9 sm:py-20">
           <p className="ether-in font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
             Private events · Las Vegas
           </p>
@@ -44,13 +44,13 @@ export default function EventsPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl px-6 py-14">
+      <section className="mx-auto max-w-5xl px-6 py-9 sm:py-14">
         <ExperienceBuilder />
       </section>
 
       {/* Meet your bartenders */}
       <section className="border-t border-shell/10">
-        <div className="mx-auto max-w-4xl px-6 py-14">
+        <div className="mx-auto max-w-4xl px-6 py-9 sm:py-14">
           <h2 className="h-sign text-4xl text-shell sm:text-5xl">
             Meet your <span className="text-coconut">bartenders.</span>
           </h2>

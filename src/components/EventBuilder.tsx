@@ -301,7 +301,7 @@ export default function EventBuilder() {
         id="book"
         className="border-t border-shell/10 bg-abyss"
       >
-        <div className="mx-auto grid max-w-6xl gap-14 px-6 py-20 lg:grid-cols-[1fr_1.3fr]">
+        <div className="mx-auto grid max-w-6xl gap-14 px-6 py-12 sm:py-20 lg:grid-cols-[1fr_1.3fr]">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
               Almost there

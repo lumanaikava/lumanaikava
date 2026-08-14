@@ -164,7 +164,7 @@ export default async function InvitedPage({
           className="luna-grain pointer-events-none absolute inset-0 opacity-80"
           aria-hidden
         />
-        <div className="relative mx-auto flex min-h-[92svh] max-w-4xl flex-col items-center justify-center px-6 py-20 text-center">
+        <div className="relative mx-auto flex min-h-[92svh] max-w-4xl flex-col items-center justify-center px-6 py-12 sm:py-20 text-center">
           <Eclipse className="luna-corona luna-float mb-9 h-28 w-28 sm:h-32 sm:w-32" />
           <p className="luna-in font-mono text-[11px] uppercase tracking-[0.35em] text-shell/60">
             Lumanai presents
@@ -207,7 +207,7 @@ export default async function InvitedPage({
       </section>
 
       {/* ── One panel: what's sealed, and how the night runs ── */}
-      <section className="luna-sweep relative overflow-hidden border-t border-shell/10 px-6 py-14">
+      <section className="luna-sweep relative overflow-hidden border-t border-shell/10 px-6 py-9 sm:py-14">
         <div className="mx-auto max-w-5xl">
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
             {/* Deliberately vague. The menu is the surprise. */}
@@ -249,7 +249,7 @@ export default async function InvitedPage({
                       <p className="h-sign-med text-lg text-shell">
                         {m.title}
                         {m.gated && (
-                          <span className="ml-2 rounded-full bg-gold/15 px-2 py-0.5 align-middle font-mono text-[9px] uppercase tracking-[0.14em] text-gold">
+                          <span className="ml-2 rounded-full bg-gold/15 px-2 py-0.5 align-middle font-mono text-[10px] uppercase tracking-[0.12em] text-gold">
                             Meridian +
                           </span>
                         )}
@@ -287,7 +287,7 @@ export default async function InvitedPage({
       {/* ── Tickets ──────────────────────────────────────────── */}
       <section
         id="tickets"
-        className="relative border-t border-shell/10 px-6 py-16"
+        className="relative border-t border-shell/10 px-6 py-10 sm:py-16"
       >
         <div className="mx-auto max-w-3xl text-center">
           <Eyebrow>Admission</Eyebrow>

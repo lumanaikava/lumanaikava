@@ -28,7 +28,7 @@ export default async function Home() {
 
       {/* The word we own — dictionary entry, wording set by Ash */}
       <section className="border-b border-shell/10 bg-abyss/60">
-        <div className="mx-auto max-w-3xl px-6 py-14 text-center">
+        <div className="mx-auto max-w-3xl px-6 py-9 sm:py-14 text-center">
           <p className="h-sign text-5xl text-shell sm:text-6xl">NAKTAIL</p>
           <p className="mt-2 text-sm tracking-[0.2em] text-shell/50">
             (nak-TAYL) <span className="italic">n.</span>
@@ -91,7 +91,7 @@ export default async function Home() {
                         {d.effects.map((fx) => (
                           <span
                             key={fx}
-                            className="rounded-full border border-shell/25 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.2em] text-shell/60"
+                            className="rounded-full border border-shell/25 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-shell/60"
                           >
                             {fx}
                           </span>

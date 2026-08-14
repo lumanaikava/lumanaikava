@@ -19,7 +19,7 @@ export default function AboutKavaPage() {
           className="object-cover object-center opacity-30"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-abyss/70 via-abyss/70 to-abyss" />
-        <div className="relative mx-auto max-w-4xl px-6 pb-16 pt-40 text-center sm:pt-48">
+        <div className="relative mx-auto max-w-4xl px-6 pb-10 sm:pb-16 pt-40 text-center sm:pt-48">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
             Our Kava
           </p>
@@ -37,7 +37,7 @@ export default function AboutKavaPage() {
       </section>
 
       <section className="border-t border-shell/10">
-        <div className="mx-auto max-w-3xl px-6 py-20">
+        <div className="mx-auto max-w-3xl px-6 py-12 sm:py-20">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-coconut">
             How it works
           </p>
@@ -55,7 +55,7 @@ export default function AboutKavaPage() {
       </section>
 
       <section className="border-t border-shell/10 bg-abyss">
-        <div className="mx-auto max-w-3xl px-6 py-20">
+        <div className="mx-auto max-w-3xl px-6 py-12 sm:py-20">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
             About the liver-damage claims
           </p>
@@ -85,7 +85,7 @@ export default function AboutKavaPage() {
       </section>
 
       <section className="border-t border-shell/10">
-        <div className="mx-auto max-w-3xl px-6 py-20 text-center">
+        <div className="mx-auto max-w-3xl px-6 py-12 sm:py-20 text-center">
           <Ripple
             className="mx-auto h-16 w-16 text-coconut/70"
             rings={4}

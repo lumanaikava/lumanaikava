@@ -31,7 +31,7 @@ export default function FindUsPage() {
           className="object-cover object-center opacity-35"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-abyss/70 via-abyss/70 to-abyss" />
-        <div className="relative mx-auto max-w-6xl px-6 pb-10 pt-16 sm:pt-20">
+        <div className="relative mx-auto max-w-6xl px-6 pb-10 pt-10 sm:pt-20">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
             Find the bar · Las Vegas
           </p>
@@ -87,7 +87,7 @@ export default function FindUsPage() {
 
       {/* CTA */}
       <section className="border-t border-shell/10 bg-abyss">
-        <div className="mx-auto max-w-4xl px-6 py-16 text-center">
+        <div className="mx-auto max-w-4xl px-6 py-10 sm:py-16 text-center">
           <p className="text-2xl text-shell">
             Want the bar to appear at your event next?
           </p>

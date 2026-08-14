@@ -126,7 +126,7 @@ export default function ExperienceBuilder() {
 
   if (status.kind === "sent") {
     return (
-      <div className="ether-in mx-auto max-w-xl py-16 text-center">
+      <div className="ether-in mx-auto max-w-xl py-10 sm:py-16 text-center">
         <div className="ether-pulse mx-auto h-20 w-20 rounded-full border border-gold/50" />
         <h2 className="h-sign mt-8 text-4xl text-shell sm:text-5xl">
           We&apos;ve got it.
@@ -146,7 +146,7 @@ export default function ExperienceBuilder() {
     "font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50";
 
   return (
-    <form onSubmit={submit} className="space-y-14">
+    <form onSubmit={submit} className="space-y-10 sm:space-y-14">
       {/* 1 — the experience */}
       <section className="ether-in">
         <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold">
@@ -155,7 +155,7 @@ export default function ExperienceBuilder() {
         <h2 className="h-sign mt-3 text-3xl text-shell sm:text-4xl">
           What kind of night is it?
         </h2>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {EXPERIENCES.map((x) => {
             const active = experience === x.name;
             return (
@@ -180,16 +180,16 @@ export default function ExperienceBuilder() {
                   alt=""
                   width={600}
                   height={800}
-                  className={`h-44 w-full object-cover transition-all duration-700 ${
+                  className={`h-32 w-full object-cover transition-all duration-700 sm:h-44 ${
                     active
                       ? "scale-105 opacity-70"
                       : "opacity-35 group-hover:opacity-55"
                   }`}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-abyss via-abyss/70 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-4 text-left">
+                <div className="absolute inset-x-0 bottom-0 p-3 text-left sm:p-4">
                   <p
-                    className={`h-sign-med text-xl transition-colors ${
+                    className={`h-sign-med text-lg transition-colors sm:text-xl ${
                       active ? "text-gold" : "text-shell"
                     }`}
                   >
@@ -251,13 +251,13 @@ export default function ExperienceBuilder() {
           Optional functional add-ons. Pick what sounds right — we&apos;ll
           talk through what actually suits your crowd.
         </p>
-        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+        <div className="mt-5 grid gap-2.5 sm:grid-cols-3 sm:gap-3">
           {experienceUpgrades.map((u) => {
             const active = upgrades.has(u.name);
             return (
               <label
                 key={u.name}
-                className={`cursor-pointer rounded-2xl border p-5 transition-all duration-300 ${
+                className={`cursor-pointer rounded-2xl border p-4 transition-all duration-300 sm:p-5 ${
                   active
                     ? "border-gold bg-gold/[0.07]"
                     : "border-shell/15 bg-lagoon/20 hover:border-shell/35"
@@ -304,24 +304,24 @@ export default function ExperienceBuilder() {
             rather price it properly after hearing what you want.
           </p>
 
-          <div className="mt-7 grid gap-5 sm:grid-cols-2">
-            <label className="block">
+          <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-4 sm:gap-5">
+            <label className="col-span-2 block sm:col-span-1">
               <span className={label}>Your name</span>
               <input name="name" required className={field} />
             </label>
-            <label className="block">
+            <label className="col-span-2 block sm:col-span-1">
               <span className={label}>Email</span>
               <input name="email" type="email" required className={field} />
             </label>
             <label className="block">
-              <span className={label}>Mobile (optional)</span>
+              <span className={label}>Mobile</span>
               <input name="phone" type="tel" className={field} />
             </label>
             <label className="block">
               <span className={label}>Event date</span>
               <input name="date" type="date" className={field} />
             </label>
-            <label className="block sm:col-span-2">
+            <label className="col-span-2 block">
               <span className={label}>Where</span>
               <input
                 name="city"
@@ -329,9 +329,9 @@ export default function ExperienceBuilder() {
                 className={field}
               />
             </label>
-            <label className="block sm:col-span-2">
+            <label className="col-span-2 block">
               <span className={label}>What are you imagining?</span>
-              <textarea name="message" rows={4} className={`${field} resize-y`} />
+              <textarea name="message" rows={3} className={`${field} resize-y`} />
             </label>
           </div>
 

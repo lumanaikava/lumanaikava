@@ -1,6 +1,6 @@
 export default function ProductsLoading() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20">
+    <section className="mx-auto max-w-6xl px-6 py-12 sm:py-20">
       <div className="h-3 w-16 animate-pulse rounded bg-shell/20" />
       <div className="mt-6 h-14 w-3/4 animate-pulse rounded bg-shell/15" />
       <div className="mt-6 h-4 w-1/2 animate-pulse rounded bg-shell/10" />

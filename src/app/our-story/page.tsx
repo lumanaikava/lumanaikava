@@ -65,14 +65,14 @@ export default async function OurStoryPage() {
       </section>
 
       <section className="border-t border-shell/10">
-        <div className="mx-auto max-w-2xl px-6 py-14">
-          <div className="space-y-11">
+        <div className="mx-auto max-w-2xl px-6 py-9 sm:py-14">
+          <div className="space-y-8 sm:space-y-11">
             {blocks.map((b) => (
               <div key={b.id}>
                 {b.heading && (
                   <h2 className="h-sign-med text-xl text-gold">{b.heading}</h2>
                 )}
-                <div className="mt-3 space-y-4">
+                <div className="mt-3 space-y-3.5">
                   {b.body.map((para) => (
                     <p
                       key={para.slice(0, 40)}
@@ -86,7 +86,7 @@ export default async function OurStoryPage() {
             ))}
           </div>
 
-          <div className="mt-14 border-t border-shell/10 pt-8">
+          <div className="mt-10 border-t border-shell/10 pt-7 sm:mt-14 sm:pt-8">
             <p className="h-sign text-3xl text-coconut">
               {STORY_SIGNOFF.farewell}
             </p>

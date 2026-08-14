@@ -39,7 +39,7 @@ export default function RewardsPage() {
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute -right-32 top-16 h-96 w-96 rounded-full bg-amethyst/25 blur-3xl" />
         <div className="pointer-events-none absolute -left-40 bottom-0 h-96 w-96 rounded-full bg-amethyst/30 blur-3xl" />
-        <div className="relative mx-auto max-w-4xl px-6 pb-16 pt-32 text-center">
+        <div className="relative mx-auto max-w-4xl px-6 pb-10 sm:pb-16 pt-32 text-center">
           <CoconutMark className="mx-auto h-16 w-16 text-coconut" />
           <p className="mt-6 font-mono text-xs uppercase tracking-[0.2em] text-gold">
             Coconut Rewards
@@ -58,7 +58,7 @@ export default function RewardsPage() {
 
       {/* Earn */}
       <section className="border-t border-shell/10">
-        <div className="mx-auto max-w-4xl px-6 py-20">
+        <div className="mx-auto max-w-4xl px-6 py-12 sm:py-20">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-coconut">
             How to earn
           </p>
@@ -66,11 +66,11 @@ export default function RewardsPage() {
             Four ways to fill your bowl.
           </h2>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+          <div className="mt-6 grid gap-3 sm:mt-10 sm:grid-cols-2 sm:gap-4">
             {earn.map((e) => (
               <div
                 key={e.label}
-                className="flex items-center justify-between rounded-2xl border border-shell/10 bg-lagoon/40 p-6"
+                className="flex items-center justify-between rounded-2xl border border-shell/10 bg-lagoon/40 p-4 sm:p-6"
               >
                 <p className="text-shell">{e.label}</p>
                 <p className="font-mono text-sm text-gold">{e.value}</p>
@@ -82,7 +82,7 @@ export default function RewardsPage() {
 
       {/* Redeem ladder */}
       <section className="border-t border-shell/10 bg-abyss">
-        <div className="mx-auto max-w-4xl px-6 py-20">
+        <div className="mx-auto max-w-4xl px-6 py-12 sm:py-20">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
             The ladder
           </p>
@@ -90,11 +90,11 @@ export default function RewardsPage() {
             What coconuts get you.
           </h2>
 
-          <ol className="mt-10 space-y-4">
+          <ol className="mt-6 space-y-2.5 sm:mt-10 sm:space-y-4">
             {redeem.map((r, i) => (
               <li
                 key={r.threshold}
-                className="relative flex items-start gap-6 rounded-2xl border border-shell/10 bg-lagoon/30 p-6"
+                className="relative flex items-start gap-4 rounded-2xl border border-shell/10 bg-lagoon/30 p-4 sm:gap-6 sm:p-6"
               >
                 <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-gold/40 bg-abyss">
                   <CoconutMark className="h-8 w-8 text-coconut" />
@@ -113,14 +113,14 @@ export default function RewardsPage() {
 
       {/* Rules */}
       <section className="border-t border-shell/10">
-        <div className="mx-auto max-w-3xl px-6 py-20">
+        <div className="mx-auto max-w-3xl px-6 py-12 sm:py-20">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-coconut">
             The fine print
           </p>
           <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
             Simple, no gotchas.
           </h2>
-          <ul className="mt-8 space-y-4 text-shell/80">
+          <ul className="mt-6 space-y-3 text-shell/80 sm:mt-8 sm:space-y-4">
             {rules.map((r) => (
               <li key={r} className="flex gap-3">
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
@@ -133,7 +133,7 @@ export default function RewardsPage() {
 
       {/* CTA */}
       <section className="border-t border-shell/10 bg-abyss">
-        <div className="mx-auto max-w-3xl px-6 py-20 text-center">
+        <div className="mx-auto max-w-3xl px-6 py-12 sm:py-20 text-center">
           <h2 className="text-3xl sm:text-4xl">Start collecting.</h2>
           <p className="mt-3 text-shell/70">
             Your coconut balance follows the email you check out with —
@@ -161,7 +161,7 @@ export default function RewardsPage() {
             there beats standing up a second login on this site that
             would only mirror it.
           */}
-          <p className="mt-10 text-sm text-shell/55">
+          <p className="mt-7 text-sm text-shell/55">
             Already collecting?{" "}
             <a
               href="https://lumanai.com/account"

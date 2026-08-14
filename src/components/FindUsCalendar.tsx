@@ -166,7 +166,7 @@ export default function FindUsCalendar({
                     </p>
                   ))}
                   {evs.length > 2 && (
-                    <p className="px-1 font-mono text-[9px] text-shell/40">
+                    <p className="px-1 font-mono text-[10px] text-shell/45">
                       +{evs.length - 2} more
                     </p>
                   )}

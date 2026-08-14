@@ -56,7 +56,7 @@ export default function OurCraftPage() {
           className="object-cover object-center opacity-35"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-abyss/70 via-abyss/70 to-abyss" />
-        <div className="relative mx-auto max-w-4xl px-6 pb-16 pt-40 text-center sm:pt-48">
+        <div className="relative mx-auto max-w-4xl px-6 pb-10 sm:pb-16 pt-40 text-center sm:pt-48">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold">
             Our Craft
           </p>
@@ -73,8 +73,8 @@ export default function OurCraftPage() {
 
       {/* Principles */}
       <section className="border-t border-shell/10">
-        <div className="mx-auto max-w-6xl px-6 py-24">
-          <div className="grid gap-6 md:grid-cols-2">
+        <div className="mx-auto max-w-6xl px-6 py-14 sm:py-24">
+          <div className="grid gap-4 md:grid-cols-2 md:gap-6">
             {principles.map((p, i) => (
               <div
                 key={p.title}
@@ -100,18 +100,18 @@ export default function OurCraftPage() {
 
       {/* Spec sheet */}
       <section className="border-t border-shell/10 bg-abyss">
-        <div className="mx-auto max-w-4xl px-6 py-24">
+        <div className="mx-auto max-w-4xl px-6 py-14 sm:py-24">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-coconut">
             Spec sheet
           </p>
           <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
             Everything, on the record.
           </h2>
-          <dl className="mt-10 divide-y divide-shell/10 border-y border-shell/10">
+          <dl className="mt-7 divide-y divide-shell/10 border-y border-shell/10 sm:mt-10">
             {specs.map((s) => (
               <div
                 key={s.label}
-                className="grid gap-2 py-5 sm:grid-cols-[1fr_2fr] sm:gap-6"
+                className="grid gap-1 py-3.5 sm:grid-cols-[1fr_2fr] sm:gap-6 sm:py-5"
               >
                 <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
                   {s.label}
@@ -125,7 +125,7 @@ export default function OurCraftPage() {
 
       {/* Bottom line */}
       <section className="border-t border-shell/10">
-        <div className="mx-auto max-w-3xl px-6 py-20 text-center">
+        <div className="mx-auto max-w-3xl px-6 py-12 sm:py-20 text-center">
           <p className="text-3xl text-shell sm:text-4xl">
             A difference you can taste, a potency you can feel.
           </p>
