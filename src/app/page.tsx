@@ -56,7 +56,7 @@ export default async function Home() {
             </h2>
             <Link
               href="/menu"
-              className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold hover:text-shell"
+              className="-my-2 shrink-0 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-gold hover:text-shell"
             >
               Full menu →
             </Link>

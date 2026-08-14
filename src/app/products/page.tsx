@@ -40,6 +40,10 @@ export default async function ProductsPage() {
        eyebrow, no tabs. Three across on a phone, five on a desktop,
        which puts nine products in three short rows or two. */
     <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+      {/* The page deliberately shows no title — the bottles are the
+          content. Search engines and screen readers still need one, so
+          it's here and invisible rather than absent. */}
+      <h1 className="sr-only">Shop Lumanai kava — bottles, growlers and RUSH</h1>
       <div className="grid grid-cols-3 gap-x-2 gap-y-5 sm:gap-x-4 sm:gap-y-7 lg:grid-cols-5">
         {products.map((p) => {
           const art = artworkFor(p.handle) ?? p.image;

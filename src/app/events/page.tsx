@@ -102,7 +102,7 @@ export default function EventsPage() {
           </p>
           <Link
             href="/find-us"
-            className="prose-link mt-2 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-gold"
+            className="prose-link mt-1 inline-block py-2 text-xs font-semibold uppercase tracking-[0.2em] text-gold"
           >
             Find the bar at a market →
           </Link>
