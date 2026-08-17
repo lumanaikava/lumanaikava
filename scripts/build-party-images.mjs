@@ -26,55 +26,21 @@ function stars(count, w, h, seed = 7) {
   }).join("");
 }
 
+const LOGO = "assets/luna-ekliptika_logo_transparent.png";
+
 /**
- * The mark: a diamond frame, a full moon, and a bold crescent laid over
- * it from the left — the way the flyer draws it.
+ * Ash's logo, sized and placed. It is white-on-transparent, so it only
+ * works over the dark ground these cards already have.
  *
- * The crescent is a disc with a second, offset disc masked out of it.
- * The maria are clipped to the moon's own circle. Both need ids unique
- * to each instance, because a page can hold more than one mark.
+ * Composited by sharp rather than referenced from the SVG, because
+ * librsvg won't load a local file from an <image href>.
  */
-function mark(cx, cy, size, stroke, id = "m") {
-  const half = size / 2;
-  const mr = size * 0.2;            // moon radius
-  const cr = size * 0.255;          // crescent outer radius
-  const mx = cx + size * 0.085;     // moon sits right of centre
-  const bite = size * 0.105;        // how far the cut-out disc is offset
-
-  // Irregular sizes and a heavy blur — as hard-edged discs these read as
-  // a golf ball rather than lunar maria.
-  const mare = [
-    [-0.36, -0.28, 0.34, 0.5],
-    [0.14, -0.42, 0.22, 0.42],
-    [0.38, 0.12, 0.30, 0.46],
-    [-0.14, 0.36, 0.36, 0.38],
-    [-0.50, 0.10, 0.16, 0.34],
-    [0.02, -0.06, 0.26, 0.30],
-    [0.30, 0.46, 0.14, 0.30],
-  ]
-    .map(
-      ([dx, dy, rr, o]) =>
-        `<circle cx="${(mx + dx * mr).toFixed(1)}" cy="${(cy + dy * mr).toFixed(1)}" r="${(rr * mr).toFixed(1)}" fill="#8c8e97" opacity="${o}"/>`,
-    )
-    .join("");
-
-  return `
-    <defs>
-      <clipPath id="moonclip-${id}"><circle cx="${mx}" cy="${cy}" r="${mr}"/></clipPath>
-      <filter id="soften-${id}" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur stdDeviation="${(mr * 0.11).toFixed(2)}"/>
-      </filter>
-      <mask id="crescent-${id}">
-        <rect x="0" y="0" width="100%" height="100%" fill="black"/>
-        <circle cx="${cx - size * 0.075}" cy="${cy}" r="${cr}" fill="white"/>
-        <circle cx="${cx - size * 0.075 + bite}" cy="${cy}" r="${cr * 0.84}" fill="black"/>
-      </mask>
-    </defs>
-    <rect x="${cx - half * 0.72}" y="${cy - half * 0.72}" width="${half * 1.44}" height="${half * 1.44}"
-          transform="rotate(45 ${cx} ${cy})" fill="none" stroke="${BONE}" stroke-width="${stroke}"/>
-    <circle cx="${mx}" cy="${cy}" r="${mr}" fill="url(#moonface)"/>
-    <g clip-path="url(#moonclip-${id})" filter="url(#soften-${id})" opacity="0.55">${mare}</g>
-    <circle cx="${cx - size * 0.075}" cy="${cy}" r="${cr}" fill="${BONE}" mask="url(#crescent-${id})"/>`;
+async function logoLayer(px, left, top) {
+  return {
+    input: await sharp(LOGO).resize(px, px, { fit: "inside" }).png().toBuffer(),
+    left: Math.round(left),
+    top: Math.round(top),
+  };
 }
 
 function defs() {
@@ -97,17 +63,16 @@ function defs() {
     </defs>`;
 }
 
-/** The main square: the mark, the name, the date. Nothing else. */
-function ticketCard(S = 1600) {
+/** The main square: the logo, the name, the date. Nothing else. */
+async function ticketCard(S = 1600) {
   const cx = S / 2;
-  return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${S}" height="${S}">
+  const bg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${S}" height="${S}">
     ${defs()}
     <rect width="${S}" height="${S}" fill="url(#sky)"/>
     ${stars(150, S, S)}
     <circle cx="${cx}" cy="${S * 0.36}" r="${S * 0.30}" fill="url(#glow)"/>
     <text x="${cx}" y="${S * 0.115}" text-anchor="middle" font-family="Helvetica, Arial, sans-serif"
           font-size="${S * 0.0225}" letter-spacing="${S * 0.0105}" fill="${GOLD}">LUMANAI PRESENTS</text>
-    ${mark(cx, S * 0.375, S * 0.40, S * 0.011, "hero")}
     <text x="${cx}" y="${S * 0.655}" text-anchor="middle" font-family="Helvetica, Arial, sans-serif"
           font-weight="bold" font-size="${S * 0.098}" letter-spacing="${S * 0.004}" fill="${BONE}">LUNA</text>
     <text x="${cx}" y="${S * 0.762}" text-anchor="middle" font-family="Helvetica, Arial, sans-serif"
@@ -118,22 +83,25 @@ function ticketCard(S = 1600) {
     <text x="${cx}" y="${S * 0.918}" text-anchor="middle" font-family="Helvetica, Arial, sans-serif"
           font-size="${S * 0.019}" letter-spacing="${S * 0.0055}" fill="${BONE}" opacity="0.45">A PREMIUM ZERO-PROOF NIGHTLIFE EXPERIENCE</text>
   </svg>`);
+  const px = S * 0.46;
+  return sharp(bg).composite([await logoLayer(px, (S - px) / 2, S * 0.375 - px / 2)]).png().toBuffer();
 }
 
-/** Second angle: the mark alone, big, for galleries and the OG card. */
-function markOnly(S = 1600) {
+/** Second angle: the logo alone, big, for galleries. */
+async function markOnly(S = 1600) {
   const cx = S / 2;
-  return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${S}" height="${S}">
+  const bg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${S}" height="${S}">
     ${defs()}
     <rect width="${S}" height="${S}" fill="url(#sky)"/>
     ${stars(190, S, S, 23)}
     <circle cx="${cx}" cy="${cx}" r="${S * 0.36}" fill="url(#glow)"/>
-    ${mark(cx, cx, S * 0.62, S * 0.0092, "solo")}
   </svg>`);
+  const px = S * 0.7;
+  return sharp(bg).composite([await logoLayer(px, (S - px) / 2, (S - px) / 2)]).png().toBuffer();
 }
 
 /** What the buyer is actually getting: the run of the night. */
-function detailsCard(S = 1600) {
+async function detailsCard(S = 1600) {
   const cx = S / 2;
   const rows = [
     ["DOORS", "8PM — late"],
@@ -144,11 +112,10 @@ function detailsCard(S = 1600) {
   ];
   const top = S * 0.335;
   const gap = S * 0.108;
-  return Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${S}" height="${S}">
+  const bg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${S}" height="${S}">
     ${defs()}
     <rect width="${S}" height="${S}" fill="url(#sky)"/>
     ${stars(110, S, S, 41)}
-    ${mark(cx, S * 0.155, S * 0.17, S * 0.0055, "small")}
     <text x="${cx}" y="${S * 0.262}" text-anchor="middle" font-family="Helvetica, Arial, sans-serif"
           font-weight="bold" font-size="${S * 0.042}" letter-spacing="${S * 0.006}" fill="${BONE}">LUNA<tspan fill="${GOLD}" dx="${S * 0.022}">EKLIPTIKA</tspan></text>
     ${rows
@@ -165,6 +132,8 @@ function detailsCard(S = 1600) {
     <text x="${cx}" y="${S * 0.935}" text-anchor="middle" font-family="Helvetica, Arial, sans-serif"
           font-size="${S * 0.0175}" letter-spacing="${S * 0.005}" fill="${BONE}" opacity="0.4">21+ · SPACE IS LIMITED · INVITATION ONLY</text>
   </svg>`);
+  const px = S * 0.185;
+  return sharp(bg).composite([await logoLayer(px, (S - px) / 2, S * 0.155 - px / 2)]).png().toBuffer();
 }
 
 fs.mkdirSync(OUT, { recursive: true });
@@ -176,7 +145,7 @@ const jobs = [
 ];
 
 for (const [name, make] of jobs) {
-  const buf = await sharp(make()).png({ compressionLevel: 9 }).toBuffer();
+  const buf = await make();
   fs.writeFileSync(`${OUT}/${name}`, buf);
   const { width, height } = await sharp(buf).metadata();
   console.log(`${name.padEnd(30)} ${width}x${height}  ${(buf.length / 1024).toFixed(0)}KB`);

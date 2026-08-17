@@ -141,8 +141,9 @@ export default async function InvitedPage({
         />
         <div className="relative mx-auto flex min-h-[92svh] max-w-4xl flex-col items-center justify-center px-6 py-12 sm:py-20 text-center">
           <EventMark
-            id="hero"
-            className="luna-float mb-9 h-32 w-32 text-shell sm:h-40 sm:w-40"
+            priority
+            sizes="(min-width: 640px) 176px, 144px"
+            className="luna-float mb-9 h-36 w-36 sm:h-44 sm:w-44"
           />
           <p className="luna-in font-mono text-[11px] uppercase tracking-[0.35em] text-shell/60">
             Lumanai presents
