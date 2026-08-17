@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import BuyTicket, { type Tier } from "@/components/party/BuyTicket";
 import Countdown from "@/components/party/Countdown";
+import EventMark from "@/components/party/EventMark";
 import { getProductByHandle, formatPrice } from "@/lib/integrations/shopify";
 import { PARTY_TICKET_HANDLE } from "@/lib/catalog";
 import { isUnpublished, tierRank, crewLinkCode } from "@/lib/party-tiers";
@@ -25,32 +26,6 @@ export const metadata: Metadata = {
   title: "Luna Ekliptika",
   robots: { index: false, follow: false },
 };
-
-/**
- * The eclipse. A gold corona around a dark disc — drawn rather than
- * shipped as an image so it scales cleanly and costs nothing to load.
- */
-function Eclipse({ className = "" }: { className?: string }) {
-  return (
-    <div className={`pointer-events-none relative ${className}`} aria-hidden>
-      <div
-        className="absolute inset-0 rounded-full blur-2xl"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(237,226,180,0.55) 0%, rgba(237,226,180,0.18) 45%, transparent 70%)",
-        }}
-      />
-      <div
-        className="absolute inset-0 rounded-full"
-        style={{
-          background: "var(--abyss)",
-          boxShadow:
-            "0 0 0 2px rgba(237,226,180,0.75), 0 0 60px 8px rgba(237,226,180,0.35)",
-        }}
-      />
-    </div>
-  );
-}
 
 export const dynamic = "force-dynamic";
 
@@ -165,7 +140,10 @@ export default async function InvitedPage({
           aria-hidden
         />
         <div className="relative mx-auto flex min-h-[92svh] max-w-4xl flex-col items-center justify-center px-6 py-12 sm:py-20 text-center">
-          <Eclipse className="luna-corona luna-float mb-9 h-28 w-28 sm:h-32 sm:w-32" />
+          <EventMark
+            id="hero"
+            className="luna-float mb-9 h-32 w-32 text-shell sm:h-40 sm:w-40"
+          />
           <p className="luna-in font-mono text-[11px] uppercase tracking-[0.35em] text-shell/60">
             Lumanai presents
           </p>
