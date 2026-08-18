@@ -131,11 +131,16 @@ export default function Footer() {
           <p className="text-center font-mono text-[10px] uppercase tracking-[0.2em] text-shell/40">
             In partnership with
           </p>
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 lg:gap-x-12">
-            {["Etho Wellness Club", "Discoflow", "Sweat Equity"].map((name) => (
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 lg:flex-nowrap lg:gap-x-9">
+            {[
+              "Ritual Collective",
+              "Reshape Body Bar",
+              "My Health Matrix",
+              "Grizzly Health",
+            ].map((name) => (
               <span
                 key={name}
-                className="h-sign-med text-base tracking-wide text-shell/60 transition-colors hover:text-gold lg:text-xl"
+                className="h-sign-med whitespace-nowrap text-sm tracking-wide text-shell/60 transition-colors hover:text-gold lg:text-lg"
               >
                 {name}
               </span>

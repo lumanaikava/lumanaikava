@@ -32,7 +32,7 @@ type DrinkNav = {
 const nav: DrinkNav[] = [
   {
     href: "/menu",
-    label: "Menu",
+    label: "Drinks",
     img: "/images/drinks/icons/hive-gold.png",
     accent: "#ffbb00",
     delay: "0s",
@@ -53,7 +53,7 @@ const nav: DrinkNav[] = [
   },
   {
     href: "/find-us",
-    label: "Find Us",
+    label: "Schedule",
     img: "/images/drinks/icons/violet.png",
     accent: "#a855e8",
     delay: "2.3s",
@@ -66,8 +66,8 @@ const nav: DrinkNav[] = [
     delay: "1.2s",
   },
   {
-    href: "/rewards",
-    label: "Rewards",
+    href: "/our-story",
+    label: "Story",
     img: "/images/drinks/icons/ros.png",
     accent: "#ff6a2b",
     delay: "2.9s",
@@ -141,12 +141,19 @@ export default function Archipelago({
   const router = useRouter();
   const [burst, setBurst] = useState<{ x: number; y: number } | null>(null);
 
-  /** The light-burst transport: golden explosion from the click point. */
+  /**
+   * The light-burst: a golden flash from the click point.
+   *
+   * It used to preventDefault, wait 480ms, THEN navigate — so every
+   * drink felt half a second broken before anything happened. Now the
+   * navigation starts immediately and the burst plays over the top of
+   * it, which looks the same and responds instantly.
+   */
   function sail(e: MouseEvent<HTMLAnchorElement>, href: string) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     e.preventDefault();
     setBurst({ x: e.clientX, y: e.clientY });
-    window.setTimeout(() => router.push(href), 480);
+    router.push(href);
   }
 
   // Cycle through upcoming dates, fading between them.
@@ -232,18 +239,12 @@ export default function Archipelago({
         <h1 className="h-sign mt-6 text-2xl text-shell sm:text-4xl">
           All the buzz <span className="text-coconut">without the booze</span>
         </h1>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
+        <div className="mt-8">
           <Link
             href="/events"
             className="btn-brush text-xs font-bold uppercase tracking-[0.2em] text-shell"
           >
             Build Your Event
-          </Link>
-          <Link
-            href="/find-us"
-            className="rounded-full border border-shell/40 px-7 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-shell transition-colors hover:border-gold hover:text-gold"
-          >
-            Find the Bar
           </Link>
         </div>
       </div>
@@ -258,6 +259,7 @@ export default function Archipelago({
             <Link
               key={d.href}
               href={d.href}
+              prefetch
               onClick={(e) => sail(e, d.href)}
               className="group block text-center"
             >

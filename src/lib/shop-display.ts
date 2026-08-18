@@ -147,3 +147,30 @@ const SUBTITLES: Record<string, string> = {
 export function subtitleFor(handle: string): string | undefined {
   return SUBTITLES[handle];
 }
+
+/**
+ * What the grid shows for price.
+ *
+ * A growler is sold in two sizes at two prices, so a single figure is
+ * always wrong for half the buyers — it either undersells the 64oz or
+ * scares people off the 32oz. Show the span instead.
+ *
+ * Computed from the live variants rather than written down, so a
+ * reprice in Shopify moves this on its own.
+ */
+export function priceRangeLabel(
+  product: {
+    priceLabel: string;
+    variants: { amount: number; priceLabel: string }[];
+  },
+): string {
+  const priced = product.variants.filter((v) => v.amount > 0);
+  if (priced.length < 2) return product.priceLabel;
+
+  const low = priced.reduce((a, b) => (b.amount < a.amount ? b : a));
+  const high = priced.reduce((a, b) => (b.amount > a.amount ? b : a));
+  if (low.amount === high.amount) return low.priceLabel;
+
+  // En dash, not a hyphen — this is a range, not a compound word.
+  return `${low.priceLabel}–${high.priceLabel}`;
+}

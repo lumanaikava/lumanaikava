@@ -10,6 +10,7 @@ import {
   subtitleFor,
   isNew,
   HIDE_PRICES,
+  priceRangeLabel,
 } from "@/lib/shop-display";
 
 export const metadata: Metadata = {
@@ -90,7 +91,7 @@ export default async function ProductsPage() {
               )}
               {!HIDE_PRICES && (
                 <p className="mt-1 font-mono text-xs text-gold">
-                  {p.priceLabel}
+                  {priceRangeLabel(p)}
                 </p>
               )}
             </Link>

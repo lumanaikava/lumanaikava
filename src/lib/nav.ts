@@ -1,8 +1,10 @@
 export const navLinks = [
-  // Book and Rewards are covered by the gold "Book the Bar" button and
-  // the footer; Menu now lives per-event rather than as one static page.
+  // Book is covered by the gold "Book the Bar" button. Labels match the
+  // drink icons on the home page — two names for the same page reads as
+  // two pages.
+  { label: "Drinks", href: "/menu" },
   { label: "Shop", href: "/products" },
-  { label: "Find Us", href: "/find-us" },
+  { label: "Schedule", href: "/find-us" },
   { label: "Our Story", href: "/our-story" },
   { label: "Ingredients", href: "/ingredients" },
   { label: "FAQ", href: "/faq" },

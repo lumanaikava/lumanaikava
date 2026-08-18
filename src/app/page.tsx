@@ -112,35 +112,38 @@ export default async function Home() {
           style={{ backgroundImage: "url(/images/roots-texture.webp)" }}
           aria-hidden
         />
+        {/* One photo beside the ask, not a four-up strip above it — the
+            strip made the section read as a gallery with a caption. */}
         <div className="relative mx-auto max-w-6xl px-6 py-12">
-          <div className="grid grid-cols-4 gap-3">
-            {galleryImages.slice(0, 4).map((src) => (
-              <div
-                key={src}
-                className="brush-mask relative aspect-square overflow-hidden sm:aspect-[4/3]"
+          <div className="grid items-center gap-8 md:grid-cols-2 md:gap-12">
+            <div className="order-2 md:order-1">
+              {/* Two lines, deliberately: the break is placed, not left
+                  to wrap wherever the viewport happens to end. */}
+              <h2 className="h-sign text-[2.1rem] leading-[1.05] text-shell sm:text-5xl">
+                Make your next event
+                <br />
+                <span className="text-coconut">
+                  an unforgettable sober experience.
+                </span>
+              </h2>
+              <Link
+                href="/events"
+                className="btn-brush mt-7 inline-block font-mono text-xs font-bold uppercase tracking-[0.2em] text-shell"
+                style={{ "--brush-bg": "var(--amethyst)" } as React.CSSProperties}
               >
-                <Image
-                  src={src}
-                  alt="Lumanai event"
-                  fill
-                  sizes="25vw"
-                  className="object-cover transition-transform duration-500 hover:scale-105"
-                />
-              </div>
-            ))}
-          </div>
-          <div className="mt-10 flex flex-col items-center gap-5 text-center">
-            <h2 className="h-sign text-4xl text-shell sm:text-5xl">
-              Your next event,{" "}
-              <span className="text-coconut">but everyone remembers it.</span>
-            </h2>
-            <Link
-              href="/events"
-              className="btn-brush font-mono text-xs font-bold uppercase tracking-[0.2em] text-shell"
-              style={{ "--brush-bg": "var(--amethyst)" } as React.CSSProperties}
-            >
-              Build Your Event
-            </Link>
+                Build Your Event
+              </Link>
+            </div>
+
+            <div className="brush-mask relative order-1 aspect-[4/3] overflow-hidden md:order-2">
+              <Image
+                src={galleryImages[0]}
+                alt="The Lumanai bar at a private event"
+                fill
+                sizes="(min-width: 768px) 50vw, 100vw"
+                className="object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>
