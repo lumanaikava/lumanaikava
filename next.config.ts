@@ -14,13 +14,12 @@ const nextConfig: NextConfig = {
      * Google will index both — splitting every page's ranking between
      * lumanai.com and lumanaikava.vercel.app.
      *
-     * This sends the vercel.app host to the real domain. It is OFF
-     * until CANONICAL_HOST_REDIRECT is set, because switching it on
-     * before lumanai.com points at Vercel would redirect the only
-     * working URL of the new site straight into the old Shopify store.
+     * Target is www, not the apex: Vercel serves on www.lumanai.com and
+     * 308s the apex to it, so pointing here at the apex would make
+     * every redirected request take two hops.
      *
-     * Turn it on in Vercel — CANONICAL_HOST_REDIRECT=1 — once
-     * lumanai.com is serving this site, and redeploy.
+     * OFF until CANONICAL_HOST_REDIRECT is set. Safe to enable now that
+     * lumanai.com is live on Vercel (2026-08-18).
      */
     if (!process.env.CANONICAL_HOST_REDIRECT) return [];
 
@@ -28,7 +27,7 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         has: [{ type: "host", value: "lumanaikava.vercel.app" }],
-        destination: "https://lumanai.com/:path*",
+        destination: "https://www.lumanai.com/:path*",
         permanent: true,
       },
     ];

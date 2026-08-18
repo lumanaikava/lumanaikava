@@ -24,7 +24,8 @@
  * So: set SITE_ORIGIN, and delete dead domains from the Vercel project.
  */
 
-const FALLBACK = "https://lumanai.com";
+// Vercel serves on www and 308s the apex to it, so www is canonical.
+const FALLBACK = "https://www.lumanai.com";
 
 function withProtocol(host: string): string {
   return /^https?:\/\//.test(host) ? host : `https://${host}`;
