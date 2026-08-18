@@ -1,25 +1,25 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
+import PartyGate from "@/components/party/PartyGate";
 import BuyTicket, { type Tier } from "@/components/party/BuyTicket";
 import Countdown from "@/components/party/Countdown";
 import EventMark from "@/components/party/EventMark";
 import { getProductByHandle, formatPrice } from "@/lib/integrations/shopify";
 import { PARTY_TICKET_HANDLE } from "@/lib/catalog";
-import { isUnpublished, tierRank, crewLinkCode } from "@/lib/party-tiers";
+import { tierRank } from "@/lib/party-tiers";
 
 /**
  * LUNA EKLIPTIKA — the launch party.
  *
- * No password. The page is `noindex`, unlinked from the nav, and reached
- * either by a link you were sent or by finding the coconut in the footer.
- * A passcode on top of that only ever stopped invited people who'd
- * forgotten the word — the exclusivity is the guest list and the ticket
- * tiers, not a gate that annoys the people you actually invited.
+ * PASSWORD ONLY (Ash, 2026-08-17). A private event at a private
+ * residence is a different legal posture from a public one, and the
+ * door is part of what makes it private — along with the waiver at
+ * checkout. The word lives in PARTY_PASSCODE.
  *
  * The venue address appears NOWHERE in this file, in the repo, or in any
- * response this route sends. It is printed on the physical ticket that
- * ships after purchase — that's the whole point of the night. Please keep
- * it that way: anything rendered here is one "view source" away from
- * public.
+ * response this route sends. It goes out by email after a contribution
+ * is made — that's the whole point of the night. Please keep it that
+ * way: anything rendered here is one "view source" away from public.
  */
 
 export const metadata: Metadata = {
@@ -29,53 +29,49 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-/** Golden Hour opens Aug 28 2026, 7:00 PM Las Vegas (PDT = UTC−7). */
+/** VIP Reception opens Aug 28 2026, 7:00 PM Las Vegas (PDT = UTC−7). */
 const DOORS_ISO = "2026-08-29T02:00:00Z";
 
 const RUN_OF_NIGHT = [
   {
     time: "7–8 PM",
-    title: "Golden Hour",
-    body: "A private reception for Meridian and above. Welcome champagne mocktail poured on arrival, before the room fills.",
+    title: "VIP Reception",
+    body: "A private hour for Meridian and above, on the rooftop, before the room fills.",
     gated: true,
   },
   {
     time: "8 PM",
     title: "Doors",
-    body: "The full bar opens, the menu is revealed, and the kitchen starts sending. Live DJ until late.",
+    body: "The bar opens, the menu is revealed, and the kitchen starts sending.",
   },
   {
     time: "Late",
     title: "Totality",
-    body: "Zach keeps pouring until the last person leaves.",
+    body: "Cold plunges, a midnight sound bath, and pouring until the last person leaves.",
   },
 ];
 
 /**
- * What's being kept back on purpose.
+ * The offerings.
  *
- * The drink lineup used to be listed here. It isn't anymore — Ash is
- * building a secret cocktail menu and Zach a matching spread, and naming
- * either would spend the surprise before anyone walks in. Tease the
- * shape, never the contents.
+ * Ash replaced the old "sealed until the doors" tease with this: three
+ * plain headings that say what the night actually contains. Still no
+ * drink names — the menu is the surprise — but the shape is concrete
+ * now, which sells better than a locked box.
  */
-const SEALED = [
+const OFFERINGS = [
   {
     label: "The menu",
-    by: "Ash",
-    line: "A kava cocktail list written for one night and never served again.",
+    line: "An exclusively crafted, curated menu of naktails (kava) and functional mocktails.",
   },
   {
-    label: "The table",
-    by: "Zach",
-    line: "Hors d'oeuvres built to sit against it, course by course.",
+    label: "Activations",
+    line: "Poolside cold plunges, midnight sound bath, and more.",
   },
-];
-
-const CREW = [
-  { name: "Zach", role: "Behind the bar" },
-  { name: "Ash", role: "Your host" },
-  { name: "Karina", role: "Running the night" },
+  {
+    label: "The lineup",
+    line: "DJ lineup drops later this week.",
+  },
 ];
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
@@ -86,21 +82,43 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default async function InvitedPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const params = await searchParams;
+/** What everyone sees until they say the word. */
+function Door() {
+  return (
+    <div className="luna">
+      <section className="luna-sweep relative flex min-h-[88svh] flex-col items-center justify-center overflow-hidden px-6 py-20 text-center">
+        <div className="luna-bg pointer-events-none absolute inset-0" aria-hidden />
+        <div
+          className="luna-grain pointer-events-none absolute inset-0 opacity-70"
+          aria-hidden
+        />
+        <div className="relative">
+          <EventMark
+            priority
+            sizes="112px"
+            className="luna-float mx-auto mb-8 h-28 w-28"
+          />
+          <Eyebrow>08 · 28 · 26 — Las Vegas</Eyebrow>
+          <h1 className="h-sign mt-5 text-5xl text-shell sm:text-7xl">
+            Invitation <span className="text-gold">only.</span>
+          </h1>
+          <p className="mx-auto mt-5 max-w-xs text-sm leading-relaxed text-shell/60">
+            A private evening at a private residence. If you&rsquo;re
+            meant to be here, you were given the word.
+          </p>
+          <PartyGate />
+        </div>
+      </section>
+    </div>
+  );
+}
 
-  /**
-   * The Friends + Family rate is unpublished. Filtering happens HERE, on
-   * the server, so an unlisted $20 ticket is never in the HTML for anyone
-   * to find — hiding it in the component would still ship it to every
-   * browser. It unlocks with /invited?crew=<PARTY_CREW_CODE>.
-   */
-  const code = crewLinkCode();
-  const crewLink = Boolean(code) && params.crew === code;
+export default async function InvitedPage() {
+  const expected = process.env.PARTY_PASSCODE;
+  const jar = await cookies();
+  const invited = Boolean(expected) && jar.get("lumanai_invited")?.value === expected;
+
+  if (!invited) return <Door />;
 
   // Ticket product — lives in Shopify, hidden from the shop, sold only here.
   let tiers: Tier[] = [];
@@ -116,7 +134,6 @@ export default async function InvitedPage({
           priceLabel: formatPrice(node.price.amount, node.price.currencyCode),
           available: node.availableForSale,
         }))
-        .filter((t) => crewLink || !isUnpublished(t.title))
         // Shopify returns variants in its own order; show them cheapest
         // tier first so the ladder reads the way it was designed.
         .sort((a, b) => tierRank(a.title) - tierRank(b.title));
@@ -154,15 +171,15 @@ export default async function InvitedPage({
             <span className="text-gold">Ekliptika</span>
           </h1>
           <p className="luna-in luna-d2 mt-6 font-mono text-sm uppercase tracking-[0.3em] text-shell/80">
-            Fri · Aug 28 · Golden Hour 7PM · Doors 8PM
+            Fri · Aug 28 · VIP Reception 7PM · Doors 8PM
           </p>
           <p className="luna-in luna-d3 mt-2 font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
-            Dress code — all black
+            Dress code — all black · pool party
           </p>
 
           {/* The address is the secret. Show its shape, not its content. */}
           <p className="mt-3 flex flex-wrap items-center justify-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-shell/45">
-            <span>A private mansion ·</span>
+            <span>A private residence ·</span>
             <span
               className="inline-block h-[1em] w-32 translate-y-[0.15em] rounded-[2px] bg-shell/25"
               aria-hidden
@@ -180,39 +197,38 @@ export default async function InvitedPage({
             className="btn-brush luna-in luna-d5 mt-12 font-mono text-sm font-bold uppercase tracking-[0.2em] text-shell"
             style={{ "--brush-bg": "var(--amethyst)" } as React.CSSProperties}
           >
-            Get on the list
+            Secure your spot
           </a>
         </div>
       </section>
 
-      {/* ── One panel: what's sealed, and how the night runs ── */}
+      {/* ── The offerings, and how the night runs ───────────── */}
       <section className="luna-sweep relative overflow-hidden border-t border-shell/10 px-6 py-9 sm:py-14">
         <div className="mx-auto max-w-5xl">
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
-            {/* Deliberately vague. The menu is the surprise. */}
             <div className="luna-in luna-d1">
-              <Eyebrow>Sealed until the doors</Eyebrow>
+              <Eyebrow>The offerings</Eyebrow>
               <h2 className="h-sign mt-4 text-4xl text-shell sm:text-5xl">
-                Nobody sees
+                What the night
                 <br />
-                <span className="text-gold">the menu early.</span>
+                <span className="text-gold">is made of.</span>
               </h2>
               <ul className="mt-7 space-y-5">
-                {SEALED.map((s) => (
-                  <li key={s.label} className="border-l border-gold/30 pl-5">
+                {OFFERINGS.map((o) => (
+                  <li key={o.label} className="border-l border-gold/30 pl-5">
                     <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-gold">
-                      {s.label} · {s.by}
+                      {o.label}
                     </p>
                     <p className="mt-1.5 text-sm leading-relaxed text-shell/70">
-                      {s.line}
+                      {o.line}
                     </p>
                   </li>
                 ))}
               </ul>
               <p className="mt-7 text-xs leading-relaxed text-shell/35">
                 Open bar comes with Meridian and above. Obsidian includes a
-                craft drink and a traditional shot, with everything after
-                at a discount. Zero alcohol, all night.
+                hand-crafted drink and an extra-strength kava shot, with
+                everything after at a discount. Zero alcohol, all night.
               </p>
             </div>
 
@@ -243,20 +259,9 @@ export default async function InvitedPage({
 
               <div className="luna-rule my-7" />
 
-              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-shell/35">
-                Your crew
-              </p>
-              <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
-                {CREW.map((c) => (
-                  <span key={c.name} className="text-sm text-shell/70">
-                    <span className="h-sign-med text-shell">{c.name}</span>
-                    <span className="text-shell/40"> · {c.role}</span>
-                  </span>
-                ))}
-              </div>
-              <p className="mt-6 text-xs leading-relaxed text-shell/35">
-                Hand-picked, invite only, capped on purpose. No lines, no
-                wristbands, no strangers.
+              <p className="text-xs leading-relaxed text-shell/35">
+                Fifty people. Hand-picked, invitation only, capped on
+                purpose. No lines, no wristbands, no strangers.
               </p>
             </div>
           </div>
@@ -274,15 +279,15 @@ export default async function InvitedPage({
             Choose your orbit.
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-shell/75">
-            Your ticket arrives in the mail — a real, printed ticket. The
-            address is printed on it, and nowhere else. Checkout asks
-            where to send it.
+            Your contribution secures your spot. Confirmation and the
+            full details — including where — arrive by email. Nothing
+            ships.
           </p>
 
           <div className="mt-9 rounded-3xl border border-gold/40 bg-abyss/60 p-7 backdrop-blur sm:p-9">
             {!productFound ? (
               <p className="text-shell/75">
-                Tickets drop here any minute — keep this page close.
+    Contributions open here any minute — keep this page close.
               </p>
             ) : anyAvailable ? (
               <BuyTicket tiers={tiers} />
@@ -304,9 +309,9 @@ export default async function InvitedPage({
 
           <p className="mx-auto mt-9 max-w-md text-xs leading-relaxed text-shell/40">
             All black. 21+. Zero alcohol, all night — everyone drives
-            home sharp. Order early enough for the mail to reach you.
-            Keep the address between friends; the room is capped and the
-            list is checked at the door.
+            home sharp. There is a pool; bring what you need for it.
+            Keep the details between friends — the room is capped and
+            the list is checked at the door.
           </p>
         </div>
       </section>

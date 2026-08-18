@@ -578,6 +578,105 @@ body {
   );
 }
 
+/* ── Tier ladder — the escalation ───────────────────────────────
+   Four tiers stacked in a column read as four identical rows unless
+   the card itself gets richer as the price does. Each step adds ONE
+   thing — a warmer ground, then an edge, then corner marks, then a
+   moving sheen — so the ladder is legible before a single perk has
+   been read. data-flourish is set from PARTY_TIERS. */
+
+.luna .tier-card {
+  background: rgba(11, 11, 12, 0.55);
+}
+
+/* 1 — Meridian: a faint warm ground. */
+.luna .tier-card[data-flourish="1"] {
+  background:
+    linear-gradient(180deg, rgba(212, 175, 106, 0.05), transparent 60%),
+    rgba(11, 11, 12, 0.6);
+}
+
+/* 2 — Perihelion: warmer still, and a lit edge. */
+.luna .tier-card[data-flourish="2"] {
+  background:
+    linear-gradient(180deg, rgba(212, 175, 106, 0.09), transparent 65%),
+    rgba(13, 12, 11, 0.7);
+  border-color: rgba(212, 175, 106, 0.3);
+}
+
+/* 3 — Aphelion: gold edge, outer glow, and a slow sheen. */
+.luna .tier-card[data-flourish="3"] {
+  background:
+    linear-gradient(180deg, rgba(212, 175, 106, 0.14), transparent 70%),
+    rgba(16, 14, 12, 0.8);
+  border-color: rgba(212, 175, 106, 0.5);
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 106, 0.12),
+    0 18px 50px -22px rgba(212, 175, 106, 0.5);
+}
+
+.luna .tier-card[data-flourish="3"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 60%
+  );
+  background-size: 250% 100%;
+  animation: tier-sheen 7s ease-in-out infinite;
+}
+
+@keyframes tier-sheen {
+  0%,
+  100% {
+    background-position: 130% 0;
+  }
+  55% {
+    background-position: -30% 0;
+  }
+}
+
+/* Selected state sits on top of whatever the tier already is. */
+.luna .tier-card--on {
+  background:
+    linear-gradient(180deg, rgba(212, 175, 106, 0.16), transparent 70%),
+    rgba(18, 16, 13, 0.85);
+  box-shadow: 0 0 0 1px rgba(212, 175, 106, 0.35);
+}
+
+/* Corner marks — Perihelion and up. Two opposite corners only; four
+   would read as a frame and fight the card's own rounding. */
+.luna .tier-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(212, 175, 106, 0.55);
+  pointer-events: none;
+}
+.luna .tier-corner--tl {
+  top: 9px;
+  left: 9px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.luna .tier-corner--br {
+  right: 9px;
+  bottom: 9px;
+  border-left: 0;
+  border-top: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .luna .tier-card[data-flourish="3"]::after {
+    animation: none;
+  }
+}
+
 /* ── Booking flow — ethereal motion ─────────────────────────────
    Slow, low-amplitude, and few. The point is calm, not spectacle,
    so nothing here is fast enough to notice mid-scroll. Disabled

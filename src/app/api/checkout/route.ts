@@ -82,6 +82,9 @@ export async function POST(req: Request) {
     smsConsent?: unknown;
     name?: unknown;
     phone?: unknown;
+    /** Liability waiver, ticked before the buy button unlocks. */
+    waiverAccepted?: unknown;
+    waiverText?: unknown;
   };
   try {
     payload = await req.json();
@@ -127,6 +130,35 @@ export async function POST(req: Request) {
       // Never block a sale on the CRM. The buyer still gets their order;
       // we lose one consent record and it's logged loudly here.
       console.error("[checkout] SMS consent record failed to reach GHL:", err);
+    }
+  }
+
+  /**
+   * Record the waiver the same way, and for the same reason: after the
+   * redirect we never run again.
+   *
+   * Filed even when there's no phone number — this one is a legal
+   * record, not a marketing permission, so it must not depend on
+   * someone also having opted into texts. The exact text they agreed to
+   * goes in the record; a bare "accepted: true" proves nothing later.
+   */
+  if (payload.waiverAccepted === true) {
+    const text =
+      typeof payload.waiverText === "string" ? payload.waiverText.trim() : "";
+    try {
+      await forwardBookingToGhl({
+        source: "lumanai.com — LUNA EKLIPTIKA waiver accepted",
+        name:
+          (typeof payload.name === "string" ? payload.name.trim() : "") ||
+          "Guest",
+        email: "",
+        phone,
+        message: `[Waiver accepted] ${new Date().toISOString()} — LUNA EKLIPTIKA, before checkout.
+
+${text}`,
+      });
+    } catch (err) {
+      console.error("[checkout] waiver record failed to reach GHL:", err);
     }
   }
 

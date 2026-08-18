@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import SmsConsent from "@/components/SmsConsent";
+import Waiver, { WAIVER_TEXT } from "@/components/party/Waiver";
 import { tierFor } from "@/lib/party-tiers";
 
 export type Tier = {
@@ -15,8 +16,7 @@ export type Tier = {
 /** Fallback for a variant with no tier config — better than a blank card. */
 const GENERIC_PERKS = [
   "Entry to LUNA EKLIPTIKA",
-  "Hors d'oeuvres all night",
-  "Live DJ",
+  "Complimentary anti-inflammatory hors d'oeuvres all night",
 ];
 
 function perksFor(title: string): string[] {
@@ -40,6 +40,8 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
   const [smsConsent, setSmsConsent] = useState(false);
   const [smsName, setSmsName] = useState("");
   const [smsPhone, setSmsPhone] = useState("");
+  // Ash: password + waiver are what make this defensible legally.
+  const [waiver, setWaiver] = useState(false);
 
   const digits = smsPhone.replace(/\D/g, "").length;
   const phoneLooksReal = digits >= 10;
@@ -51,6 +53,11 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
 
   async function buy() {
     if (!tier) return;
+
+    if (!waiver) {
+      setError("Please read and accept the acknowledgement to continue.");
+      return;
+    }
 
     // A ticked box with no number isn't permission to anything — stop
     // here rather than recording a consent we can't act on.
@@ -71,6 +78,10 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
           // Names the moment for the consent record — the shop checkout
           // files the same opt-in under different wording.
           context: "ticket",
+          // Recorded with the order so the acceptance has a timestamp
+          // and the exact text agreed to, not just a ticked box.
+          waiverAccepted: true,
+          waiverText: WAIVER_TEXT,
           ...(smsConsent && phoneLooksReal
             ? { smsConsent: "yes", name: smsName.trim(), phone: smsPhone.trim() }
             : {}),
@@ -100,12 +111,20 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
             return (
               <label
                 key={t.variantId}
-                className={`relative flex cursor-pointer flex-col gap-3 rounded-2xl border p-5 text-left transition sm:flex-row sm:items-start sm:gap-6 ${
+                data-flourish={cfg?.flourish ?? 0}
+                className={`tier-card relative flex cursor-pointer flex-col gap-3 rounded-2xl border p-5 text-left transition sm:flex-row sm:items-start sm:gap-6 ${
                   active
-                    ? "border-gold bg-gold/10"
+                    ? "tier-card--on border-gold"
                     : "border-shell/15 bg-abyss/40 hover:border-shell/35"
                 } ${t.available ? "" : "cursor-not-allowed opacity-45"}`}
               >
+                {/* Corner marks earn their way in as the tier climbs. */}
+                {(cfg?.flourish ?? 0) >= 2 && (
+                  <>
+                    <span aria-hidden className="tier-corner tier-corner--tl" />
+                    <span aria-hidden className="tier-corner tier-corner--br" />
+                  </>
+                )}
                 <input
                   type="radio"
                   name="tier"
@@ -116,13 +135,23 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
                   className="sr-only"
                 />
 
-                <div className="sm:w-44 sm:shrink-0">
+                <div className="sm:w-48 sm:shrink-0">
                   <span className="h-sign block text-2xl text-shell">
                     {labelFor(t.title)}
                   </span>
-                  <span className="mt-0.5 block font-mono text-xl font-bold text-gold">
-                    {t.priceLabel}
+                  <span className="mt-0.5 flex items-baseline gap-1.5">
+                    <span className="font-mono text-xl font-bold text-gold">
+                      {t.priceLabel}
+                    </span>
+                    <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-shell/40">
+                      donation
+                    </span>
                   </span>
+                  {cfg?.vipReception && (
+                    <span className="mt-1.5 inline-block rounded-full border border-gold/40 bg-gold/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-gold">
+                      VIP Reception 7–8PM
+                    </span>
+                  )}
                   {cfg?.note && (
                     <span className="mt-1 block text-[11px] italic leading-snug text-shell/45">
                       {cfg.note}
@@ -166,6 +195,9 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
         <div className="text-center">
           <p className="h-sign text-3xl text-shell">{labelFor(tier.title)}</p>
           <p className="h-sign mt-1 text-5xl text-gold">{tier.priceLabel}</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-shell/40">
+            donation
+          </p>
           <ul className="mt-4 inline-flex flex-col gap-1.5 text-left">
             {perksFor(tier.title).map((p: string) => (
               <li key={p} className="text-sm text-shell/75">
@@ -184,7 +216,7 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
           htmlFor="ticket-qty"
           className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50"
         >
-          How many
+          Quantity
         </label>
         <select
           id="ticket-qty"
@@ -240,18 +272,20 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
         )}
       </div>
 
+      <Waiver checked={waiver} onChange={setWaiver} />
+
       <div className="flex flex-col items-center gap-3">
         <button
           onClick={buy}
-          disabled={busy || !tier.available}
-          className="btn-brush font-mono text-sm font-bold uppercase tracking-[0.2em] text-shell"
+          disabled={busy || !tier.available || !waiver}
+          className="btn-brush font-mono text-sm font-bold uppercase tracking-[0.2em] text-shell disabled:cursor-not-allowed disabled:opacity-45"
           style={{ "--brush-bg": "var(--amethyst)" } as React.CSSProperties}
         >
           {busy
             ? "Opening checkout..."
             : !tier.available
               ? "Sold out"
-              : `Claim ${qty > 1 ? `${qty} spots` : "your spot"}${
+              : `Secure ${qty > 1 ? `${qty} spots` : "your spot"}${
                   // The price already sits above a lone tier — only repeat
                   // it when a chooser makes "which price?" a real question.
                   showTiers ? ` · ${tier.priceLabel}` : ""
