@@ -24,7 +24,7 @@ export async function shopifyFetch<T>(
    * trusted to keep a cached cartCreate from handing two buyers the
    * same checkout URL.
    */
-  options: { mutation?: boolean } = {},
+  options: { mutation?: boolean; revalidate?: number } = {},
 ): Promise<T> {
   const { domain, token, configured } = shopifyConfig();
   if (!configured) {
@@ -43,7 +43,7 @@ export async function shopifyFetch<T>(
     // Shopify admin show up without a redeploy.
     ...(options.mutation
       ? { cache: "no-store" as const }
-      : { next: { revalidate: 60 } }),
+      : { next: { revalidate: options.revalidate ?? 60 } }),
   });
   if (!res.ok) throw new Error(`Shopify ${res.status}`);
   const json = (await res.json()) as { data: T; errors?: unknown };

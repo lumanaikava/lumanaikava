@@ -131,8 +131,11 @@ export default function Footer() {
           <p className="text-center font-mono text-[10px] uppercase tracking-[0.2em] text-shell/40">
             In partnership with
           </p>
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 lg:flex-nowrap lg:gap-x-9">
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 lg:flex-nowrap lg:gap-x-6">
             {[
+              "Etho Wellness Club",
+              "Discoflow",
+              "Sweat Equity",
               "Ritual Collective",
               "Reshape Body Bar",
               "My Health Matrix",
@@ -140,7 +143,7 @@ export default function Footer() {
             ].map((name) => (
               <span
                 key={name}
-                className="h-sign-med whitespace-nowrap text-sm tracking-wide text-shell/60 transition-colors hover:text-gold lg:text-lg"
+                className="h-sign-med whitespace-nowrap text-[13px] tracking-wide text-shell/60 transition-colors hover:text-gold sm:text-sm lg:text-base"
               >
                 {name}
               </span>

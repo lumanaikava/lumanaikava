@@ -4,6 +4,8 @@ import PartyGate from "@/components/party/PartyGate";
 import BuyTicket, { type Tier } from "@/components/party/BuyTicket";
 import Countdown from "@/components/party/Countdown";
 import EventMark from "@/components/party/EventMark";
+import SpotsLeft from "@/components/party/SpotsLeft";
+import { partySpotsLeft } from "@/lib/party-capacity";
 import { getProductByHandle, formatPrice } from "@/lib/integrations/shopify";
 import { PARTY_TICKET_HANDLE } from "@/lib/catalog";
 import { tierRank } from "@/lib/party-tiers";
@@ -144,6 +146,10 @@ export default async function InvitedPage() {
 
   const anyAvailable = tiers.some((t) => t.available);
 
+  // Null when the Storefront token can't read inventory — the counter
+  // is then simply absent rather than wrong.
+  const capacity = await partySpotsLeft();
+
   return (
     /* Scoped theme: black environment, earth tones, gold + silver.
        Redefines the brand palette for this page only — the rest of
@@ -176,6 +182,11 @@ export default async function InvitedPage() {
           <p className="luna-in luna-d3 mt-2 font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
             Dress code — all black · pool party
           </p>
+          {capacity && capacity.left > 0 && (
+            <p className="luna-in luna-d3 mt-3 font-mono text-[11px] uppercase tracking-[0.24em] text-shell/50">
+              {capacity.left} of {capacity.capacity} spots left
+            </p>
+          )}
 
           {/* The address is the secret. Show its shape, not its content. */}
           <p className="mt-3 flex flex-wrap items-center justify-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-shell/45">
@@ -285,6 +296,11 @@ export default async function InvitedPage() {
           </p>
 
           <div className="mt-9 rounded-3xl border border-gold/40 bg-abyss/60 p-7 backdrop-blur sm:p-9">
+            {capacity && (
+              <div className="mb-8 border-b border-shell/10 pb-7">
+                <SpotsLeft data={capacity} />
+              </div>
+            )}
             {!productFound ? (
               <p className="text-shell/75">
     Contributions open here any minute — keep this page close.
