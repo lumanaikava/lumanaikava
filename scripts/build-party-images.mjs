@@ -114,9 +114,9 @@ async function markOnly(S = 1600) {
 async function detailsCard(S = 1600) {
   const cx = S / 2;
   const rows = [
-    ["DOORS", "8PM — late"],
+    ["WHEN", "Fri Aug 28 · 7PM—1AM"],
     ["VIP RECEPTION", "7—8PM · Meridian and above"],
-    ["DRESS", "White & neutral tones"],
+    ["DRESS", "Whites, off-whites & kava colors"],
     ["WHERE", "A private residence · address sent by email"],
     ["THE BAR", "Unlimited kava shots · zero alcohol"],
   ];

@@ -38,7 +38,7 @@ const RUN_OF_NIGHT = [
   {
     time: "7–8 PM",
     title: "VIP Reception",
-    body: "A private hour for Meridian and above, on the rooftop, before the room fills.",
+    body: "A private hour on the roof for Meridian and above — a welcome pour, live strings, and the room before it fills.",
     gated: true,
   },
   {
@@ -48,18 +48,28 @@ const RUN_OF_NIGHT = [
   },
   {
     time: "9 PM",
-    title: "First course",
-    body: "Beet and citrus ginger salad in an endive shell, followed by grilled pineapple and coconut shrimp skewers in a manuka honey glaze.",
+    title: "Appetizer",
+    body: "Ginger citrus beet salad in an endive shell.",
+  },
+  {
+    time: "9:30 PM",
+    title: "Entrée",
+    body: "Charred shrimp and pineapple skewer in a manuka honey glaze.",
   },
   {
     time: "10 PM",
     title: "Dessert",
-    body: "Ube sesame coconut truffle with a house raspberry drizzle.",
+    body: "Sesame ube truffle with shaved coconut dust and raspberry coulis.",
   },
   {
-    time: "Late",
+    time: "12 AM",
+    title: "Midnight moon",
+    body: "A soundbath under the full moon, then after hours inside.",
+  },
+  {
+    time: "1 AM",
     title: "Totality",
-    body: "Cold plunges, a midnight sound bath, and pouring until the last person leaves.",
+    body: "The last pour.",
   },
 ];
 
@@ -78,7 +88,7 @@ const OFFERINGS = [
   },
   {
     label: "The table",
-    line: "Three courses, no sugar in any of them. Beet and citrus ginger salad in an endive shell; grilled pineapple and coconut shrimp skewers in a manuka honey glaze; an ube sesame coconut truffle with house raspberry drizzle. Anti-inflammatory by design.",
+    line: "Three courses, no sugar in any of them. Ginger citrus beet salad in an endive shell; charred shrimp and pineapple skewer in a manuka honey glaze; sesame ube truffle with shaved coconut dust and raspberry coulis. Anti-inflammatory by design.",
   },
   {
     label: "Activations",
@@ -193,10 +203,10 @@ export default async function InvitedPage() {
             <span className="text-gold">Ekliptika</span>
           </h1>
           <p className="luna-in luna-d2 mt-6 font-mono text-sm uppercase tracking-[0.3em] text-shell/80">
-            Fri · Aug 28 · VIP Reception 7PM · Doors 8PM
+            Fri · Aug 28 · 7PM–1AM · Doors 8PM
           </p>
           <p className="luna-in luna-d3 mt-2 font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
-            Dress code — white & neutral tones · pool party
+            Dress code — whites, off-whites & kava colors
           </p>
           {capacity && capacity.left > 0 && (
             <p className="luna-in luna-d3 mt-3 font-mono text-[11px] uppercase tracking-[0.24em] text-shell/50">
@@ -343,8 +353,9 @@ export default async function InvitedPage() {
           </div>
 
           <p className="mx-auto mt-9 max-w-md text-xs leading-relaxed text-shell/40">
-            All black. 21+. Zero alcohol, all night — everyone drives
-            home sharp. There is a pool; bring what you need for it.
+            Whites, off-whites and kava colors — linens preferred,
+            swimsuit optional. 21+. Zero alcohol, all night, so
+            everyone drives home sharp.
             Keep the details between friends — the room is capped and
             the list is checked at the door.
           </p>
