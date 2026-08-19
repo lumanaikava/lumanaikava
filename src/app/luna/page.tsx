@@ -206,7 +206,7 @@ export default async function InvitedPage() {
             Fri · Aug 28 · 7PM–1AM · Doors 8PM
           </p>
           <p className="luna-in luna-d3 mt-2 font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
-            Dress code — whites, off-whites & kava colors
+            Dress code — all white
           </p>
           {capacity && capacity.left > 0 && (
             <p className="luna-in luna-d3 mt-3 font-mono text-[11px] uppercase tracking-[0.24em] text-shell/50">
@@ -353,9 +353,9 @@ export default async function InvitedPage() {
           </div>
 
           <p className="mx-auto mt-9 max-w-md text-xs leading-relaxed text-shell/40">
-            Whites, off-whites and kava colors — linens preferred,
-            swimsuit optional. 21+. Zero alcohol, all night, so
-            everyone drives home sharp.
+            All white — off-whites, beiges and kava colors welcome.
+            Linens preferred, swimsuits optional. 21+. Zero alcohol,
+            all night, so everyone drives home sharp.
             Keep the details between friends — the room is capped and
             the list is checked at the door.
           </p>

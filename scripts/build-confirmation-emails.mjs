@@ -17,13 +17,14 @@ const OUT = path.join("..", "Lumanai Business");
 
 /* ── The things most likely to change ───────────────────────── */
 
-// Zach's tier notes said "All black"; his standalone instruction two
-// days later said whites and neutrals, and the site + invitation now
-// say that everywhere. Going with the newer one — flip this single
-// line if the notes were right.
+// Official, confirmed by Zach 2026-08-19. "All white" is the headline;
+// the rest is the permitted range. Gold and silver accents are a VIP-
+// only line — it goes in Meridian and above ONLY, so it stays a mark of
+// the tier rather than a dress note everyone has read.
 const DRESS = "All white";
 const DRESS_LONG =
-  "Whites, off-whites and kava colors. Linens preferred, swimsuit optional.";
+  "All white — off-whites, beiges and kava colors welcome. Linens preferred, swimsuits optional.";
+const DRESS_VIP = "Gold and silver accents encouraged.";
 
 const ADDRESS = "8620 Grove Mill Ct";
 const CITY = "Las Vegas, NV 89139";
@@ -58,7 +59,7 @@ function calendarLink(startUtc) {
 
 /* ── Per tier ───────────────────────────────────────────────── */
 
-const RUSH = "RUSH instant ceremonial kava pouch to take home";
+const RUSH = "RUSH instant ceremonial kava pouch to take home ($60 value)";
 const SHOTS = "Unlimited traditional kava shots";
 const HORS = "Complimentary anti-inflammatory hors d'oeuvres all night";
 const OPEN_BAR = "Every cocktail on the exclusive menu, open bar all night";
@@ -75,6 +76,7 @@ const TIERS = [
     when: `Fri, Aug 28 · Doors 8PM · ${DRESS}`,
     start: "20260829T030000Z",
     concierge: false,
+    vip: false,
     included: [
       SHOTS,
       "One kava naktail from the exclusive menu",
@@ -89,8 +91,9 @@ const TIERS = [
     when: `Fri, Aug 28 · VIP Reception 7–8PM · Doors 8PM · ${DRESS}`,
     start: "20260829T020000Z",
     concierge: false,
+    vip: true,
     included: [
-      `${RUSH} ($60 value)`,
+      RUSH,
       SHOTS,
       OPEN_BAR,
       KANNA,
@@ -106,6 +109,7 @@ const TIERS = [
     when: `Fri, Aug 28 · VIP Reception 7–8PM · Doors 8PM · ${DRESS}`,
     start: "20260829T020000Z",
     concierge: true,
+    vip: true,
     included: [
       RUSH,
       SHOTS,
@@ -127,6 +131,7 @@ const TIERS = [
     when: `Fri, Aug 28 · VIP Reception 7–8PM · Doors 8PM · ${DRESS}`,
     start: "20260829T020000Z",
     concierge: true,
+    vip: true,
     included: [
       RUSH,
       SHOTS,
@@ -145,6 +150,36 @@ const TIERS = [
 ];
 
 const BRING = ["Swimsuit", "Yoga mat", "Empty stomach"];
+
+/**
+ * The shape of the night, times only.
+ *
+ * No dish names on purpose — the guest has already paid, so this is
+ * about anticipation rather than persuasion, and "second course" lands
+ * better than a menu they'll read twice and then forget.
+ */
+const SCHEDULE = [
+  ["7–8 PM", "VIP Reception, on the roof", true],
+  ["8 PM", "Doors"],
+  ["9 PM", "First course"],
+  ["9:30 PM", "Second"],
+  ["10 PM", "Dessert"],
+  ["12 AM", "Midnight moon soundbath"],
+  ["1 AM", "Last pour"],
+];
+
+const schedule = (vip) =>
+  `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">` +
+  SCHEDULE.filter(([, , gated]) => vip || !gated)
+    .map(
+      ([time, what]) =>
+        `<tr>` +
+        `<td width="76" style="padding:0 0 8px 0;font-family:${HEAD};font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#8a8378;vertical-align:top;">${time}</td>` +
+        `<td style="padding:0 0 8px 0;font-family:${TEXT};font-size:15px;line-height:1.45;color:${BODY};">${what}</td>` +
+        `</tr>`,
+    )
+    .join("") +
+  `</table>`;
 
 /* ── Pieces ─────────────────────────────────────────────────── */
 
@@ -217,9 +252,9 @@ function build(t) {
   <tr><td style="padding:28px 34px 0 34px;">
     <p style="margin:0 0 16px 0;font-family:${TEXT};font-size:16px;line-height:1.6;color:${BODY};">{{FIRST_NAME}} &mdash;</p>
     <p style="margin:0 0 16px 0;font-family:${TEXT};font-size:16px;line-height:1.6;color:${BODY};">
-      Thank you. Your contribution is in and your spot is held. This
-      email is your entry &mdash; there&rsquo;s nothing to print and
-      nothing arriving in the mail.
+      Thank you. Your contribution is in and your spot is held.
+      <strong style="color:${BONE};">The QR code below is your
+      entry</strong> &mdash; nothing is printed and nothing ships.
     </p>
     <p style="margin:0;font-family:${TEXT};font-size:16px;line-height:1.6;color:${BODY};">${t.line}</p>
   </td></tr>
@@ -236,9 +271,10 @@ function build(t) {
       <tr><td align="center" style="padding:26px 22px;">
         ${eyebrow("Your ticket")}
         <p style="margin:0 0 18px 0;font-family:${TEXT};font-size:15px;line-height:1.55;color:${BODY};">
-          Open this on your phone and add it to your home screen. It shows
-          the QR we scan at the door &mdash; screenshot it too, the
-          driveway has no signal.
+          This is how you get in. Open it on your phone, add it to your
+          home screen, and show the QR at the door.
+          <strong style="color:${BONE};">Screenshot it as well</strong>
+          &mdash; the driveway has no signal.
         </p>
         <a href="{{TICKET_LINK}}" style="display:inline-block;background:${GOLD};color:#050505;text-decoration:none;font-family:${HEAD};font-size:14px;font-weight:800;letter-spacing:3px;text-transform:uppercase;padding:15px 34px;border-radius:999px;">Open my ticket</a>
         <p style="margin:14px 0 0 0;font-family:${TEXT};font-size:12px;line-height:1.5;color:#8a8378;">It&rsquo;s yours alone &mdash; the link carries your name and tier.</p>
@@ -254,11 +290,18 @@ ${rule}
     ${bullets(t.included)}
   </td></tr>
 
+  <!-- The night -->
+  <tr><td style="padding:26px 34px 0 34px;">
+    ${eyebrow("The night")}
+    ${schedule(t.vip)}
+    <p style="margin:10px 0 0 0;font-family:${TEXT};font-size:13px;line-height:1.5;color:#8a8378;">Three courses, no sugar in any of them. What they are is the surprise.</p>
+  </td></tr>
+
   <!-- What to bring -->
   <tr><td style="padding:26px 34px 0 34px;">
     ${eyebrow("What to bring")}
     ${bullets(BRING)}
-    <p style="margin:12px 0 0 0;font-family:${TEXT};font-size:13px;line-height:1.5;color:#8a8378;">${DRESS_LONG} 21+.</p>
+    <p style="margin:12px 0 0 0;font-family:${TEXT};font-size:13px;line-height:1.5;color:#8a8378;">${DRESS_LONG}${t.vip ? ` <span style="color:${GOLD};">${DRESS_VIP}</span>` : ""} 21+.</p>
   </td></tr>
 ${
   t.concierge
@@ -322,8 +365,8 @@ ${rule}
       See you on the 28th.<br />&mdash; Ash &amp; Zach
     </p>
     <p style="margin:18px 0 0 0;font-family:${TEXT};font-size:12px;line-height:1.5;color:#6f6a61;">
-      This email is your entry &mdash; by attending, you agree to the
-      terms accepted at checkout.
+      Your QR code is your entry. By attending, you agree to the terms
+      accepted at checkout.
     </p>
   </td></tr>
 

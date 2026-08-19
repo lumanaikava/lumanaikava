@@ -116,7 +116,7 @@ async function detailsCard(S = 1600) {
   const rows = [
     ["WHEN", "Fri Aug 28 · 7PM—1AM"],
     ["VIP RECEPTION", "7—8PM · Meridian and above"],
-    ["DRESS", "Whites, off-whites & kava colors"],
+    ["DRESS", "All white · linens preferred"],
     ["WHERE", "A private residence · address sent by email"],
     ["THE BAR", "Unlimited kava shots · zero alcohol"],
   ];
