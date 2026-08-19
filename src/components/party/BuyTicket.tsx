@@ -112,6 +112,9 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
               <label
                 key={t.variantId}
                 data-flourish={cfg?.flourish ?? 0}
+                style={
+                  { "--tier": cfg?.accent ?? "#d4af6a" } as React.CSSProperties
+                }
                 className={`tier-card relative flex cursor-pointer flex-col gap-3 rounded-2xl border p-5 text-left transition sm:flex-row sm:items-start sm:gap-6 ${
                   active
                     ? "tier-card--on border-gold"
@@ -136,9 +139,17 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
                 />
 
                 <div className="sm:w-48 sm:shrink-0">
-                  <span className="h-sign block text-2xl text-shell">
+                  <span
+                    className="h-sign block text-2xl"
+                    style={{ color: cfg?.accent ?? "var(--shell)" }}
+                  >
                     {labelFor(t.title)}
                   </span>
+                  <span
+                    aria-hidden
+                    className="mt-1 block h-px w-9 rounded-full"
+                    style={{ background: cfg?.accent ?? "var(--gold)", opacity: 0.7 }}
+                  />
                   <span className="mt-0.5 flex items-baseline gap-1.5">
                     <span className="font-mono text-xl font-bold text-gold">
                       {t.priceLabel}
@@ -167,7 +178,11 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
                 <ul className="flex-1 space-y-1">
                   {perksFor(t.title).map((p) => (
                     <li key={p} className="text-xs leading-relaxed text-shell/70">
-                      <span aria-hidden className="mr-1.5 text-gold">
+                      <span
+                        aria-hidden
+                        className="mr-1.5"
+                        style={{ color: cfg?.accent ?? "var(--gold)" }}
+                      >
                         ·
                       </span>
                       {p}
@@ -179,9 +194,15 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
                     five of them are stacked. */}
                 <span
                   aria-hidden
-                  className={`absolute right-4 top-4 h-3 w-3 rounded-full border transition ${
-                    active ? "border-gold bg-gold" : "border-shell/30"
-                  }`}
+                  className="absolute right-4 top-4 h-3 w-3 rounded-full border transition"
+                  style={
+                    active
+                      ? {
+                          borderColor: cfg?.accent ?? "var(--gold)",
+                          background: cfg?.accent ?? "var(--gold)",
+                        }
+                      : undefined
+                  }
                 />
               </label>
             );

@@ -6,8 +6,8 @@
  * variant name, because that's a promise to a paying guest and it should
  * live somewhere a human can read and correct.
  *
- * Perk lists are Ash's words (2026-08-17). Don't paraphrase them — the
- * partner names and the dollar values are commitments.
+ * Perk lists are Ash's words. Don't paraphrase them — the partner names
+ * and the dollar values are commitments.
  *
  * Order matters: tiers render in the order listed, lowest first.
  */
@@ -28,7 +28,16 @@ export type PartyTier = {
    * anyone has finished reading a single perk.
    */
   flourish: 0 | 1 | 2 | 3;
+  /**
+   * The tier's own accent, named after the thing the tier is named
+   * after: obsidian glass, a gold meridian line, the white heat of
+   * perihelion, the cold blue distance of aphelion.
+   */
+  accent: string;
 };
+
+/** Poured for every guest, whatever they paid. Stated once, not per tier. */
+export const INCLUDED_FOR_ALL = "Unlimited traditional kava shots, all night";
 
 export const PARTY_TIERS: PartyTier[] = [
   {
@@ -36,26 +45,30 @@ export const PARTY_TIERS: PartyTier[] = [
     label: "Obsidian",
     note: "The night, in full",
     perks: [
-      "One hand-crafted mixed drink",
-      "One extra-strength kava shot",
+      "Unlimited traditional kava shots",
+      "One kava naktail from the exclusive menu",
       "Complimentary anti-inflammatory hors d'oeuvres all night",
       "Discounted drinks available for purchase",
     ],
     flourish: 0,
+    accent: "#8f96a8",
   },
   {
     match: "meridian",
     label: "Meridian",
     note: "The reception opens at seven",
     perks: [
+      "Unlimited traditional kava shots",
+      "Every cocktail on the exclusive menu, open bar all night",
+      "Ash's signature kanna cocktail — built for this night only",
       "VIP Reception, 7–8PM",
-      "Open bar all night",
       "Complimentary anti-inflammatory hors d'oeuvres all night",
       "Exclusive VIP rooftop",
       "RUSH instant ceremonial kava pouch to take home ($60 value)",
     ],
     vipReception: true,
     flourish: 1,
+    accent: "#d4af6a",
   },
   {
     match: "perihelion",
@@ -70,6 +83,7 @@ export const PARTY_TIERS: PartyTier[] = [
     ],
     vipReception: true,
     flourish: 2,
+    accent: "#f0e6d2",
   },
   {
     match: "aphelion",
@@ -85,6 +99,7 @@ export const PARTY_TIERS: PartyTier[] = [
     ],
     vipReception: true,
     flourish: 3,
+    accent: "#9ec5ea",
   },
 ];
 

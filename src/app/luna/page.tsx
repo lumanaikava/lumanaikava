@@ -44,7 +44,17 @@ const RUN_OF_NIGHT = [
   {
     time: "8 PM",
     title: "Doors",
-    body: "The bar opens, the menu is revealed, and the kitchen starts sending.",
+    body: "The bar opens and the menu is revealed.",
+  },
+  {
+    time: "9 PM",
+    title: "First course",
+    body: "Beet and citrus ginger salad in an endive shell, followed by grilled pineapple and coconut shrimp skewers in a manuka honey glaze.",
+  },
+  {
+    time: "10 PM",
+    title: "Dessert",
+    body: "Ube sesame coconut truffle with a house raspberry drizzle.",
   },
   {
     time: "Late",
@@ -63,8 +73,12 @@ const RUN_OF_NIGHT = [
  */
 const OFFERINGS = [
   {
-    label: "The menu",
-    line: "An exclusively crafted, curated menu of naktails (kava) and functional mocktails.",
+    label: "The bar",
+    line: "Unlimited traditional kava shots for everyone, all night. An exclusively crafted menu of naktails (kava) and functional mocktails — with Ash's signature kanna cocktail poured for Meridian and above.",
+  },
+  {
+    label: "The table",
+    line: "Three courses, no sugar in any of them. Beet and citrus ginger salad in an endive shell; grilled pineapple and coconut shrimp skewers in a manuka honey glaze; an ube sesame coconut truffle with house raspberry drizzle. Anti-inflammatory by design.",
   },
   {
     label: "Activations",
@@ -90,6 +104,7 @@ function Door() {
     <div className="luna">
       <section className="luna-sweep relative flex min-h-[88svh] flex-col items-center justify-center overflow-hidden px-6 py-20 text-center">
         <div className="luna-bg pointer-events-none absolute inset-0" aria-hidden />
+        <div className="luna-roots" aria-hidden />
         <div
           className="luna-grain pointer-events-none absolute inset-0 opacity-70"
           aria-hidden
@@ -158,6 +173,7 @@ export default async function InvitedPage() {
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section className="luna-sweep relative overflow-hidden">
         <div className="luna-bg pointer-events-none absolute inset-0" aria-hidden />
+        <div className="luna-roots" aria-hidden />
         <div
           className="luna-grain pointer-events-none absolute inset-0 opacity-80"
           aria-hidden
@@ -180,7 +196,7 @@ export default async function InvitedPage() {
             Fri · Aug 28 · VIP Reception 7PM · Doors 8PM
           </p>
           <p className="luna-in luna-d3 mt-2 font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
-            Dress code — all black · pool party
+            Dress code — white & neutral tones · pool party
           </p>
           {capacity && capacity.left > 0 && (
             <p className="luna-in luna-d3 mt-3 font-mono text-[11px] uppercase tracking-[0.24em] text-shell/50">
@@ -215,7 +231,8 @@ export default async function InvitedPage() {
 
       {/* ── The offerings, and how the night runs ───────────── */}
       <section className="luna-sweep relative overflow-hidden border-t border-shell/10 px-6 py-9 sm:py-14">
-        <div className="mx-auto max-w-5xl">
+        <div className="luna-roots luna-roots--soft" aria-hidden />
+        <div className="relative mx-auto max-w-5xl">
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
             <div className="luna-in luna-d1">
               <Eyebrow>The offerings</Eyebrow>
@@ -237,9 +254,10 @@ export default async function InvitedPage() {
                 ))}
               </ul>
               <p className="mt-7 text-xs leading-relaxed text-shell/35">
-                Open bar comes with Meridian and above. Obsidian includes a
-                hand-crafted drink and an extra-strength kava shot, with
-                everything after at a discount. Zero alcohol, all night.
+                Every ticket pours unlimited kava shots. Obsidian adds one
+                naktail from the exclusive menu, with everything after at a
+                discount. Meridian and above open the whole cocktail list,
+                plus the signature pour. Zero alcohol, all night.
               </p>
             </div>
 
@@ -282,9 +300,10 @@ export default async function InvitedPage() {
       {/* ── Tickets ──────────────────────────────────────────── */}
       <section
         id="tickets"
-        className="relative border-t border-shell/10 px-6 py-10 sm:py-16"
+        className="relative overflow-hidden border-t border-shell/10 px-6 py-10 sm:py-16"
       >
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="luna-roots" aria-hidden />
+        <div className="relative mx-auto max-w-3xl text-center">
           <Eyebrow>Admission</Eyebrow>
           <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">
             Choose your orbit.

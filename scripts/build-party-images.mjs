@@ -29,6 +29,16 @@ function stars(count, w, h, seed = 7) {
 const LOGO = "assets/luna-ekliptika_logo_transparent.png";
 
 /**
+ * SVG is XML, so a bare & in copy is a parse error, not a character.
+ * "White & neutral tones" took the whole build down until this existed.
+ */
+const xml = (v) =>
+  String(v)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+/**
  * Ash's logo, sized and placed. It is white-on-transparent, so it only
  * works over the dark ground these cards already have.
  *
@@ -105,10 +115,10 @@ async function detailsCard(S = 1600) {
   const cx = S / 2;
   const rows = [
     ["DOORS", "8PM — late"],
-    ["GOLDEN HOUR", "7—8PM · Meridian and above"],
-    ["DRESS", "All black"],
-    ["WHERE", "A private mansion · address on your ticket"],
-    ["THE BAR", "Kava + functional mocktails · zero alcohol"],
+    ["VIP RECEPTION", "7—8PM · Meridian and above"],
+    ["DRESS", "White & neutral tones"],
+    ["WHERE", "A private residence · address sent by email"],
+    ["THE BAR", "Unlimited kava shots · zero alcohol"],
   ];
   const top = S * 0.335;
   const gap = S * 0.108;
@@ -122,9 +132,9 @@ async function detailsCard(S = 1600) {
       .map(
         ([k, v], i) => `
       <text x="${S * 0.135}" y="${top + i * gap}" font-family="Helvetica, Arial, sans-serif"
-            font-size="${S * 0.0185}" letter-spacing="${S * 0.0042}" fill="${GOLD}">${k}</text>
+            font-size="${S * 0.0185}" letter-spacing="${S * 0.0042}" fill="${GOLD}">${xml(k)}</text>
       <text x="${S * 0.135}" y="${top + i * gap + S * 0.042}" font-family="Helvetica, Arial, sans-serif"
-            font-size="${S * 0.0295}" fill="${BONE}" opacity="0.9">${v}</text>
+            font-size="${S * 0.0295}" fill="${BONE}" opacity="0.9">${xml(v)}</text>
       <line x1="${S * 0.135}" y1="${top + i * gap + S * 0.066}" x2="${S * 0.865}" y2="${top + i * gap + S * 0.066}"
             stroke="${BONE}" stroke-width="1" opacity="0.12"/>`,
       )

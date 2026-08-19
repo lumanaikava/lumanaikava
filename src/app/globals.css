@@ -585,6 +585,27 @@ body {
   );
 }
 
+/* Roots, carried through the party page.
+   The pattern is the through-line between the main site and this one —
+   without it /luna reads as a different brand rather than the same one
+   after dark. Kept very low and multiplied so it reads as texture in
+   the black, never as a picture. */
+.luna .luna-roots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("/images/roots-texture.webp");
+  background-size: 620px;
+  background-repeat: repeat;
+  opacity: 0.11;
+  mix-blend-mode: screen;
+}
+
+.luna .luna-roots--soft {
+  opacity: 0.07;
+  background-size: 460px;
+}
+
 /* ── Tier ladder — the escalation ───────────────────────────────
    Four tiers stacked in a column read as four identical rows unless
    the card itself gets richer as the price does. Each step adds ONE
@@ -596,30 +617,33 @@ body {
   background: rgba(11, 11, 12, 0.55);
 }
 
-/* 1 — Meridian: a faint warm ground. */
+/* Each step tints with --tier, the colour the tier is named after, so
+   the ladder is a gradient of identity rather than four shades of gold. */
+
+/* 1 — Meridian: a faint ground in its own colour. */
 .luna .tier-card[data-flourish="1"] {
   background:
-    linear-gradient(180deg, rgba(212, 175, 106, 0.05), transparent 60%),
+    linear-gradient(180deg, color-mix(in srgb, var(--tier) 7%, transparent), transparent 60%),
     rgba(11, 11, 12, 0.6);
 }
 
-/* 2 — Perihelion: warmer still, and a lit edge. */
+/* 2 — Perihelion: stronger, and a lit edge. */
 .luna .tier-card[data-flourish="2"] {
   background:
-    linear-gradient(180deg, rgba(212, 175, 106, 0.09), transparent 65%),
+    linear-gradient(180deg, color-mix(in srgb, var(--tier) 12%, transparent), transparent 65%),
     rgba(13, 12, 11, 0.7);
-  border-color: rgba(212, 175, 106, 0.3);
+  border-color: color-mix(in srgb, var(--tier) 35%, transparent);
 }
 
-/* 3 — Aphelion: gold edge, outer glow, and a slow sheen. */
+/* 3 — Aphelion: coloured edge, outer glow, and a slow sheen. */
 .luna .tier-card[data-flourish="3"] {
   background:
-    linear-gradient(180deg, rgba(212, 175, 106, 0.14), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--tier) 17%, transparent), transparent 70%),
     rgba(16, 14, 12, 0.8);
-  border-color: rgba(212, 175, 106, 0.5);
+  border-color: color-mix(in srgb, var(--tier) 55%, transparent);
   box-shadow:
-    0 0 0 1px rgba(212, 175, 106, 0.12),
-    0 18px 50px -22px rgba(212, 175, 106, 0.5);
+    0 0 0 1px color-mix(in srgb, var(--tier) 14%, transparent),
+    0 18px 50px -22px color-mix(in srgb, var(--tier) 55%, transparent);
 }
 
 .luna .tier-card[data-flourish="3"]::after {
@@ -651,9 +675,10 @@ body {
 /* Selected state sits on top of whatever the tier already is. */
 .luna .tier-card--on {
   background:
-    linear-gradient(180deg, rgba(212, 175, 106, 0.16), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--tier) 20%, transparent), transparent 70%),
     rgba(18, 16, 13, 0.85);
-  box-shadow: 0 0 0 1px rgba(212, 175, 106, 0.35);
+  border-color: color-mix(in srgb, var(--tier) 70%, transparent) !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--tier) 40%, transparent);
 }
 
 /* Corner marks — Perihelion and up. Two opposite corners only; four
@@ -662,7 +687,7 @@ body {
   position: absolute;
   width: 14px;
   height: 14px;
-  border: 1px solid rgba(212, 175, 106, 0.55);
+  border: 1px solid color-mix(in srgb, var(--tier) 60%, transparent);
   pointer-events: none;
 }
 .luna .tier-corner--tl {
