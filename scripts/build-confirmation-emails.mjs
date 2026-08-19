@@ -1,0 +1,353 @@
+import fs from "node:fs";
+import path from "node:path";
+
+/**
+ * The four tier confirmation emails.
+ *
+ * Generated rather than hand-written because they share nine tenths of
+ * their content. Four copies of the address block is four places to fix
+ * a typo in, and the one that gets missed is the one with the gate code
+ * in it.
+ *
+ * Run:  node scripts/build-confirmation-emails.mjs
+ * Out:  ../Lumanai Business/Confirmation — <Tier>.html
+ */
+
+const OUT = path.join("..", "Lumanai Business");
+
+/* ── The things most likely to change ───────────────────────── */
+
+// Zach's tier notes said "All black"; his standalone instruction two
+// days later said whites and neutrals, and the site + invitation now
+// say that everywhere. Going with the newer one — flip this single
+// line if the notes were right.
+const DRESS = "All white";
+const DRESS_LONG =
+  "Whites, off-whites and kava colors. Linens preferred, swimsuit optional.";
+
+const ADDRESS = "8620 Grove Mill Ct";
+const CITY = "Las Vegas, NV 89139";
+const GATE = "89139";
+const CONCIERGE = { name: "Karina", phone: "702-445-4242" };
+
+const GOLD = "#d4af6a";
+const BONE = "#f2efe8";
+const BODY = "#ddd8cf";
+const MUTE = "#a9a296";
+const LINE = "#2a2621";
+const ROOTS = "https://www.lumanai.com/images/party/roots-email.jpg";
+const LOGO = "https://www.lumanai.com/images/party/luna-ekliptika-logo.png";
+
+const HEAD = `'Barlow Semi Condensed',Helvetica,Arial,sans-serif`;
+const TEXT = `Barlow,Helvetica,Arial,sans-serif`;
+
+/** Aug 28 2026, Las Vegas (PDT = UTC−7). */
+function calendarLink(startUtc) {
+  const p = new URLSearchParams({
+    action: "TEMPLATE",
+    text: "LUNA EKLIPTIKA — Lumanai",
+    dates: `${startUtc}/20260829T080000Z`,
+    details:
+      "Your contribution is confirmed. Dress: " +
+      DRESS_LONG +
+      " Bring a swimsuit, a yoga mat and an empty stomach. 21+.",
+    location: `${ADDRESS}, ${CITY}`,
+  });
+  return `https://calendar.google.com/calendar/render?${p}`;
+}
+
+/* ── Per tier ───────────────────────────────────────────────── */
+
+const RUSH = "RUSH instant ceremonial kava pouch to take home";
+const SHOTS = "Unlimited traditional kava shots";
+const HORS = "Complimentary anti-inflammatory hors d'oeuvres all night";
+const OPEN_BAR = "Every cocktail on the exclusive menu, open bar all night";
+const KANNA = "Ash's signature kanna cocktail — built for this night only";
+const VIP = "VIP Reception, 7–8PM";
+const ROOFTOP = "Exclusive VIP rooftop";
+const GIFTS = "More perks and a curated set of gifts, revealed on arrival";
+
+const TIERS = [
+  {
+    key: "Obsidian",
+    accent: "#c9ccd6",
+    line: "We built this night to be worth showing up for. Glad you'll be there.",
+    when: `Fri, Aug 28 · Doors 8PM · ${DRESS}`,
+    start: "20260829T030000Z",
+    concierge: false,
+    included: [
+      SHOTS,
+      "One kava naktail from the exclusive menu",
+      HORS,
+      "Discounted drinks available for purchase",
+    ],
+  },
+  {
+    key: "Meridian",
+    accent: GOLD,
+    line: "The reception opens at seven — come early, the room's better before it fills.",
+    when: `Fri, Aug 28 · VIP Reception 7–8PM · Doors 8PM · ${DRESS}`,
+    start: "20260829T020000Z",
+    concierge: false,
+    included: [
+      `${RUSH} ($60 value)`,
+      SHOTS,
+      OPEN_BAR,
+      KANNA,
+      VIP,
+      HORS,
+      ROOFTOP,
+    ],
+  },
+  {
+    key: "Perihelion",
+    accent: "#e8e2d4",
+    line: "It really means the world to us. Thank you for helping create the future of social drinking with us.",
+    when: `Fri, Aug 28 · VIP Reception 7–8PM · Doors 8PM · ${DRESS}`,
+    start: "20260829T020000Z",
+    concierge: true,
+    included: [
+      RUSH,
+      SHOTS,
+      OPEN_BAR,
+      KANNA,
+      VIP,
+      HORS,
+      ROOFTOP,
+      "3 month Aphelion Club membership",
+      "1 month Sweat Equity pass",
+      "Reshape Body Bar pass",
+      GIFTS,
+    ],
+  },
+  {
+    key: "Aphelion",
+    accent: "#f3e6c8",
+    line: "It really means the world to us. Thank you for helping create the future of social drinking with us.",
+    when: `Fri, Aug 28 · VIP Reception 7–8PM · Doors 8PM · ${DRESS}`,
+    start: "20260829T020000Z",
+    concierge: true,
+    included: [
+      RUSH,
+      SHOTS,
+      OPEN_BAR,
+      KANNA,
+      VIP,
+      HORS,
+      ROOFTOP,
+      "1 year Aphelion Club membership",
+      "3 month Sweat Equity pass",
+      "Reshape Body Bar pass",
+      "1 week MyHealthMatrix pass with wellness age test",
+      GIFTS,
+    ],
+  },
+];
+
+const BRING = ["Swimsuit", "Yoga mat", "Empty stomach"];
+
+/* ── Pieces ─────────────────────────────────────────────────── */
+
+const eyebrow = (t, color = GOLD) =>
+  `<p style="margin:0 0 14px 0;font-family:${HEAD};font-size:12px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:${color};">${t}</p>`;
+
+const bullets = (items) =>
+  `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">` +
+  items
+    .map(
+      (i, n) =>
+        `<tr><td style="padding:0 0 ${n === items.length - 1 ? 0 : 9}px 0;font-family:${TEXT};font-size:15px;line-height:1.5;color:${BODY};"><span style="color:${GOLD};">&middot;</span>&nbsp;&nbsp;${i}</td></tr>`,
+    )
+    .join("") +
+  `</table>`;
+
+const rule = `<tr><td style="padding:28px 34px 0 34px;"><div style="height:1px;background:${LINE};"></div></td></tr>`;
+
+function build(t) {
+  const cal = calendarLink(t.start);
+  return `<!-- ============================================================
+     LUNA EKLIPTIKA — confirmation · ${t.key.toUpperCase()}
+     ============================================================
+
+     Sent AFTER a ${t.key} contribution clears.
+
+     1. Replace  {{FIRST_NAME}}
+     2. Replace  {{TICKET_LINK}}  with the guest's ticket URL from
+        scripts/mint-tickets.mjs. Each one is unique to them.
+
+     Subject: You're in — LUNA EKLIPTIKA, Friday Aug 28
+
+     ⚠️ THIS IS THE ONLY PLACE THE ADDRESS AND GATE CODE APPEAR.
+     Never send it to anyone who hasn't paid.
+
+     GENERATED — edit scripts/build-confirmation-emails.mjs and re-run,
+     don't edit this file. All four tiers share one template.
+     ============================================================ -->
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@600;700;800;900&display=swap');
+</style>
+
+<div style="margin:0;padding:0;background:#050505;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+       background="${ROOTS}"
+       style="background:#050505 url('${ROOTS}') repeat center top;">
+<tr><td align="center" style="padding:36px 16px;">
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background:#0b0b0c;border:1px solid ${LINE};border-radius:18px;">
+
+  <tr><td align="center" style="padding:44px 32px 0 32px;">
+    <img src="${LOGO}" width="96" height="96" alt="Luna Ekliptika"
+         style="display:block;width:96px;height:96px;border:0;" />
+  </td></tr>
+
+  <tr><td align="center" style="padding:24px 32px 0 32px;">
+    <p style="margin:0;font-family:${HEAD};font-size:12px;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:${GOLD};">You&rsquo;re in</p>
+    <h1 style="margin:12px 0 0 0;font-family:${HEAD};font-size:38px;line-height:1.02;font-weight:900;letter-spacing:1px;color:${BONE};text-transform:uppercase;">
+      Luna <span style="color:${GOLD};">Ekliptika</span>
+    </h1>
+  </td></tr>
+
+  <tr><td align="center" style="padding:20px 32px 0 32px;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border:1px solid ${t.accent}77;border-radius:999px;">
+      <tr><td style="padding:9px 26px;font-family:${HEAD};font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:${t.accent};">${t.key}</td></tr>
+    </table>
+  </td></tr>
+
+  <tr><td style="padding:28px 34px 0 34px;">
+    <p style="margin:0 0 16px 0;font-family:${TEXT};font-size:16px;line-height:1.6;color:${BODY};">{{FIRST_NAME}} &mdash;</p>
+    <p style="margin:0 0 16px 0;font-family:${TEXT};font-size:16px;line-height:1.6;color:${BODY};">
+      Thank you. Your contribution is in and your spot is held. This
+      email is your entry &mdash; there&rsquo;s nothing to print and
+      nothing arriving in the mail.
+    </p>
+    <p style="margin:0;font-family:${TEXT};font-size:16px;line-height:1.6;color:${BODY};">${t.line}</p>
+  </td></tr>
+
+  <tr><td align="center" style="padding:22px 34px 0 34px;">
+    <p style="margin:0;font-family:${HEAD};font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:${BONE};">${t.when}</p>
+  </td></tr>
+
+  <!-- Ticket -->
+  <tr><td style="padding:26px 34px 0 34px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+           background="${ROOTS}"
+           style="background:#141210 url('${ROOTS}') repeat center center;border:1px solid ${GOLD}66;border-radius:14px;">
+      <tr><td align="center" style="padding:26px 22px;">
+        ${eyebrow("Your ticket")}
+        <p style="margin:0 0 18px 0;font-family:${TEXT};font-size:15px;line-height:1.55;color:${BODY};">
+          Open this on your phone and add it to your home screen. It shows
+          the QR we scan at the door &mdash; screenshot it too, the
+          driveway has no signal.
+        </p>
+        <a href="{{TICKET_LINK}}" style="display:inline-block;background:${GOLD};color:#050505;text-decoration:none;font-family:${HEAD};font-size:14px;font-weight:800;letter-spacing:3px;text-transform:uppercase;padding:15px 34px;border-radius:999px;">Open my ticket</a>
+        <p style="margin:14px 0 0 0;font-family:${TEXT};font-size:12px;line-height:1.5;color:#8a8378;">It&rsquo;s yours alone &mdash; the link carries your name and tier.</p>
+      </td></tr>
+    </table>
+  </td></tr>
+
+${rule}
+
+  <!-- What's included -->
+  <tr><td style="padding:26px 34px 0 34px;">
+    ${eyebrow("What's included")}
+    ${bullets(t.included)}
+  </td></tr>
+
+  <!-- What to bring -->
+  <tr><td style="padding:26px 34px 0 34px;">
+    ${eyebrow("What to bring")}
+    ${bullets(BRING)}
+    <p style="margin:12px 0 0 0;font-family:${TEXT};font-size:13px;line-height:1.5;color:#8a8378;">${DRESS_LONG} 21+.</p>
+  </td></tr>
+${
+  t.concierge
+    ? `
+  <!-- Concierge -->
+  <tr><td style="padding:26px 34px 0 34px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid ${LINE};border-radius:12px;background:#111013;">
+      <tr><td style="padding:20px 22px;">
+        ${eyebrow("Your concierge")}
+        <p style="margin:0 0 8px 0;font-family:${TEXT};font-size:15px;line-height:1.55;color:${BODY};">
+          Your personal concierge is <strong style="color:${BONE};">${CONCIERGE.name}</strong>. Please don&rsquo;t hesitate to contact her before or during the event if you need anything kava or event-related.
+        </p>
+        <a href="tel:+1${CONCIERGE.phone.replace(/\D/g, "")}" style="font-family:${HEAD};font-size:18px;font-weight:700;letter-spacing:2px;color:${GOLD};text-decoration:none;">${CONCIERGE.phone}</a>
+      </td></tr>
+    </table>
+  </td></tr>`
+    : ""
+}
+
+  <tr><td style="padding:28px 34px 0 34px;">
+    <p style="margin:0;font-family:${TEXT};font-size:16px;line-height:1.6;color:${BODY};">Below is the part we don&rsquo;t publish anywhere.</p>
+  </td></tr>
+
+  <!-- The address -->
+  <tr><td style="padding:18px 34px 0 34px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+           background="${ROOTS}"
+           style="background:#141210 url('${ROOTS}') repeat center center;border:1px solid ${GOLD}66;border-radius:14px;">
+      <tr><td align="center" style="padding:26px 22px;">
+        <p style="margin:0 0 8px 0;font-family:${HEAD};font-size:11px;font-weight:600;letter-spacing:3.5px;text-transform:uppercase;color:${GOLD};">The address</p>
+        <p style="margin:0;font-family:${HEAD};font-size:26px;font-weight:700;line-height:1.25;color:${BONE};">${ADDRESS}</p>
+        <p style="margin:2px 0 0 0;font-family:${TEXT};font-size:15px;color:${MUTE};">${CITY}</p>
+
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:18px auto 0 auto;border-top:1px solid ${GOLD}44;">
+          <tr><td align="center" style="padding:16px 22px 0 22px;">
+            <p style="margin:0 0 4px 0;font-family:${HEAD};font-size:11px;font-weight:600;letter-spacing:3.5px;text-transform:uppercase;color:${GOLD};">Gate code</p>
+            <p style="margin:0;font-family:${HEAD};font-size:30px;font-weight:900;letter-spacing:7px;color:${BONE};">${GATE}</p>
+          </td></tr>
+        </table>
+
+        <p style="margin:16px 0 0 0;">
+          <a href="https://maps.google.com/?q=${encodeURIComponent(`${ADDRESS}, ${CITY}`)}" style="font-family:${HEAD};font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:${GOLD};text-decoration:none;">Open in maps &rarr;</a>
+        </p>
+        <p style="margin:14px 0 0 0;font-family:${TEXT};font-size:13px;line-height:1.5;color:#8a8378;">Please keep this between us. It&rsquo;s someone&rsquo;s home.</p>
+      </td></tr>
+    </table>
+  </td></tr>
+
+  <tr><td align="center" style="padding:26px 34px 0 34px;">
+    <a href="${cal}" style="display:inline-block;border:1px solid ${GOLD}66;color:${GOLD};text-decoration:none;font-family:${HEAD};font-size:12px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;padding:13px 30px;border-radius:999px;">Add to calendar</a>
+  </td></tr>
+
+${rule}
+
+  <tr><td style="padding:22px 34px 0 34px;">
+    <p style="margin:0;font-family:${TEXT};font-size:15px;line-height:1.6;color:${BODY};">
+      Anything at all &mdash; dietary, timing, a plus one, cold feet
+      &mdash; just reply to this email. It reaches us directly.
+    </p>
+    <p style="margin:16px 0 0 0;font-family:${TEXT};font-size:15px;line-height:1.6;color:${BODY};">
+      See you on the 28th.<br />&mdash; Ash &amp; Zach
+    </p>
+    <p style="margin:18px 0 0 0;font-family:${TEXT};font-size:12px;line-height:1.5;color:#6f6a61;">
+      This email is your entry &mdash; by attending, you agree to the
+      terms accepted at checkout.
+    </p>
+  </td></tr>
+
+  <tr><td align="center" style="padding:30px 34px 34px 34px;">
+    <p style="margin:0;font-family:${HEAD};font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#4d4941;">Lumanai &middot; Las Vegas</p>
+    <p style="margin:8px 0 0 0;font-family:${TEXT};font-size:12px;color:#4d4941;">
+      <a href="mailto:bula@lumanai.com" style="color:#6f6a61;text-decoration:none;">bula@lumanai.com</a>
+    </p>
+  </td></tr>
+
+</table>
+
+</td></tr>
+</table>
+</div>
+`;
+}
+
+fs.mkdirSync(OUT, { recursive: true });
+for (const t of TIERS) {
+  const html = build(t);
+  const file = path.join(OUT, `Confirmation — ${t.key}.html`);
+  fs.writeFileSync(file, html, "utf8");
+  console.log(
+    `${`Confirmation — ${t.key}.html`.padEnd(34)} ${t.included.length} perks  ${(html.length / 1024).toFixed(1)}KB`,
+  );
+}
