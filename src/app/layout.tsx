@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/components/CartProvider";
 import CartDrawer from "@/components/CartDrawer";
+import FlashOverlay from "@/components/FlashOverlay";
 import { CONTACT_EMAIL } from "@/lib/contact";
 import { SITE_ORIGIN } from "@/lib/site-origin";
 
@@ -106,6 +107,7 @@ export default function RootLayout({
           </main>
           <Footer />
           <CartDrawer />
+          <FlashOverlay />
         </CartProvider>
         <script
           type="application/ld+json"

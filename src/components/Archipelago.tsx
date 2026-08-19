@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState, type MouseEvent } from "react";
 import SplashDrink from "@/components/SplashDrink";
+import { flashFrom } from "@/components/FlashOverlay";
 
 /**
  * The Lumanai hero: a craft kava tropical bar at the shoreline, at
@@ -138,22 +138,22 @@ export default function Archipelago({
 }: {
   events: { date: string; label: string; kind?: string }[];
 }) {
-  const router = useRouter();
-  const [burst, setBurst] = useState<{ x: number; y: number } | null>(null);
 
   /**
    * The light-burst: a golden flash from the click point.
    *
-   * It used to preventDefault, wait 480ms, THEN navigate — so every
-   * drink felt half a second broken before anything happened. Now the
-   * navigation starts immediately and the burst plays over the top of
-   * it, which looks the same and responds instantly.
+   * The flash is dispatched to FlashOverlay, which lives in the root
+   * layout and therefore survives this page unmounting. That's what
+   * lets the click navigate in the same tick — the original had to
+   * stall 480ms so the burst could be seen before the hero was torn
+   * down, and that stall was the lag.
+   *
+   * No preventDefault: the Link navigates on its own, so a middle
+   * click, cmd-click or "open in new tab" all still behave normally.
    */
-  function sail(e: MouseEvent<HTMLAnchorElement>, href: string) {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    e.preventDefault();
-    setBurst({ x: e.clientX, y: e.clientY });
-    router.push(href);
+  function sail(e: MouseEvent<HTMLAnchorElement>) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    flashFrom(e.clientX, e.clientY);
   }
 
   // Cycle through upcoming dates, fading between them.
@@ -260,7 +260,7 @@ export default function Archipelago({
               key={d.href}
               href={d.href}
               prefetch
-              onClick={(e) => sail(e, d.href)}
+              onClick={sail}
               className="group block text-center"
             >
               <span
@@ -314,22 +314,6 @@ export default function Archipelago({
         </div>
       )}
 
-      {/* Light-burst transport overlay */}
-      {burst && (
-        <div className="pointer-events-none fixed inset-0 z-[90]" aria-hidden>
-          <span
-            className="transport-ring absolute block h-[120vmax] w-[120vmax] rounded-full"
-            style={{
-              left: burst.x,
-              top: burst.y,
-              marginLeft: "-60vmax",
-              marginTop: "-60vmax",
-              background:
-                "radial-gradient(circle, rgba(237,226,180,0.9) 0%, rgba(107,58,156,0.9) 35%, rgba(5,16,42,1) 70%)",
-            }}
-          />
-        </div>
-      )}
     </section>
   );
 }

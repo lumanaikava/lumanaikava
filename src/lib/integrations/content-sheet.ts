@@ -77,11 +77,24 @@ async function parse(res: Response, what: string): Promise<Record<string, unknow
  */
 async function readGrid(
   tab: ContentTab,
+  /**
+   * `true` bypasses the cache. Required before any WRITE — a
+   * read-modify-write off a cached copy would silently discard whatever
+   * changed in between.
+   *
+   * Display reads pass `false` and get a 60-second cache. An Apps Script
+   * /exec round trip is 1–3 SECONDS, and with no-store every visitor to
+   * the home page paid it three times over; the page took 2.2s to answer
+   * where /products took 0.3s. Caching is safe here precisely because
+   * /api/revalidate purges the moment the sheet is edited, so the stale
+   * window is "until Zach saves", not sixty seconds.
+   */
+  fresh = true,
 ): Promise<{ headers: string[]; rows: (string | number)[][] }> {
   if (!URL) throw new Error("Content sheet webhook not configured.");
   const sep = URL.includes("?") ? "&" : "?";
   const res = await fetch(`${URL}${sep}list=1&tab=${encodeURIComponent(tab)}`, {
-    cache: "no-store",
+    ...(fresh ? { cache: "no-store" as const } : { next: { revalidate: 60 } }),
     redirect: "follow",
   });
   const data = await parse(res, `Content sheet (${tab})`);
@@ -91,8 +104,11 @@ async function readGrid(
   };
 }
 
-async function readRows(tab: ContentTab): Promise<(string | number)[][]> {
-  return (await readGrid(tab)).rows;
+async function readRows(
+  tab: ContentTab,
+  fresh = true,
+): Promise<(string | number)[][]> {
+  return (await readGrid(tab, fresh)).rows;
 }
 
 async function writeRows(
@@ -115,14 +131,14 @@ async function writeRows(
 /* ── Events ────────────────────────────────────────────────── */
 
 /** Throws if the sheet can't be read — use before any write. */
-export async function readEventsStrict(): Promise<SiteEvent[]> {
-  return (await readRows("Events")).map(valuesToEvent).filter((e) => e.id && e.date);
+export async function readEventsStrict(fresh = true): Promise<SiteEvent[]> {
+  return (await readRows("Events", fresh)).map(valuesToEvent).filter((e) => e.id && e.date);
 }
 
 /** [] on failure. Display use only — never as the basis for a write. */
 export async function readEventsSafe(): Promise<SiteEvent[]> {
   try {
-    return await readEventsStrict();
+    return await readEventsStrict(false);
   } catch (err) {
     console.error("[content] events unreadable:", err);
     return [];
@@ -135,13 +151,13 @@ export async function saveEvents(events: SiteEvent[]): Promise<void> {
 
 /* ── FAQ ───────────────────────────────────────────────────── */
 
-export async function readFaqStrict(): Promise<SiteFaq[]> {
-  return (await readRows("FAQ")).map(valuesToFaq).filter((f) => f.id && f.q);
+export async function readFaqStrict(fresh = true): Promise<SiteFaq[]> {
+  return (await readRows("FAQ", fresh)).map(valuesToFaq).filter((f) => f.id && f.q);
 }
 
 export async function readFaqSafe(): Promise<SiteFaq[]> {
   try {
-    return await readFaqStrict();
+    return await readFaqStrict(false);
   } catch (err) {
     console.error("[content] faq unreadable:", err);
     return [];
@@ -154,13 +170,13 @@ export async function saveFaq(items: SiteFaq[]): Promise<void> {
 
 /* ── Our Story ─────────────────────────────────────────────── */
 
-export async function readStoryStrict(): Promise<SiteStory[]> {
-  return (await readRows("Story")).map(valuesToStory).filter((b) => b.id);
+export async function readStoryStrict(fresh = true): Promise<SiteStory[]> {
+  return (await readRows("Story", fresh)).map(valuesToStory).filter((b) => b.id);
 }
 
 export async function readStorySafe(): Promise<SiteStory[]> {
   try {
-    return await readStoryStrict();
+    return await readStoryStrict(false);
   } catch (err) {
     console.error("[content] story unreadable:", err);
     return [];
@@ -173,13 +189,13 @@ export async function saveStory(blocks: SiteStory[]): Promise<void> {
 
 /* ── Per-event menus ───────────────────────────────────────── */
 
-export async function readMenusStrict(): Promise<EventMenuOverride[]> {
-  return (await readRows("Menus")).map(valuesToOverride).filter((m) => m.key);
+export async function readMenusStrict(fresh = true): Promise<EventMenuOverride[]> {
+  return (await readRows("Menus", fresh)).map(valuesToOverride).filter((m) => m.key);
 }
 
 export async function readMenusSafe(): Promise<EventMenuOverride[]> {
   try {
-    return await readMenusStrict();
+    return await readMenusStrict(false);
   } catch (err) {
     console.error("[content] menus unreadable:", err);
     return [];
@@ -194,7 +210,8 @@ export async function saveMenus(items: EventMenuOverride[]): Promise<void> {
 
 /** Header row first, then the data — the events parser reads by column name. */
 export async function readMainListRows(): Promise<string[][]> {
-  const { headers, rows } = await readGrid("MAIN LIST");
+  // Display only — the site never writes here, so it always caches.
+  const { headers, rows } = await readGrid("MAIN LIST", false);
   // An older deployment of the script returns rows without headers.
   // Say so, rather than letting the calendar quietly come back empty.
   if (headers.length === 0) {
