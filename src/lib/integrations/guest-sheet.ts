@@ -184,3 +184,8 @@ export async function patchGuest(
 export async function removeGuest(id: string): Promise<void> {
   await editSavedGuest(id, () => null);
 }
+
+/** Wipe every row from the sheet. Used by the owner-only Clear All. */
+export async function clearAllGuests(): Promise<void> {
+  await callSheet({ action: "replace", rows: [] });
+}

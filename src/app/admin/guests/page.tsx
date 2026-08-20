@@ -13,23 +13,16 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function GuestsPage() {
-  // Guest contact details are customer data — owners only.
   const session = await getSession();
 
-  if (!session.isOwner) {
+  if (!session.authed) {
     return (
       <section className="mx-auto max-w-2xl px-6 py-24 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
-          {session.authed ? "Owners only" : "Crew only"}
+          Crew only
         </p>
         <h1 className="h-sign mt-3 text-5xl text-shell">Guest List</h1>
-        {session.authed ? (
-          <p className="mt-4 text-shell/70">
-            Ash or Zach can get you what you need from the list.
-          </p>
-        ) : (
-          <LoginForm />
-        )}
+        <LoginForm />
       </section>
     );
   }
@@ -84,6 +77,7 @@ export default async function GuestsPage() {
           initialGuests={board.guests}
           canWrite={board.sheetReady}
           canSeed={board.sheetReady && session.isOwner}
+          canClear={board.sheetReady && session.isOwner}
         />
       </div>
     </section>

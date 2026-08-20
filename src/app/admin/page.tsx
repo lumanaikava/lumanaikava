@@ -192,12 +192,22 @@ export default async function AdminPage() {
   if (!isOwner) {
     return (
       <section className="mx-auto max-w-3xl px-6 py-10">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
-          My hours
-        </p>
-        <h1 className="h-sign mt-2 text-5xl text-shell">
-          Hey{crewName ? `, ${crewName}` : ""}.
-        </h1>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+              My hours
+            </p>
+            <h1 className="h-sign mt-2 text-5xl text-shell">
+              Hey{crewName ? `, ${crewName}` : ""}.
+            </h1>
+          </div>
+          <Link
+            href="/admin/guests"
+            className="rounded-full border border-shell/25 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-shell hover:border-gold hover:text-gold"
+          >
+            Guest list →
+          </Link>
+        </div>
         <p className="mt-3 text-sm text-shell/60">
           Log your shifts here. Everything you submit goes straight to Ash
           and Zach — you don&apos;t need to send it anywhere else.

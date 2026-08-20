@@ -13,16 +13,23 @@ import { isGuestStatus, normaliseInstagram, type Guest } from "@/lib/guests";
 
 export const runtime = "nodejs";
 
-/** Guest contact details are customer data — owners only. */
+/**
+ * Any signed-in crew member can read and edit the guest list.
+ *
+ * Zach's call 2026-08-20: the guest list is a shared operational tool
+ * for LUNA night, and staff need to tick channels off as they text and
+ * DM. It carries phone/email/IG but not payment or hours, so the
+ * sensitivity floor is lower than payroll.
+ */
 async function requireAuth() {
   const session = await getSession();
-  if (!session.isOwner) return { ok: false as const, crew: "", session };
+  if (!session.authed) return { ok: false as const, crew: "", session };
   return { ok: true as const, crew: session.name, session };
 }
 
 const unauthorized = (session: { authed: boolean }) =>
   NextResponse.json(
-    { error: session.authed ? "Owners only." : "Not signed in." },
+    { error: session.authed ? "Not authorised." : "Not signed in." },
     { status: session.authed ? 403 : 401 },
   );
 
