@@ -70,6 +70,11 @@ function buyersFromOrders(orders: AdminOrder[]): Guest[] {
       invitedPhone: true,
       invitedEmail: true,
       invitedInstagram: true,
+      // Buyers are neither staff nor comped by default — those are
+      // labels a human sets, and inferring them from an order would
+      // silently reclassify people.
+      isStaff: false,
+      isFree: false,
       addedBy: "Shopify",
       addedAt: o.createdAt,
     }));

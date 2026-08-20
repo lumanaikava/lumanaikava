@@ -86,6 +86,8 @@ export async function POST(req: Request) {
     invitedPhone: b.invitedPhone === true,
     invitedEmail: b.invitedEmail === true,
     invitedInstagram: b.invitedInstagram === true,
+    isStaff: b.isStaff === true,
+    isFree: b.isFree === true,
     addedBy: auth.crew,
     addedAt: new Date().toISOString(),
   };
@@ -140,6 +142,8 @@ export async function PUT(req: Request) {
       if (typeof b.invitedInstagram === "boolean") {
         patch.invitedInstagram = b.invitedInstagram;
       }
+      if (typeof b.isStaff === "boolean") patch.isStaff = b.isStaff;
+      if (typeof b.isFree === "boolean") patch.isFree = b.isFree;
       if (Object.keys(patch).length === 0) {
         return NextResponse.json({ error: "Nothing to change." }, { status: 400 });
       }

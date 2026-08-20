@@ -44,6 +44,14 @@ export type Guest = {
   invitedPhone: boolean;
   invitedEmail: boolean;
   invitedInstagram: boolean;
+  /**
+   * Labels. Independent — someone can be staff without being comped (rare
+   * but possible), and comped without being staff (a VIP guest of the
+   * house). Both are just tags; the board reads them, and the totals
+   * ignore them so headcount stays real.
+   */
+  isStaff: boolean;
+  isFree: boolean;
   /** Which crew member added them (manual adds only). */
   addedBy: string;
   addedAt: string;
@@ -76,6 +84,8 @@ export const GUEST_COLUMNS = [
   "Invited Phone",
   "Invited Email",
   "Invited Instagram",
+  "Staff",
+  "Free",
 ] as const;
 
 export const GUEST_STATUSES: GuestStatus[] = ["lead", "confirmed", "checked-in"];
@@ -113,6 +123,8 @@ export function guestToValues(g: Guest): (string | number)[] {
     yn(g.invitedPhone),
     yn(g.invitedEmail),
     yn(g.invitedInstagram),
+    yn(g.isStaff),
+    yn(g.isFree),
   ];
 }
 
@@ -135,6 +147,8 @@ export function valuesToGuest(c: (string | number)[]): Guest {
     invitedPhone: readYn(c[11]),
     invitedEmail: readYn(c[12]),
     invitedInstagram: readYn(c[13]),
+    isStaff: readYn(c[14]),
+    isFree: readYn(c[15]),
   };
 }
 

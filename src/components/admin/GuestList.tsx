@@ -307,6 +307,10 @@ export default function GuestList({
                 const key = channelFlagKey(ch);
                 mutate(g, { [key]: next } as Partial<Guest>, { [key]: next });
               }}
+              onToggleLabel={(label, next) => {
+                const key = label === "staff" ? "isStaff" : "isFree";
+                mutate(g, { [key]: next } as Partial<Guest>, { [key]: next });
+              }}
               onRemove={() => remove(g)}
             />
           ))}
@@ -386,6 +390,7 @@ function GuestRow({
   onCheckIn,
   onUndo,
   onToggleChannel,
+  onToggleLabel,
   onRemove,
 }: {
   guest: Guest;
@@ -395,6 +400,7 @@ function GuestRow({
   onCheckIn: () => void;
   onUndo: () => void;
   onToggleChannel: (ch: Channel, next: boolean) => void;
+  onToggleLabel: (label: "staff" | "free", next: boolean) => void;
   onRemove: () => void;
 }) {
   // A row is "lit" when they've paid OR someone flipped the Secure switch.
@@ -421,6 +427,16 @@ function GuestRow({
           {lit && !here && (
             <span className="shrink-0 rounded-full bg-gold/25 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.15em] text-gold">
               {guest.source === "ticket" ? "Paid" : "Secured"}
+            </span>
+          )}
+          {guest.isStaff && (
+            <span className="shrink-0 rounded-full bg-violet-400/20 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.15em] text-violet-300">
+              Staff
+            </span>
+          )}
+          {guest.isFree && (
+            <span className="shrink-0 rounded-full bg-emerald-400/20 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.15em] text-emerald-300">
+              Free
             </span>
           )}
           {guest.tickets > 1 && (
@@ -464,7 +480,36 @@ function GuestRow({
 
       {/* Actions */}
       {canWrite && (
-        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+        <div className="flex flex-col items-start gap-2 sm:items-end">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => onToggleLabel("staff", !guest.isStaff)}
+              aria-pressed={guest.isStaff}
+              className={`rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] transition-colors disabled:cursor-not-allowed ${
+                guest.isStaff
+                  ? "border-violet-400 bg-violet-400/20 text-violet-200"
+                  : "border-shell/25 text-shell/60 hover:border-violet-400 hover:text-violet-300"
+              }`}
+            >
+              Staff
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => onToggleLabel("free", !guest.isFree)}
+              aria-pressed={guest.isFree}
+              className={`rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] transition-colors disabled:cursor-not-allowed ${
+                guest.isFree
+                  ? "border-emerald-400 bg-emerald-400/20 text-emerald-200"
+                  : "border-shell/25 text-shell/60 hover:border-emerald-400 hover:text-emerald-300"
+              }`}
+            >
+              Free
+            </button>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
           {guest.status === "lead" && (
             <button
               onClick={onSecure}
@@ -501,6 +546,7 @@ function GuestRow({
               Remove
             </button>
           )}
+          </div>
         </div>
       )}
     </li>

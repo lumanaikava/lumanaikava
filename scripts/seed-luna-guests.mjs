@@ -50,6 +50,8 @@ function toValues(g) {
     "", // Invited Phone
     "", // Invited Email
     "", // Invited Instagram
+    g.isStaff ? "yes" : "",
+    g.isFree ? "yes" : "",
   ];
 }
 
@@ -109,14 +111,16 @@ const guests = [
   },
 
   // — Crew and friends bucket (starts with the comped house list) —
-  { name: "Ash", tickets: 1, notes: "House · FREE" },
-  { name: "Zach", tickets: 1, notes: "House · FREE" },
-  { name: "Karina", tickets: 1, notes: "House · FREE" },
-  { name: "Kaden", tickets: 1, notes: "House · FREE" },
-  { name: "Mikey", tickets: 1, notes: "House · FREE" },
-  { name: "Yoscelin", tickets: 1, notes: "House · FREE" },
-  { name: "Merrill", tickets: 1, notes: "House · FREE" },
-  { name: "Danny", tickets: 1, notes: "House · FREE" },
+  // All eight below are staff and comped — labels toggle to gold + emerald
+  // in the UI, so they read at a glance in the door queue.
+  { name: "Ash", isStaff: true, isFree: true },
+  { name: "Zach", isStaff: true, isFree: true },
+  { name: "Karina", isStaff: true, isFree: true },
+  { name: "Kaden", isStaff: true, isFree: true },
+  { name: "Mikey", isStaff: true, isFree: true },
+  { name: "Yoscelin", isStaff: true, isFree: true },
+  { name: "Merrill", isStaff: true, isFree: true },
+  { name: "Danny", isStaff: true, isFree: true },
 
   // — Bucket after Merrill/Danny —
   { name: "Thais" },
