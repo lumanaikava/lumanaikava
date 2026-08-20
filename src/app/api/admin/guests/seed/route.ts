@@ -85,6 +85,7 @@ export async function POST() {
       invitedInstagram: false,
       isStaff: spec.isStaff === true,
       isFree: spec.isFree === true,
+      staffTitle: spec.staffTitle ?? "",
       addedBy: session.name,
       addedAt: new Date(now + i * 1000).toISOString(),
     };

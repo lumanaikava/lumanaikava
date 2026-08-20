@@ -95,6 +95,7 @@ export async function POST(req: Request) {
     invitedInstagram: b.invitedInstagram === true,
     isStaff: b.isStaff === true,
     isFree: b.isFree === true,
+    staffTitle: String(b.staffTitle ?? "").trim().slice(0, 60),
     addedBy: auth.crew,
     addedAt: new Date().toISOString(),
   };
@@ -151,6 +152,21 @@ export async function PUT(req: Request) {
       }
       if (typeof b.isStaff === "boolean") patch.isStaff = b.isStaff;
       if (typeof b.isFree === "boolean") patch.isFree = b.isFree;
+      // Free-text edit fields — everything the row's edit panel exposes.
+      if (typeof b.name === "string") {
+        const trimmed = b.name.trim().slice(0, 120);
+        if (!trimmed) {
+          return NextResponse.json(
+            { error: "Name can't be blank." },
+            { status: 400 },
+          );
+        }
+        patch.name = trimmed;
+      }
+      if (typeof b.notes === "string") patch.notes = b.notes.trim().slice(0, 400);
+      if (typeof b.staffTitle === "string") {
+        patch.staffTitle = b.staffTitle.trim().slice(0, 60);
+      }
       if (Object.keys(patch).length === 0) {
         return NextResponse.json({ error: "Nothing to change." }, { status: 400 });
       }

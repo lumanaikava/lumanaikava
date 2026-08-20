@@ -52,6 +52,11 @@ export type Guest = {
    */
   isStaff: boolean;
   isFree: boolean;
+  /**
+   * Free-text job for staff, e.g. "Bartender", "DJ", "Kitchen". Rendered
+   * next to the Staff badge, only when isStaff is true.
+   */
+  staffTitle: string;
   /** Which crew member added them (manual adds only). */
   addedBy: string;
   addedAt: string;
@@ -86,6 +91,7 @@ export const GUEST_COLUMNS = [
   "Invited Instagram",
   "Staff",
   "Free",
+  "Staff Title",
 ] as const;
 
 export const GUEST_STATUSES: GuestStatus[] = ["lead", "confirmed", "checked-in"];
@@ -125,6 +131,7 @@ export function guestToValues(g: Guest): (string | number)[] {
     yn(g.invitedInstagram),
     yn(g.isStaff),
     yn(g.isFree),
+    g.staffTitle,
   ];
 }
 
@@ -149,6 +156,7 @@ export function valuesToGuest(c: (string | number)[]): Guest {
     invitedInstagram: readYn(c[13]),
     isStaff: readYn(c[14]),
     isFree: readYn(c[15]),
+    staffTitle: s(c[16]),
   };
 }
 

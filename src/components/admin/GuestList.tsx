@@ -49,6 +49,9 @@ export default function GuestList({
   const [adding, setAdding] = useState(false);
   const [seeding, setSeeding] = useState(false);
   const [clearing, setClearing] = useState(false);
+  /** Which row is open for edit. Only one at a time — the panel is a
+      Guest-shaped form, and two open panels racing is a hazard. */
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const totals = useMemo(() => guestTotals(guests), [guests]);
   const listIsEmpty = guests.length === 0;
@@ -329,6 +332,14 @@ export default function GuestList({
               guest={g}
               busy={busyId === g.id}
               canWrite={canWrite}
+              editing={editingId === g.id}
+              onEditToggle={() =>
+                setEditingId((cur) => (cur === g.id ? null : g.id))
+              }
+              onSaveEdit={async (patch) => {
+                await mutate(g, patch, patch);
+                setEditingId(null);
+              }}
               onSecure={() =>
                 mutate(g, { status: "confirmed" }, { status: "confirmed" })
               }
@@ -477,6 +488,9 @@ function GuestRow({
   guest,
   busy,
   canWrite,
+  editing,
+  onEditToggle,
+  onSaveEdit,
   onSecure,
   onCheckIn,
   onUndo,
@@ -487,6 +501,9 @@ function GuestRow({
   guest: Guest;
   busy: boolean;
   canWrite: boolean;
+  editing: boolean;
+  onEditToggle: () => void;
+  onSaveEdit: (patch: Partial<Guest>) => Promise<void>;
   onSecure: () => void;
   onCheckIn: () => void;
   onUndo: () => void;
@@ -497,14 +514,40 @@ function GuestRow({
   const lit = guest.status === "confirmed" || guest.status === "checked-in";
   const here = guest.status === "checked-in";
 
-  const shell = lit
-    ? "border-gold/50 bg-gold/[0.08] shadow-[0_0_0_1px_rgba(212,175,106,0.2)]"
-    : "border-shell/10 bg-lagoon/15";
+  /**
+   * Shell: border colour tracks labels, background tracks status. Zach
+   * asked for a purple ring around staff and a green ring around free —
+   * when a row is both (the eight house names), the outer BORDER is
+   * violet and an inner emerald box-shadow layer sits behind it, so
+   * both colours land at once.
+   *
+   * The lit-gold state for Secured/Here keeps its own background; the
+   * label rings sit on top of it rather than fighting.
+   */
+  const bg = lit ? "bg-gold/[0.08]" : "bg-lagoon/15";
+  const border = guest.isStaff
+    ? "border-violet-400/70"
+    : guest.isFree
+      ? "border-emerald-400/70"
+      : lit
+        ? "border-gold/50"
+        : "border-shell/10";
+  const shadow = (() => {
+    if (guest.isStaff && guest.isFree) {
+      // Emerald inner box-shadow reads behind the violet border.
+      return "shadow-[inset_0_0_0_2px_rgba(52,211,153,0.55)]";
+    }
+    if (lit) return "shadow-[0_0_0_1px_rgba(212,175,106,0.2)]";
+    return "";
+  })();
+
+  const shell = `${bg} ${border} ${shadow}`;
 
   return (
     <li
-      className={`flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border px-3 py-2 transition-colors ${shell} ${busy ? "opacity-50" : ""}`}
+      className={`rounded-xl border px-3 py-2 transition-colors ${shell} ${busy ? "opacity-50" : ""}`}
     >
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
       {/* Name + inline badges */}
       <div className="min-w-0 flex-1 basis-40">
         <p className="flex flex-wrap items-center gap-1.5 text-sm font-semibold text-shell">
@@ -517,6 +560,11 @@ function GuestRow({
           {lit && !here && (
             <span className="rounded-full bg-gold/25 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-gold">
               {guest.source === "ticket" ? "Paid" : "Secured"}
+            </span>
+          )}
+          {guest.isStaff && guest.staffTitle && (
+            <span className="rounded-full bg-violet-400/20 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-violet-200">
+              {guest.staffTitle}
             </span>
           )}
           {guest.tickets > 1 && (
@@ -606,6 +654,18 @@ function GuestRow({
               Undo
             </button>
           )}
+          <button
+            onClick={onEditToggle}
+            disabled={busy}
+            title={editing ? "Close editor" : "Edit fields"}
+            className={`rounded-full border px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] transition-colors disabled:opacity-60 ${
+              editing
+                ? "border-gold bg-gold/15 text-gold"
+                : "border-shell/20 text-shell/55 hover:border-gold hover:text-gold"
+            }`}
+          >
+            Edit
+          </button>
           {guest.source === "manual" && (
             <button
               onClick={onRemove}
@@ -618,6 +678,117 @@ function GuestRow({
           )}
         </div>
       )}
+    </div>
+    {editing && canWrite && (
+      <EditPanel guest={guest} busy={busy} onSave={onSaveEdit} onCancel={onEditToggle} />
+    )}
     </li>
+  );
+}
+
+/** The inline edit form. Only fields the row exposes elsewhere show up. */
+function EditPanel({
+  guest,
+  busy,
+  onSave,
+  onCancel,
+}: {
+  guest: Guest;
+  busy: boolean;
+  onSave: (patch: Partial<Guest>) => Promise<void>;
+  onCancel: () => void;
+}) {
+  const [name, setName] = useState(guest.name);
+  const [phone, setPhone] = useState(guest.phone);
+  const [email, setEmail] = useState(guest.email);
+  const [instagram, setInstagram] = useState(guest.instagram);
+  const [staffTitle, setStaffTitle] = useState(guest.staffTitle);
+  const [notes, setNotes] = useState(guest.notes);
+
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!name.trim()) return;
+    // Only send what actually changed — the API tolerates a full patch,
+    // but a smaller one means the sheet update touches fewer rows.
+    const patch: Partial<Guest> = {};
+    if (name.trim() !== guest.name) patch.name = name.trim();
+    if (phone.trim() !== guest.phone) patch.phone = phone.trim();
+    if (email.trim() !== guest.email) patch.email = email.trim();
+    if (instagram.trim() !== guest.instagram) patch.instagram = instagram.trim();
+    if (staffTitle.trim() !== guest.staffTitle) patch.staffTitle = staffTitle.trim();
+    if (notes.trim() !== guest.notes) patch.notes = notes.trim();
+    if (Object.keys(patch).length === 0) {
+      onCancel();
+      return;
+    }
+    await onSave(patch);
+  }
+
+  return (
+    <form
+      onSubmit={submit}
+      className="mt-2 grid gap-2 rounded-lg border border-shell/10 bg-abyss/50 p-2.5 sm:grid-cols-[1.2fr_1fr_1.3fr_1fr_1.2fr_auto_auto]"
+    >
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Name"
+        required
+        className="rounded-full border border-shell/20 bg-abyss/60 px-3 py-1 text-xs text-shell outline-none focus:border-gold"
+      />
+      <input
+        value={phone}
+        onChange={(e) => setPhone(e.target.value)}
+        placeholder="Phone"
+        className="rounded-full border border-shell/20 bg-abyss/60 px-3 py-1 text-xs text-shell outline-none focus:border-gold"
+      />
+      <input
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        type="email"
+        placeholder="Email"
+        className="rounded-full border border-shell/20 bg-abyss/60 px-3 py-1 text-xs text-shell outline-none focus:border-gold"
+      />
+      <input
+        value={instagram}
+        onChange={(e) => setInstagram(e.target.value)}
+        placeholder="@instagram"
+        className="rounded-full border border-shell/20 bg-abyss/60 px-3 py-1 text-xs text-shell outline-none focus:border-gold"
+      />
+      <input
+        value={staffTitle}
+        onChange={(e) => setStaffTitle(e.target.value)}
+        placeholder={guest.isStaff ? "Job title (Bartender…)" : "Job title (staff only)"}
+        disabled={!guest.isStaff}
+        title={
+          guest.isStaff
+            ? "Staff job title — Bartender, DJ, Kitchen, etc."
+            : "Toggle the Staff pill first to set a title."
+        }
+        className="rounded-full border border-shell/20 bg-abyss/60 px-3 py-1 text-xs text-shell outline-none placeholder:text-shell/35 focus:border-gold disabled:cursor-not-allowed disabled:opacity-45"
+      />
+      <button
+        type="submit"
+        disabled={busy}
+        className="rounded-full bg-gold px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-abyss hover:bg-shell disabled:opacity-60"
+      >
+        {busy ? "…" : "Save"}
+      </button>
+      <button
+        type="button"
+        onClick={onCancel}
+        disabled={busy}
+        className="rounded-full border border-shell/20 px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-shell/60 hover:border-gold hover:text-gold disabled:opacity-60"
+      >
+        Cancel
+      </button>
+      <textarea
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+        placeholder="Notes (optional)"
+        rows={2}
+        className="rounded-lg border border-shell/20 bg-abyss/60 px-3 py-1 text-xs text-shell outline-none placeholder:text-shell/35 focus:border-gold sm:col-span-7"
+      />
+    </form>
   );
 }

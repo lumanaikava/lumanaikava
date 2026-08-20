@@ -25,6 +25,7 @@ export type LunaSeedGuest = {
   notes?: string;
   isStaff?: boolean;
   isFree?: boolean;
+  staffTitle?: string;
 };
 
 export const LUNA_STARTER_LIST: LunaSeedGuest[] = [
@@ -76,14 +77,14 @@ export const LUNA_STARTER_LIST: LunaSeedGuest[] = [
   },
 
   // — House crew: everyone here is on the clock and comped —
-  { name: "Ash", isStaff: true, isFree: true },
-  { name: "Zach", isStaff: true, isFree: true },
-  { name: "Karina", isStaff: true, isFree: true },
-  { name: "Kaden", isStaff: true, isFree: true },
-  { name: "Mikey", isStaff: true, isFree: true },
-  { name: "Yoscelin", isStaff: true, isFree: true },
-  { name: "Merrill", isStaff: true, isFree: true },
-  { name: "Danny", isStaff: true, isFree: true },
+  { name: "Ash", isStaff: true, isFree: true, staffTitle: "Owner · Bar lead" },
+  { name: "Zach", isStaff: true, isFree: true, staffTitle: "Owner · Operations" },
+  { name: "Karina", isStaff: true, isFree: true, staffTitle: "Concierge" },
+  { name: "Kaden", isStaff: true, isFree: true, staffTitle: "Bartender" },
+  { name: "Mikey", isStaff: true, isFree: true, staffTitle: "Bartender" },
+  { name: "Yoscelin", isStaff: true, isFree: true, staffTitle: "Bartender" },
+  { name: "Merrill", isStaff: true, isFree: true, staffTitle: "Kitchen" },
+  { name: "Danny", isStaff: true, isFree: true, staffTitle: "Kitchen" },
 
   // — Friends bucket, names only for now —
   { name: "Thais" },
