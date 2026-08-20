@@ -41,7 +41,10 @@ const LINE = "#2a2621";
 // network — including Aristocrat's, where www.lumanai.com currently
 // doesn't. Nobody ever sees an image URL in an email.
 const ROOTS = "https://lumanaikava.vercel.app/images/party/roots-email.jpg";
-const LOGO = "https://lumanaikava.vercel.app/images/party/luna-ekliptika-logo.png";
+// Roots + logo + wordmark baked into one image. Gmail strips CSS
+// background images and the `background` shorthand, so the only way to
+// guarantee the branding arrives is to make it an <img>.
+const HEADER = "https://lumanaikava.vercel.app/images/party/email-header.jpg";
 
 const HEAD = `'Barlow Semi Condensed',Helvetica,Arial,sans-serif`;
 const TEXT = `Barlow,Helvetica,Arial,sans-serif`;
@@ -195,7 +198,7 @@ const bullets = (items, color = BODY) =>
     .join("") +
   `</table>`;
 
-const rule = `<tr><td style="padding:28px 34px 0 34px;"><div style="height:1px;background:${LINE};"></div></td></tr>`;
+const rule = `<tr><td style="padding:28px 34px 0 34px;"><div style="height:1px;background-color:${LINE};font-size:0;line-height:0;"></div></td></tr>`;
 
 function build(t) {
   const cal = calendarLink(t.start);
@@ -222,27 +225,20 @@ function build(t) {
   @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@600;700;800;900&display=swap');
 </style>
 
-<div style="margin:0;padding:0;background:#050505;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+<div style="margin:0;padding:0;background-color:#050505;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#050505"
        background="${ROOTS}"
-       style="background:#050505 url('${ROOTS}') repeat center top;">
+       style="background-color:#050505;background-image:url('${ROOTS}');background-repeat:repeat;background-position:center top;">
 <tr><td align="center" style="padding:36px 16px;">
 
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background:#0b0b0c;border:1px solid ${LINE};border-radius:18px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#0b0b0c" style="max-width:560px;background-color:#0b0b0c;border:1px solid ${LINE};border-radius:18px;">
 
-  <tr><td align="center" style="padding:44px 32px 0 32px;">
-    <img src="${LOGO}" width="96" height="96" alt="Luna Ekliptika"
-         style="display:block;width:96px;height:96px;border:0;" />
+  <tr><td style="padding:0;font-size:0;line-height:0;">
+    <img src="${HEADER}" width="560" alt="Luna Ekliptika — you're in"
+         style="display:block;width:100%;max-width:560px;height:auto;border:0;border-radius:18px 18px 0 0;" />
   </td></tr>
 
-  <tr><td align="center" style="padding:24px 32px 0 32px;">
-    <p style="margin:0;font-family:${HEAD};font-size:12px;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:${GOLD};">You&rsquo;re in</p>
-    <h1 style="margin:12px 0 0 0;font-family:${HEAD};font-size:38px;line-height:1.02;font-weight:900;letter-spacing:1px;color:${BONE};text-transform:uppercase;">
-      Luna <span style="color:${GOLD};">Ekliptika</span>
-    </h1>
-  </td></tr>
-
-  <tr><td align="center" style="padding:20px 32px 0 32px;">
+  <tr><td align="center" style="padding:26px 32px 0 32px;">
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border:1px solid ${t.accent}77;border-radius:999px;">
       <tr><td style="padding:9px 26px;font-family:${HEAD};font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:${t.accent};">${t.key}</td></tr>
     </table>
@@ -265,8 +261,8 @@ function build(t) {
   <!-- Ticket -->
   <tr><td style="padding:26px 34px 0 34px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
-           background="${ROOTS}"
-           style="background:#141210 url('${ROOTS}') repeat center center;border:1px solid ${GOLD}66;border-radius:14px;">
+           bgcolor="#141210" background="${ROOTS}"
+           style="background-color:#141210;background-image:url('${ROOTS}');background-repeat:repeat;background-position:center center;border:1px solid ${GOLD}66;border-radius:14px;">
       <tr><td align="center" style="padding:30px 22px;">
         <p style="margin:0 0 20px 0;font-family:${HEAD};font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:${BONE};">
           This is how you get in
@@ -288,7 +284,7 @@ ${rule}
   <tr><td style="padding:26px 34px 0 34px;">
     ${eyebrow("What's included")}
     ${bullets(COMMON)}
-    <div style="height:1px;background:${LINE};margin:14px 0;"></div>
+    <div style="height:1px;background-color:${LINE};margin:14px 0;font-size:0;line-height:0;"></div>
     <p style="margin:0 0 10px 0;font-family:${HEAD};font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:${t.accent};">With ${t.key}</p>
     ${bullets(t.extra, t.accent)}
   </td></tr>
@@ -311,7 +307,7 @@ ${
     ? `
   <!-- Concierge -->
   <tr><td style="padding:26px 34px 0 34px;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid ${LINE};border-radius:12px;background:#111013;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#111013" style="border:1px solid ${LINE};border-radius:12px;background-color:#111013;">
       <tr><td style="padding:20px 22px;">
         ${eyebrow("Your concierge")}
         <p style="margin:0 0 8px 0;font-family:${TEXT};font-size:15px;line-height:1.55;color:${BODY};">
@@ -327,8 +323,8 @@ ${
   <!-- The address -->
   <tr><td style="padding:18px 34px 0 34px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
-           background="${ROOTS}"
-           style="background:#141210 url('${ROOTS}') repeat center center;border:1px solid ${GOLD}66;border-radius:14px;">
+           bgcolor="#141210" background="${ROOTS}"
+           style="background-color:#141210;background-image:url('${ROOTS}');background-repeat:repeat;background-position:center center;border:1px solid ${GOLD}66;border-radius:14px;">
       <tr><td align="center" style="padding:26px 22px;">
         <p style="margin:0 0 8px 0;font-family:${HEAD};font-size:11px;font-weight:600;letter-spacing:3.5px;text-transform:uppercase;color:${GOLD};">The address</p>
         <p style="margin:0;font-family:${HEAD};font-size:26px;font-weight:700;line-height:1.25;color:${BONE};">${ADDRESS}</p>
