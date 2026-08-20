@@ -36,8 +36,12 @@ const BONE = "#f2efe8";
 const BODY = "#ddd8cf";
 const MUTE = "#a9a296";
 const LINE = "#2a2621";
-const ROOTS = "https://www.lumanai.com/images/party/roots-email.jpg";
-const LOGO = "https://www.lumanai.com/images/party/luna-ekliptika-logo.png";
+// Served from the vercel.app host, not www.lumanai.com: identical
+// files on the identical server, but that hostname resolves on every
+// network — including Aristocrat's, where www.lumanai.com currently
+// doesn't. Nobody ever sees an image URL in an email.
+const ROOTS = "https://lumanaikava.vercel.app/images/party/roots-email.jpg";
+const LOGO = "https://lumanaikava.vercel.app/images/party/luna-ekliptika-logo.png";
 
 const HEAD = `'Barlow Semi Condensed',Helvetica,Arial,sans-serif`;
 const TEXT = `Barlow,Helvetica,Arial,sans-serif`;
@@ -51,7 +55,7 @@ function calendarLink(startUtc) {
     details:
       "Your contribution is confirmed. Dress: " +
       DRESS_LONG +
-      " Bring a swimsuit, a yoga mat and an empty stomach. 21+.",
+      " Bring a swimsuit, a yoga mat and an empty stomach.",
     location: `${ADDRESS}, ${CITY}`,
   });
   return `https://calendar.google.com/calendar/render?${p}`;
@@ -68,19 +72,26 @@ const VIP = "VIP Reception, 7–8PM";
 const ROOFTOP = "Exclusive VIP rooftop";
 const GIFTS = "More perks and a curated set of gifts, revealed on arrival";
 
+/** True of every ticket — printed plain, before anything tier-specific. */
+const COMMON = [SHOTS, HORS];
+
+/**
+ * What this tier adds on top, printed in the tier's own colour.
+ *
+ * Ordered so the RUSH pouch leads wherever it exists — it's the only
+ * item a guest physically carries home, so it earns the top line.
+ */
 const TIERS = [
   {
     key: "Obsidian",
-    accent: "#c9ccd6",
+    accent: "#8f96a8",
     line: "We built this night to be worth showing up for. Glad you'll be there.",
     when: `Fri, Aug 28 · Doors 8PM · ${DRESS}`,
     start: "20260829T030000Z",
     concierge: false,
     vip: false,
-    included: [
-      SHOTS,
+    extra: [
       "One kava naktail from the exclusive menu",
-      HORS,
       "Discounted drinks available for purchase",
     ],
   },
@@ -88,35 +99,25 @@ const TIERS = [
     key: "Meridian",
     accent: GOLD,
     line: "The reception opens at seven — come early, the room's better before it fills.",
-    when: `Fri, Aug 28 · VIP Reception 7–8PM · Doors 8PM · ${DRESS}`,
+    when: `Fri, Aug 28 · Golden Hour 7PM · Doors 8PM · ${DRESS}`,
     start: "20260829T020000Z",
     concierge: false,
     vip: true,
-    included: [
-      RUSH,
-      SHOTS,
-      OPEN_BAR,
-      KANNA,
-      VIP,
-      HORS,
-      ROOFTOP,
-    ],
+    extra: [RUSH, OPEN_BAR, KANNA, VIP, ROOFTOP],
   },
   {
     key: "Perihelion",
-    accent: "#e8e2d4",
+    accent: "#f0e6d2",
     line: "It really means the world to us. Thank you for helping create the future of social drinking with us.",
-    when: `Fri, Aug 28 · VIP Reception 7–8PM · Doors 8PM · ${DRESS}`,
+    when: `Fri, Aug 28 · Golden Hour 7PM · Doors 8PM · ${DRESS}`,
     start: "20260829T020000Z",
     concierge: true,
     vip: true,
-    included: [
+    extra: [
       RUSH,
-      SHOTS,
       OPEN_BAR,
       KANNA,
       VIP,
-      HORS,
       ROOFTOP,
       "3 month Aphelion Club membership",
       "1 month Sweat Equity pass",
@@ -126,19 +127,17 @@ const TIERS = [
   },
   {
     key: "Aphelion",
-    accent: "#f3e6c8",
+    accent: "#9ec5ea",
     line: "It really means the world to us. Thank you for helping create the future of social drinking with us.",
-    when: `Fri, Aug 28 · VIP Reception 7–8PM · Doors 8PM · ${DRESS}`,
+    when: `Fri, Aug 28 · Golden Hour 7PM · Doors 8PM · ${DRESS}`,
     start: "20260829T020000Z",
     concierge: true,
     vip: true,
-    included: [
+    extra: [
       RUSH,
-      SHOTS,
       OPEN_BAR,
       KANNA,
       VIP,
-      HORS,
       ROOFTOP,
       "1 year Aphelion Club membership",
       "3 month Sweat Equity pass",
@@ -159,11 +158,11 @@ const BRING = ["Swimsuit", "Yoga mat", "Empty stomach"];
  * better than a menu they'll read twice and then forget.
  */
 const SCHEDULE = [
-  ["7–8 PM", "VIP Reception, on the roof", true],
-  ["8 PM", "Doors"],
-  ["9 PM", "First course"],
-  ["9:30 PM", "Second"],
-  ["10 PM", "Dessert"],
+  ["7–8 PM", "Rooftop VIP Reception <span style=\"color:#d4af6a;\">(Golden Hour)</span>", true],
+  ["8 PM", "Doors open"],
+  ["8:30 PM", "Opening remarks from Ash"],
+  ["9–10 PM", "Three courses of hors d'oeuvres"],
+  ["11 PM", "Founder's ceremonial speech"],
   ["12 AM", "Midnight moon soundbath"],
   ["1 AM", "Last pour"],
 ];
@@ -186,12 +185,12 @@ const schedule = (vip) =>
 const eyebrow = (t, color = GOLD) =>
   `<p style="margin:0 0 14px 0;font-family:${HEAD};font-size:12px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:${color};">${t}</p>`;
 
-const bullets = (items) =>
+const bullets = (items, color = BODY) =>
   `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">` +
   items
     .map(
       (i, n) =>
-        `<tr><td style="padding:0 0 ${n === items.length - 1 ? 0 : 9}px 0;font-family:${TEXT};font-size:15px;line-height:1.5;color:${BODY};"><span style="color:${GOLD};">&middot;</span>&nbsp;&nbsp;${i}</td></tr>`,
+        `<tr><td style="padding:0 0 ${n === items.length - 1 ? 0 : 9}px 0;font-family:${TEXT};font-size:15px;line-height:1.5;color:${color};"><span style="color:${color};opacity:0.7;">&middot;</span>&nbsp;&nbsp;${i}</td></tr>`,
     )
     .join("") +
   `</table>`;
@@ -268,16 +267,17 @@ function build(t) {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
            background="${ROOTS}"
            style="background:#141210 url('${ROOTS}') repeat center center;border:1px solid ${GOLD}66;border-radius:14px;">
-      <tr><td align="center" style="padding:26px 22px;">
-        ${eyebrow("Your ticket")}
-        <p style="margin:0 0 18px 0;font-family:${TEXT};font-size:15px;line-height:1.55;color:${BODY};">
-          This is how you get in. Open it on your phone, add it to your
-          home screen, and show the QR at the door.
-          <strong style="color:${BONE};">Screenshot it as well</strong>
-          &mdash; the driveway has no signal.
+      <tr><td align="center" style="padding:30px 22px;">
+        <p style="margin:0 0 20px 0;font-family:${HEAD};font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:${BONE};">
+          This is how you get in
         </p>
-        <a href="{{TICKET_LINK}}" style="display:inline-block;background:${GOLD};color:#050505;text-decoration:none;font-family:${HEAD};font-size:14px;font-weight:800;letter-spacing:3px;text-transform:uppercase;padding:15px 34px;border-radius:999px;">Open my ticket</a>
-        <p style="margin:14px 0 0 0;font-family:${TEXT};font-size:12px;line-height:1.5;color:#8a8378;">It&rsquo;s yours alone &mdash; the link carries your name and tier.</p>
+        <a href="{{TICKET_LINK}}"
+           style="display:inline-block;background-color:${GOLD};background-image:linear-gradient(100deg,#b8914e 0%,#e9cf92 28%,#fff6dc 46%,#e9cf92 64%,#b8914e 100%);color:#050505;text-decoration:none;font-family:${HEAD};font-size:15px;font-weight:800;letter-spacing:3px;text-transform:uppercase;padding:17px 40px;border-radius:999px;box-shadow:0 8px 26px -10px rgba(212,175,106,0.75);">
+          &#10022;&nbsp; Open my ticket &nbsp;&#10022;
+        </a>
+        <p style="margin:18px 0 0 0;font-family:${HEAD};font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:#8a8378;">
+          Add it to your home screen or screenshot
+        </p>
       </td></tr>
     </table>
   </td></tr>
@@ -287,21 +287,24 @@ ${rule}
   <!-- What's included -->
   <tr><td style="padding:26px 34px 0 34px;">
     ${eyebrow("What's included")}
-    ${bullets(t.included)}
+    ${bullets(COMMON)}
+    <div style="height:1px;background:${LINE};margin:14px 0;"></div>
+    <p style="margin:0 0 10px 0;font-family:${HEAD};font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:${t.accent};">With ${t.key}</p>
+    ${bullets(t.extra, t.accent)}
   </td></tr>
 
   <!-- The night -->
   <tr><td style="padding:26px 34px 0 34px;">
     ${eyebrow("The night")}
     ${schedule(t.vip)}
-    <p style="margin:10px 0 0 0;font-family:${TEXT};font-size:13px;line-height:1.5;color:#8a8378;">Three courses, no sugar in any of them. What they are is the surprise.</p>
+    <p style="margin:10px 0 0 0;font-family:${TEXT};font-size:13px;line-height:1.5;color:#8a8378;">No sugar in any course. What they are is the surprise.</p>
   </td></tr>
 
   <!-- What to bring -->
   <tr><td style="padding:26px 34px 0 34px;">
     ${eyebrow("What to bring")}
     ${bullets(BRING)}
-    <p style="margin:12px 0 0 0;font-family:${TEXT};font-size:13px;line-height:1.5;color:#8a8378;">${DRESS_LONG}${t.vip ? ` <span style="color:${GOLD};">${DRESS_VIP}</span>` : ""} 21+.</p>
+    <p style="margin:12px 0 0 0;font-family:${TEXT};font-size:13px;line-height:1.5;color:#8a8378;">${DRESS_LONG}${t.vip ? ` <span style="color:${GOLD};">${DRESS_VIP}</span>` : ""}</p>
   </td></tr>
 ${
   t.concierge
@@ -320,10 +323,6 @@ ${
   </td></tr>`
     : ""
 }
-
-  <tr><td style="padding:28px 34px 0 34px;">
-    <p style="margin:0;font-family:${TEXT};font-size:16px;line-height:1.6;color:${BODY};">Below is the part we don&rsquo;t publish anywhere.</p>
-  </td></tr>
 
   <!-- The address -->
   <tr><td style="padding:18px 34px 0 34px;">
@@ -391,6 +390,6 @@ for (const t of TIERS) {
   const file = path.join(OUT, `Confirmation — ${t.key}.html`);
   fs.writeFileSync(file, html, "utf8");
   console.log(
-    `${`Confirmation — ${t.key}.html`.padEnd(34)} ${t.included.length} perks  ${(html.length / 1024).toFixed(1)}KB`,
+    `${`Confirmation — ${t.key}.html`.padEnd(34)} ${COMMON.length + t.extra.length} perks  ${(html.length / 1024).toFixed(1)}KB`,
   );
 }
