@@ -89,7 +89,7 @@ export default async function TicketPage({
               Luna <span className="text-gold">Ekliptika</span>
             </h1>
             <p className="mt-2.5 font-mono text-[10px] uppercase tracking-[0.2em] text-shell/45">
-              Fri · Aug 28 · 7PM–1AM
+              Friday Night · Aug 28
             </p>
           </div>
 
@@ -109,7 +109,7 @@ export default async function TicketPage({
               />
             </div>
             <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.2em] text-shell/35">
-              Show this at the door
+              Show this at the door · personalized wristband on entry
             </p>
           </div>
 
@@ -134,8 +134,8 @@ export default async function TicketPage({
         <AddToHome />
 
         <p className="relative mt-6 max-w-xs text-center text-[11px] leading-relaxed text-shell/35">
-          Screenshot this — the driveway has no signal. Whites, off-whites
-          and kava colors; linens preferred. 21+.
+          Screenshot this — the driveway has no signal. All white; linens
+          preferred.
         </p>
       </section>
     </div>

@@ -38,7 +38,7 @@ const RUN_OF_NIGHT = [
   {
     time: "7–8 PM",
     title: "VIP Reception",
-    body: "A private hour on the roof for Meridian and above — a welcome pour, live strings, and the room before it fills.",
+    body: "A private hour on the roof for Meridian and above — a welcome pour and the room before it fills.",
     gated: true,
   },
   {
@@ -67,7 +67,7 @@ const RUN_OF_NIGHT = [
     body: "A soundbath under the full moon, then after hours inside.",
   },
   {
-    time: "1 AM",
+    time: "2 AM",
     title: "Totality",
     body: "The last pour.",
   },
@@ -203,9 +203,12 @@ export default async function InvitedPage() {
             <span className="text-gold">Ekliptika</span>
           </h1>
           <p className="luna-in luna-d2 mt-6 font-mono text-sm uppercase tracking-[0.3em] text-shell/80">
-            Fri · Aug 28 · 7PM–1AM · Doors 8PM
+            Friday Night · Aug 28
           </p>
-          <p className="luna-in luna-d3 mt-2 font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
+          <p className="luna-in luna-d3 mt-3 max-w-md font-mono text-[11px] uppercase tracking-[0.32em] text-gold/90">
+            A sober nightlife experience like no other
+          </p>
+          <p className="luna-in luna-d3 mt-3 font-mono text-[11px] uppercase tracking-[0.28em] text-shell/55">
             Dress code — all white
           </p>
           {capacity && capacity.left > 0 && (
@@ -234,7 +237,7 @@ export default async function InvitedPage() {
             className="btn-brush luna-in luna-d5 mt-12 font-mono text-sm font-bold uppercase tracking-[0.2em] text-shell"
             style={{ "--brush-bg": "var(--amethyst)" } as React.CSSProperties}
           >
-            Secure your spot
+            Enter the Euphoria
           </a>
         </div>
       </section>
@@ -300,7 +303,8 @@ export default async function InvitedPage() {
 
               <p className="text-xs leading-relaxed text-shell/35">
                 Fifty people. Hand-picked, invitation only, capped on
-                purpose. No lines, no wristbands, no strangers.
+                purpose. A personalized wristband waits with your name
+                at the door.
               </p>
             </div>
           </div>
@@ -354,10 +358,10 @@ export default async function InvitedPage() {
 
           <p className="mx-auto mt-9 max-w-md text-xs leading-relaxed text-shell/40">
             All white — off-whites, beiges and kava colors welcome.
-            Linens preferred, swimsuits optional. 21+. Zero alcohol,
-            all night, so everyone drives home sharp.
-            Keep the details between friends — the room is capped and
-            the list is checked at the door.
+            Linens preferred, swimsuits optional. Zero alcohol all
+            night, so everyone drives home sharp. Keep the details
+            between friends — the room is capped and the list is
+            checked at the door.
           </p>
         </div>
       </section>

@@ -85,7 +85,7 @@ const TIERS = [
     key: "Obsidian",
     accent: "#8f96a8",
     line: "We built this night to be worth showing up for. Glad you'll be there.",
-    when: `Fri, Aug 28 · Doors 8PM`,
+    when: `Friday Night · Aug 28 · Doors 8PM`,
     start: "20260829T030000Z",
     concierge: false,
     vip: false,
@@ -98,7 +98,7 @@ const TIERS = [
     key: "Meridian",
     accent: GOLD,
     line: "The reception opens at seven — come early, the room's better before it fills.",
-    when: `Fri, Aug 28 · Golden Hour 7PM · Doors 8PM`,
+    when: `Friday Night · Aug 28 · Golden Hour 7PM · Doors 8PM`,
     start: "20260829T020000Z",
     concierge: false,
     vip: true,
@@ -108,7 +108,7 @@ const TIERS = [
     key: "Perihelion",
     accent: "#f0e6d2",
     line: "It really means the world to us. Thank you for helping create the future of social drinking with us.",
-    when: `Fri, Aug 28 · Golden Hour 7PM · Doors 8PM`,
+    when: `Friday Night · Aug 28 · Golden Hour 7PM · Doors 8PM`,
     start: "20260829T020000Z",
     concierge: true,
     vip: true,
@@ -128,7 +128,7 @@ const TIERS = [
     key: "Aphelion",
     accent: "#9ec5ea",
     line: "It really means the world to us. Thank you for helping create the future of social drinking with us.",
-    when: `Fri, Aug 28 · Golden Hour 7PM · Doors 8PM`,
+    when: `Friday Night · Aug 28 · Golden Hour 7PM · Doors 8PM`,
     start: "20260829T020000Z",
     concierge: true,
     vip: true,
@@ -151,12 +151,10 @@ const BRING = ["Swimsuit", "Yoga mat", "Empty stomach"];
 
 const SCHEDULE = [
   ["7–8 PM", `Rooftop VIP Reception <span style="color:${GOLD};">(Golden Hour)</span>`, true],
-  ["8 PM", "Doors open"],
-  ["8:30 PM", "Opening remarks from Ash"],
+  ["8 PM", "Doors open · pick up your wristband"],
   ["9–10 PM", "Three courses of hors d'oeuvres"],
-  ["11 PM", "Founder's ceremonial speech"],
   ["12 AM", "Midnight moon soundbath"],
-  ["1 AM", "Last pour"],
+  ["2 AM", "Last pour"],
 ];
 
 /* ── Small pieces ───────────────────────────────────────────── */
@@ -228,8 +226,8 @@ function build(t) {
     <h1 style="margin:0;font-family:${HEAD};font-size:36px;line-height:1.02;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:${BONE};">
       Luna <span style="color:${GOLD};">Ekliptika</span>
     </h1>
-    <p style="margin:14px 0 0 0;font-family:${HEAD};font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:${MUTE};">
-      A premium zero-proof nightlife experience
+    <p style="margin:14px 0 0 0;font-family:${HEAD};font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:${GOLD};">
+      A sober nightlife experience like no other
     </p>
   </td></tr>
 
@@ -259,6 +257,7 @@ function build(t) {
         <p style="margin:0 0 20px 0;font-family:${HEAD};font-size:12px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:${BONE};">This is how you get in</p>
         <a href="{{TICKET_LINK}}" style="display:inline-block;background-color:${GOLD};color:${BG};text-decoration:none;font-family:${HEAD};font-size:14px;font-weight:800;letter-spacing:3px;text-transform:uppercase;padding:15px 36px;border-radius:999px;">Open my ticket</a>
         <p style="margin:16px 0 0 0;font-family:${HEAD};font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:${MUTE};">Add to home screen or screenshot</p>
+        <p style="margin:12px 0 0 0;font-family:${TEXT};font-size:13px;line-height:1.5;color:${BODY};">Scan at the door for your personalized wristband.</p>
       </td></tr>
     </table>
   </td></tr>

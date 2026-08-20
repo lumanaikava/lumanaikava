@@ -34,17 +34,18 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
   const [qty, setQty] = useState(1);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // SMS opt-in, captured here rather than at Shopify's checkout so the
-  // consent lands in our CRM with our exact wording — and so a number is
-  // only ever asked for when someone actually wants texts.
+  // Name and phone are required now — Zach wants a way to reach the
+  // guest between purchase and the door for the wristband. The SMS
+  // consent below reuses these values rather than asking twice.
+  const [guestName, setGuestName] = useState("");
+  const [guestPhone, setGuestPhone] = useState("");
   const [smsConsent, setSmsConsent] = useState(false);
-  const [smsName, setSmsName] = useState("");
-  const [smsPhone, setSmsPhone] = useState("");
   // Ash: password + waiver are what make this defensible legally.
   const [waiver, setWaiver] = useState(false);
 
-  const digits = smsPhone.replace(/\D/g, "").length;
+  const digits = guestPhone.replace(/\D/g, "").length;
   const phoneLooksReal = digits >= 10;
+  const nameLooksReal = guestName.trim().length >= 2;
 
   const tier = tiers.find((t) => t.variantId === selected) ?? firstAvailable;
   // A single-variant product doesn't need a chooser — Shopify names that
@@ -54,15 +55,16 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
   async function buy() {
     if (!tier) return;
 
-    if (!waiver) {
-      setError("Please read and accept the acknowledgement to continue.");
+    if (!nameLooksReal) {
+      setError("Please add your name so we can prep your wristband.");
       return;
     }
-
-    // A ticked box with no number isn't permission to anything — stop
-    // here rather than recording a consent we can't act on.
-    if (smsConsent && !phoneLooksReal) {
-      setError("Add a mobile number, or untick the text-message box.");
+    if (!phoneLooksReal) {
+      setError("A mobile number is required — that's how we reach you before the door.");
+      return;
+    }
+    if (!waiver) {
+      setError("Please read and accept the acknowledgement to continue.");
       return;
     }
 
@@ -82,9 +84,9 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
           // and the exact text agreed to, not just a ticked box.
           waiverAccepted: true,
           waiverText: WAIVER_TEXT,
-          ...(smsConsent && phoneLooksReal
-            ? { smsConsent: "yes", name: smsName.trim(), phone: smsPhone.trim() }
-            : {}),
+          name: guestName.trim(),
+          phone: guestPhone.trim(),
+          smsConsent: smsConsent ? "yes" : "no",
         }),
       });
       const body = await res.json();
@@ -253,44 +255,46 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
         </select>
       </div>
 
-      {/* SMS opt-in. Unchecked, optional, and it only asks for a number
-          once someone actually wants texts — no dead fields otherwise. */}
+      {/* Name + phone always visible: the wristband gets prepared with
+          the guest's name on it, and the phone is how we reach them
+          before the door if anything moves. SMS opt-in below reuses
+          the same number so we never ask twice. */}
       <div className="space-y-3 text-left">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="block">
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-shell/50">
+              Your name (for your wristband)
+            </span>
+            <input
+              value={guestName}
+              onChange={(e) => setGuestName(e.target.value)}
+              autoComplete="name"
+              placeholder="First and last"
+              aria-invalid={guestName.length > 0 && !nameLooksReal}
+              className="mt-1.5 w-full rounded-xl border border-shell/20 bg-abyss/60 px-4 py-2.5 text-sm text-shell outline-none placeholder:text-shell/30 focus:border-gold"
+            />
+          </label>
+          <label className="block">
+            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-shell/50">
+              Mobile number
+            </span>
+            <input
+              value={guestPhone}
+              onChange={(e) => setGuestPhone(e.target.value)}
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              placeholder="(702) 555-0123"
+              aria-invalid={guestPhone.length > 0 && !phoneLooksReal}
+              className="mt-1.5 w-full rounded-xl border border-shell/20 bg-abyss/60 px-4 py-2.5 text-sm text-shell outline-none placeholder:text-shell/30 focus:border-gold"
+            />
+          </label>
+        </div>
         <SmsConsent
           checked={smsConsent}
           onChange={setSmsConsent}
           note="Optional — your ticket is the same either way."
         />
-        {smsConsent && (
-          <div className="grid gap-3 sm:grid-cols-2">
-            <label className="block">
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-shell/50">
-                Your name
-              </span>
-              <input
-                value={smsName}
-                onChange={(e) => setSmsName(e.target.value)}
-                autoComplete="name"
-                className="mt-1.5 w-full rounded-xl border border-shell/20 bg-abyss/60 px-4 py-2.5 text-sm text-shell outline-none focus:border-gold"
-              />
-            </label>
-            <label className="block">
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-shell/50">
-                Mobile number
-              </span>
-              <input
-                value={smsPhone}
-                onChange={(e) => setSmsPhone(e.target.value)}
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel"
-                placeholder="(702) 555-0123"
-                aria-invalid={smsPhone.length > 0 && !phoneLooksReal}
-                className="mt-1.5 w-full rounded-xl border border-shell/20 bg-abyss/60 px-4 py-2.5 text-sm text-shell outline-none placeholder:text-shell/30 focus:border-gold"
-              />
-            </label>
-          </div>
-        )}
       </div>
 
       <Waiver checked={waiver} onChange={setWaiver} />
@@ -306,7 +310,7 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
             ? "Opening checkout..."
             : !tier.available
               ? "Sold out"
-              : `Secure ${qty > 1 ? `${qty} spots` : "your spot"}${
+              : `Enter the Euphoria${
                   // The price already sits above a lone tier — only repeat
                   // it when a chooser makes "which price?" a real question.
                   showTiers ? ` · ${tier.priceLabel}` : ""

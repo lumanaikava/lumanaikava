@@ -140,7 +140,7 @@ async function detailsCard(S = 1600) {
       )
       .join("")}
     <text x="${cx}" y="${S * 0.935}" text-anchor="middle" font-family="Helvetica, Arial, sans-serif"
-          font-size="${S * 0.0175}" letter-spacing="${S * 0.005}" fill="${BONE}" opacity="0.4">21+ · SPACE IS LIMITED · INVITATION ONLY</text>
+          font-size="${S * 0.0175}" letter-spacing="${S * 0.005}" fill="${BONE}" opacity="0.4">SPACE IS LIMITED · INVITATION ONLY</text>
   </svg>`);
   const px = S * 0.185;
   return sharp(bg).composite([await logoLayer(px, (S - px) / 2, S * 0.155 - px / 2)]).png().toBuffer();
