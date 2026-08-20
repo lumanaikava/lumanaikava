@@ -86,7 +86,7 @@ const TIERS = [
     key: "Obsidian",
     accent: "#8f96a8",
     line: "We built this night to be worth showing up for. Glad you'll be there.",
-    when: `Fri, Aug 28 · Doors 8PM · ${DRESS}`,
+    when: `Fri, Aug 28 · Doors 8PM`,
     start: "20260829T030000Z",
     concierge: false,
     vip: false,
@@ -99,7 +99,7 @@ const TIERS = [
     key: "Meridian",
     accent: GOLD,
     line: "The reception opens at seven — come early, the room's better before it fills.",
-    when: `Fri, Aug 28 · Golden Hour 7PM · Doors 8PM · ${DRESS}`,
+    when: `Fri, Aug 28 · Golden Hour 7PM · Doors 8PM`,
     start: "20260829T020000Z",
     concierge: false,
     vip: true,
@@ -109,7 +109,7 @@ const TIERS = [
     key: "Perihelion",
     accent: "#f0e6d2",
     line: "It really means the world to us. Thank you for helping create the future of social drinking with us.",
-    when: `Fri, Aug 28 · Golden Hour 7PM · Doors 8PM · ${DRESS}`,
+    when: `Fri, Aug 28 · Golden Hour 7PM · Doors 8PM`,
     start: "20260829T020000Z",
     concierge: true,
     vip: true,
@@ -129,7 +129,7 @@ const TIERS = [
     key: "Aphelion",
     accent: "#9ec5ea",
     line: "It really means the world to us. Thank you for helping create the future of social drinking with us.",
-    when: `Fri, Aug 28 · Golden Hour 7PM · Doors 8PM · ${DRESS}`,
+    when: `Fri, Aug 28 · Golden Hour 7PM · Doors 8PM`,
     start: "20260829T020000Z",
     concierge: true,
     vip: true,
@@ -259,7 +259,7 @@ function build(t) {
   </td></tr>
 
   <tr><td align="center" style="padding:22px 34px 0 34px;">
-    <p style="margin:0;font-family:${HEAD};font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:${BONE};">${t.when}</p>
+    <p style="margin:0;font-family:${HEAD};font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:${GOLD};white-space:nowrap;">${t.when}</p>
   </td></tr>
 
   <!-- Ticket -->
@@ -273,7 +273,7 @@ function build(t) {
         </p>
         <a href="{{TICKET_LINK}}"
            style="display:inline-block;background-color:${GOLD};background-image:linear-gradient(100deg,#b8914e 0%,#e9cf92 28%,#fff6dc 46%,#e9cf92 64%,#b8914e 100%);color:#050505;text-decoration:none;font-family:${HEAD};font-size:15px;font-weight:800;letter-spacing:3px;text-transform:uppercase;padding:17px 40px;border-radius:999px;box-shadow:0 8px 26px -10px rgba(212,175,106,0.75);">
-          &#10022;&nbsp; Open my ticket &nbsp;&#10022;
+          Open my ticket
         </a>
         <p style="margin:18px 0 0 0;font-family:${HEAD};font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:#8a8378;">
           Add it to your home screen or screenshot
