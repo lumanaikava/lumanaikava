@@ -303,14 +303,13 @@ export default function BuyTicket({ tiers }: { tiers: Tier[] }) {
         <button
           onClick={buy}
           disabled={busy || !tier.available || !waiver}
-          className="btn-brush font-mono text-sm font-bold uppercase tracking-[0.2em] text-shell disabled:cursor-not-allowed disabled:opacity-45"
-          style={{ "--brush-bg": "var(--amethyst)" } as React.CSSProperties}
+          className="btn-luxe font-mono text-[13px] font-bold uppercase tracking-[0.28em]"
         >
           {busy
             ? "Opening checkout..."
             : !tier.available
               ? "Sold out"
-              : `Enter the Euphoria${
+              : `Secure your spot${
                   // The price already sits above a lone tier — only repeat
                   // it when a chooser makes "which price?" a real question.
                   showTiers ? ` · ${tier.priceLabel}` : ""

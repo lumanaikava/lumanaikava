@@ -234,10 +234,9 @@ export default async function InvitedPage() {
 
           <a
             href="#tickets"
-            className="btn-brush luna-in luna-d5 mt-12 font-mono text-sm font-bold uppercase tracking-[0.2em] text-shell"
-            style={{ "--brush-bg": "var(--amethyst)" } as React.CSSProperties}
+            className="btn-luxe luna-in luna-d5 mt-12 font-mono text-[13px] font-bold uppercase tracking-[0.28em]"
           >
-            Enter the Euphoria
+            Secure your spot
           </a>
         </div>
       </section>
