@@ -43,9 +43,15 @@ const CHANNEL_LABEL: Record<Channel, string> = {
 export default function GuestList({
   initialGuests,
   canWrite,
+  canSeed = false,
 }: {
   initialGuests: Guest[];
   canWrite: boolean;
+  /**
+   * Owner-only, only shown when the list is empty and the sheet is
+   * connected. Zach's one-click starter seed for the LUNA night.
+   */
+  canSeed?: boolean;
 }) {
   const [guests, setGuests] = useState<Guest[]>(initialGuests);
   const [filter, setFilter] = useState<Filter>("all");
@@ -53,6 +59,43 @@ export default function GuestList({
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
+  const [seeding, setSeeding] = useState(false);
+  const [seedResult, setSeedResult] = useState<string | null>(null);
+
+  const listIsEmpty = guests.length === 0;
+
+  async function seedStarterList() {
+    if (
+      !confirm(
+        "Add the 35-name LUNA EKLIPTIKA starter list to the sheet? This can only be run once.",
+      )
+    )
+      return;
+    setSeeding(true);
+    setError(null);
+    setSeedResult(null);
+    try {
+      const res = await fetch("/api/admin/guests/seed", { method: "POST" });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error ?? "Couldn't seed the list.");
+      const failed = (body.failed as { name: string; error: string }[]) ?? [];
+      if (failed.length === 0) {
+        setSeedResult(
+          `Added ${body.added} of ${body.total}. Reload to see them.`,
+        );
+      } else {
+        setError(
+          `Added ${body.added} of ${body.total}. Failed: ${failed
+            .map((f) => f.name)
+            .join(", ")}`,
+        );
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Couldn't seed the list.");
+    } finally {
+      setSeeding(false);
+    }
+  }
 
   const totals = useMemo(() => guestTotals(guests), [guests]);
 
@@ -187,6 +230,34 @@ export default function GuestList({
         <p className="rounded-2xl border border-coconut/40 bg-coconut/10 px-4 py-3 text-sm text-coconut">
           {error}
         </p>
+      )}
+
+      {seedResult && (
+        <p className="rounded-2xl border border-gold/40 bg-gold/10 px-4 py-3 text-sm text-gold">
+          {seedResult}
+        </p>
+      )}
+
+      {canSeed && listIsEmpty && (
+        <div className="rounded-3xl border border-dashed border-gold/40 bg-gold/[0.06] p-5 text-center">
+          <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-gold">
+            Nothing on the list yet
+          </p>
+          <p className="mt-2 max-w-md text-sm text-shell/70 mx-auto">
+            Drop the LUNA EKLIPTIKA starter list into the sheet in one
+            click — nine leads with contact info, the eight-name house
+            crew (pre-tagged Staff + Free), and the friends bucket.
+            Everyone lands as a lead with no channels ticked.
+          </p>
+          <button
+            type="button"
+            onClick={seedStarterList}
+            disabled={seeding}
+            className="mt-4 rounded-full bg-gold px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-abyss hover:bg-shell disabled:opacity-60"
+          >
+            {seeding ? "Seeding…" : "Seed starter list (35)"}
+          </button>
+        </div>
       )}
 
       {/* Add a lead */}

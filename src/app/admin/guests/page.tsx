@@ -54,10 +54,10 @@ export default async function GuestsPage() {
       </div>
 
       <p className="mt-3 max-w-2xl text-sm text-shell/60">
-        Everyone who bought a ticket shows up here on their own. Add the
-        people you're still working on, then hit <b>Lock in</b> once
-        they're a yes. On the night, <b>Check in</b> as they walk through
-        the door.
+        The whole room in one list. Add anyone you&rsquo;re working on —
+        with any mix of phone, email or Instagram — and tick each channel
+        as you reach out. Hit <b>Secure spot</b> when they&rsquo;re a yes,
+        then <b>Check in</b> as they walk through the door.
       </p>
 
       {/* Setup gaps, stated plainly rather than failing quietly. */}
@@ -70,15 +70,6 @@ export default async function GuestsPage() {
           <b>GUESTLIST_SHEET_WEBHOOK_URL</b> in Vercel.
         </p>
       )}
-      {!board.ordersReady && (
-        <p className="mt-4 rounded-3xl border border-shell/10 bg-lagoon/20 p-5 text-sm text-shell/70">
-          <b>Ticket buyers aren't syncing yet.</b> That needs the Shopify
-          Admin API: Shopify Admin → Settings → Apps and sales channels →
-          Develop apps → your headless app → Configuration → enable{" "}
-          <b>read_orders</b> → Install → copy the token into Vercel as{" "}
-          <b>SHOPIFY_ADMIN_TOKEN</b>. Manual adds work regardless.
-        </p>
-      )}
       {board.warnings.map((w) => (
         <p
           key={w}
@@ -89,7 +80,11 @@ export default async function GuestsPage() {
       ))}
 
       <div className="mt-6">
-        <GuestList initialGuests={board.guests} canWrite={board.sheetReady} />
+        <GuestList
+          initialGuests={board.guests}
+          canWrite={board.sheetReady}
+          canSeed={board.sheetReady && session.isOwner}
+        />
       </div>
     </section>
   );
