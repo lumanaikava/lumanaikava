@@ -159,6 +159,28 @@ export async function setGuestNotes(
   }
 }
 
+/**
+ * Merge a partial change into one guest.
+ *
+ * Same fallback-and-append trick as setGuestStatus: if the row doesn't
+ * exist yet (a ticket buyer nobody has touched), synthesise it from the
+ * client-supplied fallback rather than erroring — otherwise the first
+ * checkbox click on a fresh buyer would fail.
+ */
+export async function patchGuest(
+  id: string,
+  patch: Partial<Guest>,
+  fallback?: Guest,
+): Promise<void> {
+  try {
+    await editSavedGuest(id, (g) => ({ ...g, ...patch }));
+  } catch (err) {
+    const missing = err instanceof Error && /isn't in the sheet/.test(err.message);
+    if (!missing || !fallback) throw err;
+    await appendGuest({ ...fallback, ...patch });
+  }
+}
+
 export async function removeGuest(id: string): Promise<void> {
   await editSavedGuest(id, () => null);
 }

@@ -58,10 +58,18 @@ function buyersFromOrders(orders: AdminOrder[]): Guest[] {
       name: o.customerName || o.email || "Ticket holder",
       email: o.email,
       phone: o.phone,
+      instagram: "",
       source: "ticket" as const,
       status: "confirmed" as const,
       tickets,
       notes: "",
+      // A paid ticket implies every outreach channel is moot — they said
+      // yes on their own — but we don't want the checkbox row to look
+      // "unfinished". Marking every channel true reads correctly: they're
+      // fully in, on every axis.
+      invitedPhone: true,
+      invitedEmail: true,
+      invitedInstagram: true,
       addedBy: "Shopify",
       addedAt: o.createdAt,
     }));

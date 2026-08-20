@@ -29,17 +29,38 @@ export type Guest = {
   name: string;
   email: string;
   phone: string;
+  /** Instagram handle, with or without the leading @ — normalised at write. */
+  instagram: string;
   source: GuestSource;
   status: GuestStatus;
   /** Headcount this row represents — a buyer of 3 tickets brings 3. */
   tickets: number;
   notes: string;
+  /**
+   * Outreach state — the three channels we invite people on. Each is set
+   * independently as someone actually does the outreach, so a row can say
+   * "texted, DM'd, waiting on the email" at a glance.
+   */
+  invitedPhone: boolean;
+  invitedEmail: boolean;
+  invitedInstagram: boolean;
   /** Which crew member added them (manual adds only). */
   addedBy: string;
   addedAt: string;
 };
 
-/** Column order in the Guest List sheet. Append-only — never reorder. */
+/**
+ * Column order in the Guest List sheet.
+ *
+ * APPEND-ONLY — never reorder, never delete. The Apps Script indexes by
+ * column position and the sheet is edited by hand between deploys; a
+ * reorder would misalign every existing row and the mistake wouldn't
+ * show up until someone's status stopped saving.
+ *
+ * New columns appended 2026-08-20 for Instagram + per-channel outreach
+ * flags. Older rows with only ten columns keep working — the reader
+ * treats trailing missing values as blank.
+ */
 export const GUEST_COLUMNS = [
   "Id",
   "Name",
@@ -51,12 +72,29 @@ export const GUEST_COLUMNS = [
   "Notes",
   "Added By",
   "Added At",
+  "Instagram",
+  "Invited Phone",
+  "Invited Email",
+  "Invited Instagram",
 ] as const;
 
 export const GUEST_STATUSES: GuestStatus[] = ["lead", "confirmed", "checked-in"];
 
 export function isGuestStatus(v: unknown): v is GuestStatus {
   return typeof v === "string" && (GUEST_STATUSES as string[]).includes(v);
+}
+
+/** Serialise a boolean to a stable, human-readable sheet value. */
+const yn = (b: boolean): string => (b ? "yes" : "");
+/** Read back a boolean — "yes", "y", "true", "1" all count as ticked. */
+const readYn = (v: unknown): boolean => {
+  const s = String(v ?? "").trim().toLowerCase();
+  return s === "yes" || s === "y" || s === "true" || s === "1";
+};
+
+/** Normalise an Instagram handle for storage: strip leading @ and spaces. */
+export function normaliseInstagram(v: string): string {
+  return v.trim().replace(/^@+/, "").slice(0, 60);
 }
 
 export function guestToValues(g: Guest): (string | number)[] {
@@ -71,6 +109,10 @@ export function guestToValues(g: Guest): (string | number)[] {
     g.notes,
     g.addedBy,
     g.addedAt,
+    g.instagram,
+    yn(g.invitedPhone),
+    yn(g.invitedEmail),
+    yn(g.invitedInstagram),
   ];
 }
 
@@ -87,6 +129,12 @@ export function valuesToGuest(c: (string | number)[]): Guest {
     notes: s(c[7]),
     addedBy: s(c[8]),
     addedAt: s(c[9]),
+    // Trailing columns may be absent on legacy rows — that's why they're
+    // last, and why every read tolerates undefined.
+    instagram: normaliseInstagram(s(c[10])),
+    invitedPhone: readYn(c[11]),
+    invitedEmail: readYn(c[12]),
+    invitedInstagram: readYn(c[13]),
   };
 }
 

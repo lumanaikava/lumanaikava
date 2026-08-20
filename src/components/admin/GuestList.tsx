@@ -8,27 +8,37 @@ import {
 } from "@/lib/guests";
 
 /**
- * The guest board. Ticket buyers arrive on their own; leads get typed in;
- * one button moves someone from "working on them" to "locked in".
+ * The guest board.
+ *
+ * Two flows onto it:
+ *
+ *   1. A ticket buyer arrives from Shopify already confirmed — nobody
+ *      types them in, and their row is lit gold on arrival.
+ *   2. A lead is added by hand. As Ash or Zach reaches out on each
+ *      channel — phone, email, Instagram — a pill lights up. When the
+ *      lead actually pays, one click on "Secure spot" flips the whole
+ *      row to the lit-gold "secured" state.
  *
  * Every change writes through to the Guest List sheet. Updates apply
- * optimistically so the board feels instant at the door, but a failed
- * write is rolled back and shown — never silently dropped.
+ * optimistically so the board feels instant, but a failed write is
+ * rolled back and shown — never silently dropped.
  */
 
 const STATUS_LABEL: Record<GuestStatus, string> = {
   lead: "Lead",
-  confirmed: "Locked in",
+  confirmed: "Secured",
   "checked-in": "Here",
 };
 
-const STATUS_CHIP: Record<GuestStatus, string> = {
-  lead: "bg-shell/10 text-shell/60",
-  confirmed: "bg-gold/15 text-gold",
-  "checked-in": "bg-teal/30 text-shell",
-};
-
 type Filter = "all" | GuestStatus;
+
+/** Non-empty channel and, for that channel, an "invited" flag. */
+type Channel = "phone" | "email" | "instagram";
+const CHANNEL_LABEL: Record<Channel, string> = {
+  phone: "Phone",
+  email: "Email",
+  instagram: "Instagram",
+};
 
 export default function GuestList({
   initialGuests,
@@ -51,7 +61,7 @@ export default function GuestList({
     return guests.filter((g) => {
       if (filter !== "all" && g.status !== filter) return false;
       if (!q) return true;
-      return [g.name, g.email, g.phone, g.notes]
+      return [g.name, g.email, g.phone, g.instagram, g.notes]
         .join(" ")
         .toLowerCase()
         .includes(q);
@@ -103,6 +113,7 @@ export default function GuestList({
           name,
           email: data.get("email"),
           phone: data.get("phone"),
+          instagram: data.get("instagram"),
           tickets: data.get("tickets"),
           notes: data.get("notes"),
         }),
@@ -148,7 +159,7 @@ export default function GuestList({
   }
 
   const stats = [
-    { label: "Locked in", value: totals.confirmed, accent: "text-gold" },
+    { label: "Secured", value: totals.confirmed, accent: "text-gold" },
     { label: "Leads", value: totals.leads, accent: "text-shell/70" },
     { label: "Here", value: totals.checkedIn, accent: "text-shell" },
     { label: "Headcount", value: totals.headcount, accent: "text-gold" },
@@ -185,13 +196,22 @@ export default function GuestList({
           className="rounded-3xl border border-shell/10 bg-lagoon/30 p-5"
         >
           <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-gold">
-            Add someone you're working on
+            Add someone you&rsquo;re working on
           </p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-[1.3fr_1.3fr_1fr_auto]">
+          <p className="mt-1 text-xs text-shell/50">
+            Name is enough. Fill what you have — phone, email, Instagram —
+            and check them off as you invite them on each channel.
+          </p>
+          <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
             <input
               name="name"
               required
               placeholder="Name"
+              className="rounded-full border border-shell/20 bg-abyss/60 px-4 py-2 text-sm text-shell outline-none placeholder:text-shell/35 focus:border-gold"
+            />
+            <input
+              name="phone"
+              placeholder="Phone (optional)"
               className="rounded-full border border-shell/20 bg-abyss/60 px-4 py-2 text-sm text-shell outline-none placeholder:text-shell/35 focus:border-gold"
             />
             <input
@@ -201,27 +221,10 @@ export default function GuestList({
               className="rounded-full border border-shell/20 bg-abyss/60 px-4 py-2 text-sm text-shell outline-none placeholder:text-shell/35 focus:border-gold"
             />
             <input
-              name="phone"
-              placeholder="Phone (optional)"
+              name="instagram"
+              placeholder="Instagram handle (optional)"
               className="rounded-full border border-shell/20 bg-abyss/60 px-4 py-2 text-sm text-shell outline-none placeholder:text-shell/35 focus:border-gold"
             />
-            <div className="flex items-center gap-2">
-              <label
-                htmlFor="guest-tickets"
-                className="font-mono text-[10px] uppercase tracking-[0.15em] text-shell/45"
-              >
-                Party of
-              </label>
-              <input
-                id="guest-tickets"
-                name="tickets"
-                type="number"
-                min={1}
-                max={20}
-                defaultValue={1}
-                className="w-16 rounded-full border border-shell/20 bg-abyss/60 px-3 py-2 text-sm text-shell outline-none focus:border-gold"
-              />
-            </div>
           </div>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row">
             <input
@@ -229,6 +232,19 @@ export default function GuestList({
               placeholder="Notes — who they are, who invited them…"
               className="flex-1 rounded-full border border-shell/20 bg-abyss/60 px-4 py-2 text-sm text-shell outline-none placeholder:text-shell/35 focus:border-gold"
             />
+            <label className="flex items-center gap-2">
+              <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-shell/45">
+                Party of
+              </span>
+              <input
+                name="tickets"
+                type="number"
+                min={1}
+                max={20}
+                defaultValue={1}
+                className="w-16 rounded-full border border-shell/20 bg-abyss/60 px-3 py-2 text-sm text-shell outline-none focus:border-gold"
+              />
+            </label>
             <button
               type="submit"
               disabled={adding}
@@ -271,98 +287,222 @@ export default function GuestList({
             : "Nobody matches that."}
         </p>
       ) : (
-        <ul className="divide-y divide-shell/10 rounded-3xl border border-shell/10 bg-lagoon/20">
-          {shown.map((g) => {
-            const busy = busyId === g.id;
-            return (
-              <li
-                key={g.id}
-                className={`grid gap-2 px-5 py-3.5 sm:grid-cols-[1.6fr_1.4fr_auto_auto] sm:items-center sm:gap-4 ${
-                  busy ? "opacity-50" : ""
-                }`}
-              >
-                <div className="min-w-0">
-                  <p className="flex items-center gap-2 truncate text-sm font-semibold text-shell">
-                    {g.name}
-                    {g.source === "ticket" && (
-                      <span className="shrink-0 rounded-full bg-gold/15 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.15em] text-gold">
-                        Paid
-                      </span>
-                    )}
-                    {g.tickets > 1 && (
-                      <span className="shrink-0 font-mono text-[10px] text-shell/50">
-                        ×{g.tickets}
-                      </span>
-                    )}
-                  </p>
-                  {g.notes && (
-                    <p className="truncate text-xs text-shell/50">{g.notes}</p>
-                  )}
-                </div>
-
-                <div className="min-w-0 text-xs text-shell/55">
-                  {g.email && <p className="truncate">{g.email}</p>}
-                  {g.phone && <p className="truncate">{g.phone}</p>}
-                  {!g.email && !g.phone && <p className="text-shell/30">—</p>}
-                </div>
-
-                <span
-                  className={`justify-self-start rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] sm:justify-self-auto ${STATUS_CHIP[g.status]}`}
-                >
-                  {STATUS_LABEL[g.status]}
-                </span>
-
-                {canWrite && (
-                  <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-                    {g.status === "lead" && (
-                      <button
-                        onClick={() =>
-                          mutate(g, { status: "confirmed" }, { status: "confirmed" })
-                        }
-                        disabled={busy}
-                        className="rounded-full bg-gold px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-abyss hover:bg-shell disabled:opacity-60"
-                      >
-                        Lock in
-                      </button>
-                    )}
-                    {g.status === "confirmed" && (
-                      <button
-                        onClick={() =>
-                          mutate(g, { status: "checked-in" }, { status: "checked-in" })
-                        }
-                        disabled={busy}
-                        className="rounded-full border border-shell/25 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-shell hover:border-gold hover:text-gold disabled:opacity-60"
-                      >
-                        Check in
-                      </button>
-                    )}
-                    {g.status === "checked-in" && (
-                      <button
-                        onClick={() =>
-                          mutate(g, { status: "confirmed" }, { status: "confirmed" })
-                        }
-                        disabled={busy}
-                        className="rounded-full border border-shell/20 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-shell/60 hover:border-gold hover:text-gold disabled:opacity-60"
-                      >
-                        Undo
-                      </button>
-                    )}
-                    {g.source === "manual" && (
-                      <button
-                        onClick={() => remove(g)}
-                        disabled={busy}
-                        className="text-[10px] font-bold uppercase tracking-[0.16em] text-shell/35 hover:text-coconut disabled:opacity-60"
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
-                )}
-              </li>
-            );
-          })}
+        <ul className="space-y-2">
+          {shown.map((g) => (
+            <GuestRow
+              key={g.id}
+              guest={g}
+              busy={busyId === g.id}
+              canWrite={canWrite}
+              onSecure={() =>
+                mutate(g, { status: "confirmed" }, { status: "confirmed" })
+              }
+              onCheckIn={() =>
+                mutate(g, { status: "checked-in" }, { status: "checked-in" })
+              }
+              onUndo={() =>
+                mutate(g, { status: "confirmed" }, { status: "confirmed" })
+              }
+              onToggleChannel={(ch, next) => {
+                const key = channelFlagKey(ch);
+                mutate(g, { [key]: next } as Partial<Guest>, { [key]: next });
+              }}
+              onRemove={() => remove(g)}
+            />
+          ))}
         </ul>
       )}
     </div>
+  );
+}
+
+/** Which boolean on Guest matches a channel. */
+function channelFlagKey(
+  ch: Channel,
+): "invitedPhone" | "invitedEmail" | "invitedInstagram" {
+  return ch === "phone"
+    ? "invitedPhone"
+    : ch === "email"
+      ? "invitedEmail"
+      : "invitedInstagram";
+}
+
+/** The one channel row for a guest — three pill toggles, dim if unpopulated. */
+function ChannelPills({
+  guest,
+  disabled,
+  onToggle,
+}: {
+  guest: Guest;
+  disabled: boolean;
+  onToggle: (ch: Channel, next: boolean) => void;
+}) {
+  const rows: { ch: Channel; has: string; flag: boolean }[] = [
+    { ch: "phone", has: guest.phone, flag: guest.invitedPhone },
+    { ch: "email", has: guest.email, flag: guest.invitedEmail },
+    { ch: "instagram", has: guest.instagram, flag: guest.invitedInstagram },
+  ];
+
+  return (
+    <div className="flex flex-wrap items-center gap-1.5">
+      {rows.map(({ ch, has, flag }) => {
+        const can = Boolean(has) && !disabled;
+        const cls = flag
+          ? "border-gold bg-gold/20 text-gold"
+          : has
+            ? "border-shell/25 text-shell/60 hover:border-gold hover:text-gold"
+            : "border-shell/10 text-shell/25";
+        return (
+          <button
+            key={ch}
+            type="button"
+            disabled={!can}
+            onClick={() => onToggle(ch, !flag)}
+            aria-pressed={flag}
+            title={
+              has
+                ? flag
+                  ? `Invited via ${CHANNEL_LABEL[ch].toLowerCase()} — click to undo`
+                  : `Mark as invited via ${CHANNEL_LABEL[ch].toLowerCase()}`
+                : `No ${CHANNEL_LABEL[ch].toLowerCase()} on file`
+            }
+            className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] transition-colors disabled:cursor-not-allowed ${cls}`}
+          >
+            <span aria-hidden>{flag ? "✓" : "○"}</span>
+            {CHANNEL_LABEL[ch]}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** One guest — normal by default, LIT gold when secured. */
+function GuestRow({
+  guest,
+  busy,
+  canWrite,
+  onSecure,
+  onCheckIn,
+  onUndo,
+  onToggleChannel,
+  onRemove,
+}: {
+  guest: Guest;
+  busy: boolean;
+  canWrite: boolean;
+  onSecure: () => void;
+  onCheckIn: () => void;
+  onUndo: () => void;
+  onToggleChannel: (ch: Channel, next: boolean) => void;
+  onRemove: () => void;
+}) {
+  // A row is "lit" when they've paid OR someone flipped the Secure switch.
+  const lit = guest.status === "confirmed" || guest.status === "checked-in";
+  const here = guest.status === "checked-in";
+
+  const shell = lit
+    ? "border-gold/60 bg-gradient-to-r from-gold/[0.14] via-gold/[0.06] to-gold/[0.14] shadow-[0_0_0_1px_rgba(212,175,106,0.25),0_12px_36px_-18px_rgba(212,175,106,0.55)]"
+    : "border-shell/10 bg-lagoon/20";
+
+  return (
+    <li
+      className={`grid gap-3 rounded-2xl border px-5 py-3.5 transition-colors sm:grid-cols-[1.4fr_1.4fr_auto] sm:items-center sm:gap-5 ${shell} ${busy ? "opacity-50" : ""}`}
+    >
+      {/* Identity */}
+      <div className="min-w-0">
+        <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-shell">
+          <span className="truncate">{guest.name}</span>
+          {here && (
+            <span className="shrink-0 rounded-full bg-teal/40 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.15em] text-shell">
+              Here
+            </span>
+          )}
+          {lit && !here && (
+            <span className="shrink-0 rounded-full bg-gold/25 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.15em] text-gold">
+              {guest.source === "ticket" ? "Paid" : "Secured"}
+            </span>
+          )}
+          {guest.tickets > 1 && (
+            <span className="shrink-0 font-mono text-[10px] text-shell/50">
+              ×{guest.tickets}
+            </span>
+          )}
+        </p>
+        {guest.notes && (
+          <p className="mt-0.5 truncate text-xs text-shell/50">{guest.notes}</p>
+        )}
+      </div>
+
+      {/* Contact + outreach pills */}
+      <div className="min-w-0 space-y-1.5">
+        <div className="space-y-0.5 text-[11px] leading-tight text-shell/60">
+          {guest.phone && <p className="truncate">📞 {guest.phone}</p>}
+          {guest.email && <p className="truncate">✉ {guest.email}</p>}
+          {guest.instagram && (
+            <p className="truncate">
+              <a
+                href={`https://instagram.com/${guest.instagram}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-gold"
+              >
+                @{guest.instagram}
+              </a>
+            </p>
+          )}
+          {!guest.phone && !guest.email && !guest.instagram && (
+            <p className="text-shell/30">No contact yet</p>
+          )}
+        </div>
+        <ChannelPills
+          guest={guest}
+          disabled={!canWrite || busy}
+          onToggle={onToggleChannel}
+        />
+      </div>
+
+      {/* Actions */}
+      {canWrite && (
+        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+          {guest.status === "lead" && (
+            <button
+              onClick={onSecure}
+              disabled={busy}
+              className="rounded-full bg-gold px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-abyss hover:bg-shell disabled:opacity-60"
+            >
+              Secure spot
+            </button>
+          )}
+          {guest.status === "confirmed" && (
+            <button
+              onClick={onCheckIn}
+              disabled={busy}
+              className="rounded-full border border-gold/60 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-gold hover:bg-gold hover:text-abyss disabled:opacity-60"
+            >
+              Check in
+            </button>
+          )}
+          {guest.status === "checked-in" && (
+            <button
+              onClick={onUndo}
+              disabled={busy}
+              className="rounded-full border border-shell/20 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-shell/60 hover:border-gold hover:text-gold disabled:opacity-60"
+            >
+              Undo
+            </button>
+          )}
+          {guest.source === "manual" && (
+            <button
+              onClick={onRemove}
+              disabled={busy}
+              className="text-[10px] font-bold uppercase tracking-[0.16em] text-shell/35 hover:text-coconut disabled:opacity-60"
+            >
+              Remove
+            </button>
+          )}
+        </div>
+      )}
+    </li>
   );
 }

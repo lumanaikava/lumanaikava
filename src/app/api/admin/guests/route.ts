@@ -5,10 +5,11 @@ import {
   appendGuest,
   setGuestStatus,
   setGuestNotes,
+  patchGuest,
   removeGuest,
   guestSheetConfigured,
 } from "@/lib/integrations/guest-sheet";
-import { isGuestStatus, type Guest } from "@/lib/guests";
+import { isGuestStatus, normaliseInstagram, type Guest } from "@/lib/guests";
 
 export const runtime = "nodejs";
 
@@ -77,10 +78,14 @@ export async function POST(req: Request) {
     name,
     email: String(b.email ?? "").trim().slice(0, 160),
     phone: String(b.phone ?? "").trim().slice(0, 40),
+    instagram: normaliseInstagram(String(b.instagram ?? "")),
     source: "manual",
     status,
     tickets,
     notes: String(b.notes ?? "").trim().slice(0, 400),
+    invitedPhone: b.invitedPhone === true,
+    invitedEmail: b.invitedEmail === true,
+    invitedInstagram: b.invitedInstagram === true,
     addedBy: auth.crew,
     addedAt: new Date().toISOString(),
   };
@@ -116,11 +121,29 @@ export async function PUT(req: Request) {
   try {
     if (typeof b.notes === "string") {
       await setGuestNotes(id, b.notes.trim().slice(0, 400), fallback);
-    } else {
+    } else if (typeof b.status === "string") {
       if (!isGuestStatus(b.status)) {
         return NextResponse.json({ error: "Unknown status." }, { status: 400 });
       }
       await setGuestStatus(id, b.status, fallback);
+    } else {
+      // Partial update: any subset of contact/outreach fields. Absent
+      // properties are left alone.
+      const patch: Partial<Guest> = {};
+      if (typeof b.instagram === "string") {
+        patch.instagram = normaliseInstagram(b.instagram);
+      }
+      if (typeof b.email === "string") patch.email = b.email.trim().slice(0, 160);
+      if (typeof b.phone === "string") patch.phone = b.phone.trim().slice(0, 40);
+      if (typeof b.invitedPhone === "boolean") patch.invitedPhone = b.invitedPhone;
+      if (typeof b.invitedEmail === "boolean") patch.invitedEmail = b.invitedEmail;
+      if (typeof b.invitedInstagram === "boolean") {
+        patch.invitedInstagram = b.invitedInstagram;
+      }
+      if (Object.keys(patch).length === 0) {
+        return NextResponse.json({ error: "Nothing to change." }, { status: 400 });
+      }
+      await patchGuest(id, patch, fallback);
     }
     return NextResponse.json({ ok: true });
   } catch (err) {
