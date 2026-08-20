@@ -84,7 +84,7 @@ const RUN_OF_NIGHT = [
 const OFFERINGS = [
   {
     label: "The bar",
-    line: "Unlimited traditional kava shots for everyone, all night. An exclusively crafted menu of naktails (kava) and functional mocktails — with Ash's signature kanna cocktail poured for Meridian and above.",
+    line: "Unlimited Traditional Kava shots for everyone, all night. An exclusively crafted menu of low- or no-sugar naktails (kava) and functional mocktails — with Ash's signature kanna cocktail poured for Meridian and above.",
   },
   {
     label: "The table",

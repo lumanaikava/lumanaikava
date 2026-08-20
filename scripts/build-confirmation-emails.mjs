@@ -70,7 +70,9 @@ function calendarLink(startUtc) {
 /* ── Per tier ───────────────────────────────────────────────── */
 
 const RUSH = "RUSH instant ceremonial kava pouch to take home ($60 value)";
-const SHOTS = "Unlimited traditional kava shots";
+const SHOTS = "Unlimited Traditional Kava shots for everyone, all night";
+const MENU =
+  "An exclusively crafted menu of low- or no-sugar naktails (kava) and functional mocktails";
 const HORS = "Complimentary anti-inflammatory hors d'oeuvres all night";
 const OPEN_BAR = "Every cocktail on the exclusive menu, open bar all night";
 const KANNA = "Ash's signature kanna cocktail — built for this night only";
@@ -78,7 +80,7 @@ const VIP = "VIP Reception, 7–8PM";
 const ROOFTOP = "Exclusive VIP rooftop";
 const GIFTS = "More perks and a curated set of gifts, revealed on arrival";
 
-const COMMON = [SHOTS, HORS];
+const COMMON = [SHOTS, MENU, HORS];
 
 const TIERS = [
   {
