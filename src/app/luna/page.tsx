@@ -24,9 +24,42 @@ import { tierRank } from "@/lib/party-tiers";
  * way: anything rendered here is one "view source" away from public.
  */
 
+/**
+ * Per-page metadata so a link to /luna shows up in iMessage, Instagram
+ * DMs, WhatsApp, Slack and Twitter with the LUNA EKLIPTIKA card — not
+ * the generic Lumanai homepage OG. The page is still noindex; this only
+ * affects the preview when someone deliberately shares the link.
+ */
+const OG_TITLE = "You're invited — LUNA EKLIPTIKA";
+const OG_DESCRIPTION =
+  "A sober nightlife experience like no other. Friday, August 28 · Las Vegas.";
+const OG_IMAGE = "https://www.lumanai.com/images/party/luna-og.jpg";
+
 export const metadata: Metadata = {
   title: "Luna Ekliptika",
+  description: OG_DESCRIPTION,
   robots: { index: false, follow: false },
+  openGraph: {
+    type: "website",
+    url: "https://www.lumanai.com/luna",
+    siteName: "Lumanai",
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
+    images: [
+      {
+        url: OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "LUNA EKLIPTIKA — a sober nightlife experience like no other",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
+    images: [OG_IMAGE],
+  },
 };
 
 export const dynamic = "force-dynamic";

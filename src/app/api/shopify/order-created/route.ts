@@ -8,6 +8,7 @@ import {
 } from "@/lib/email-templates/luna-confirmation";
 import { createTicket, ticketSecretConfigured } from "@/lib/ticket-token";
 import { sendEmail, resendConfigured } from "@/lib/integrations/resend";
+import { forwardBookingToGhl } from "@/lib/integrations/gohighlevel";
 
 export const runtime = "nodejs";
 /**
@@ -234,5 +235,39 @@ export async function POST(req: Request) {
   }
 
   log(order, `sent ${ticketLine.tier} to buyer · resend-id=${result.id}`);
+
+  /**
+   * Secondary — record the buyer as a GHL contact so post-party
+   * follow-ups fire from the same list every other Lumanai lead sits
+   * on. Best-effort: a GHL outage MUST NOT bounce Shopify's webhook,
+   * because that would keep retrying and hammer Resend with duplicate
+   * sends. `Promise.race` puts a hard 2s ceiling on the whole thing —
+   * order came in, ticket sent, GHL missed it. Fine.
+   */
+  try {
+    await Promise.race([
+      forwardBookingToGhl({
+        source: `lumanai.com — LUNA EKLIPTIKA ticket · ${ticketLine.tier}`,
+        name: fullNameOf(order),
+        email: toEmail,
+        phone: order.billing_address?.phone ?? "",
+        message: `LUNA EKLIPTIKA ticket purchased.
+Tier: ${ticketLine.tier}
+Order: ${order.name}
+Seats: ${ticketLine.quantity}
+Confirmation sent via Resend (${result.id}).`,
+      }),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("GHL webhook timeout (2s)")), 2000),
+      ),
+    ]);
+    log(order, `GHL contact recorded`);
+  } catch (err) {
+    log(
+      order,
+      `GHL contact record failed (non-fatal): ${err instanceof Error ? err.message : "unknown"}`,
+    );
+  }
+
   return NextResponse.json({ ok: true, tier: ticketLine.tier, resendId: result.id });
 }
