@@ -1,5 +1,7 @@
 import sharp from "sharp";
 import fs from "node:fs";
+import path from "node:path";
+import { createCanvas, GlobalFonts } from "@napi-rs/canvas";
 
 /**
  * Open Graph / iMessage preview for the LUNA EKLIPTIKA party page.
@@ -8,17 +10,35 @@ import fs from "node:fs";
  * Instagram DMs, Twitter, WhatsApp, Slack, LinkedIn. Anything wider or
  * taller gets recropped by someone.
  *
- * The point of a per-page OG is to tell the recipient at a glance that
- * this link is a PARTY invite, not the generic Lumanai homepage. The
- * roots + wordmark + gold accent + tagline do that in one look.
+ * Type renders through @napi-rs/canvas with the real brand faces —
+ * Barlow Semi Condensed for the wordmark and eyebrow, Barlow for the
+ * tagline. Loaded from @fontsource/*, which is the same source the
+ * site's runtime pulls from, so this preview reads as the brand.
  */
 
 const W = 1200;
 const H = 630;
 const GOLD = "#d4af6a";
 const BONE = "#f2efe8";
+const MUTE = "rgba(242,239,232,0.65)";
 
-// The roots texture, retinted to sit as a background layer.
+// Register the brand fonts. @napi-rs/canvas accepts woff2 directly,
+// which is the format @fontsource ships. Same weights the site uses.
+const FONT_DIR = "node_modules/@fontsource";
+GlobalFonts.registerFromPath(
+  path.join(FONT_DIR, "barlow-semi-condensed/files/barlow-semi-condensed-latin-900-normal.woff2"),
+  "Barlow Semi Condensed Black",
+);
+GlobalFonts.registerFromPath(
+  path.join(FONT_DIR, "barlow-semi-condensed/files/barlow-semi-condensed-latin-600-normal.woff2"),
+  "Barlow Semi Condensed SemiBold",
+);
+GlobalFonts.registerFromPath(
+  path.join(FONT_DIR, "barlow/files/barlow-latin-400-normal.woff2"),
+  "Barlow Regular",
+);
+
+// ── 1. Background: roots retinted warm, then vignetted so type reads
 const roots = await sharp("public/images/roots-texture.webp")
   .resize(W, W, { fit: "cover" })
   .extract({ left: 0, top: Math.round((W - H) / 2), width: W, height: H })
@@ -26,7 +46,6 @@ const roots = await sharp("public/images/roots-texture.webp")
   .linear(0.36, 6)
   .toBuffer();
 
-// Radial vignette darkens the centre so the type reads bright over it.
 const veil = Buffer.from(
   `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
      <defs>
@@ -40,37 +59,96 @@ const veil = Buffer.from(
    </svg>`,
 );
 
-// Ash's eclipse mark, sized for the top third.
+// ── 2. Type layer via canvas so the real Barlow shape is baked in
+const canvas = createCanvas(W, H);
+const ctx = canvas.getContext("2d");
+
+/** Draw one horizontally-centred line. */
+function line(
+  text,
+  y,
+  { font, size, color, letterSpacing = 0, opacity = 1 },
+) {
+  ctx.save();
+  ctx.font = `${size}px "${font}"`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillStyle = color;
+  ctx.globalAlpha = opacity;
+
+  if (letterSpacing === 0) {
+    ctx.fillText(text, W / 2, y);
+    ctx.restore();
+    return;
+  }
+
+  // Manual tracking — measure each glyph and advance by letterSpacing.
+  const chars = [...text];
+  const widths = chars.map((c) => ctx.measureText(c).width);
+  const total =
+    widths.reduce((s, w) => s + w, 0) + letterSpacing * (chars.length - 1);
+  let x = (W - total) / 2;
+  chars.forEach((c, i) => {
+    ctx.textAlign = "left";
+    ctx.fillText(c, x, y);
+    x += widths[i] + letterSpacing;
+  });
+  ctx.restore();
+}
+
+// Eyebrow
+line("YOU'RE INVITED", H * 0.555, {
+  font: "Barlow Semi Condensed SemiBold",
+  size: H * 0.04,
+  color: GOLD,
+  letterSpacing: H * 0.017,
+});
+
+// Wordmark — measured in two segments so LUNA (bone) and EKLIPTIKA (gold)
+// share the same baseline and a fixed gap between them.
+{
+  const y = H * 0.72;
+  const size = H * 0.15;
+  const gap = H * 0.05;
+  ctx.font = `${size}px "Barlow Semi Condensed Black"`;
+  const wLuna = ctx.measureText("LUNA").width;
+  const wEklip = ctx.measureText("EKLIPTIKA").width;
+  const total = wLuna + gap + wEklip;
+  const startX = (W - total) / 2;
+
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillStyle = BONE;
+  ctx.fillText("LUNA", startX, y);
+  ctx.fillStyle = GOLD;
+  ctx.fillText("EKLIPTIKA", startX + wLuna + gap, y);
+}
+
+// Tagline
+line("A sober nightlife experience like no other", H * 0.82, {
+  font: "Barlow Regular",
+  size: H * 0.033,
+  color: MUTE,
+});
+
+// Date + city, gold, tighter
+line("FRIDAY, AUGUST 28 · LAS VEGAS", H * 0.91, {
+  font: "Barlow Semi Condensed SemiBold",
+  size: H * 0.036,
+  color: GOLD,
+  letterSpacing: H * 0.008,
+});
+
+const type = canvas.toBuffer("image/png");
+
+// ── 3. The eclipse mark, sized for the top third
 const logoPx = Math.round(H * 0.28);
 const logo = await sharp("assets/luna-ekliptika_logo_transparent.png")
   .resize(logoPx, logoPx, { fit: "inside" })
   .png()
   .toBuffer();
 
-// The wordmark + eyebrow + tagline. Helvetica-ish since we don't
-// have Barlow available for image compositing — the site renders in
-// Barlow separately, and a preview thumbnail can't wait for a
-// Google Fonts fetch.
-const type = Buffer.from(
-  `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
-     <text x="${W / 2}" y="${H * 0.55}" text-anchor="middle"
-           font-family="Helvetica, Arial, sans-serif" font-size="${H * 0.038}"
-           letter-spacing="${H * 0.02}" fill="${GOLD}">YOU'RE INVITED</text>
-
-     <text x="${W / 2}" y="${H * 0.72}" text-anchor="middle"
-           font-family="Helvetica, Arial, sans-serif" font-weight="bold"
-           font-size="${H * 0.13}" letter-spacing="${H * 0.006}" fill="${BONE}">LUNA<tspan fill="${GOLD}" dx="${H * 0.035}">EKLIPTIKA</tspan></text>
-
-     <text x="${W / 2}" y="${H * 0.83}" text-anchor="middle"
-           font-family="Helvetica, Arial, sans-serif" font-size="${H * 0.028}"
-           letter-spacing="${H * 0.012}" fill="${BONE}" opacity="0.65">A SOBER NIGHTLIFE EXPERIENCE LIKE NO OTHER</text>
-
-     <text x="${W / 2}" y="${H * 0.92}" text-anchor="middle"
-           font-family="Helvetica, Arial, sans-serif" font-weight="bold"
-           font-size="${H * 0.036}" letter-spacing="${H * 0.008}" fill="${GOLD}">FRIDAY, AUGUST 28 · LAS VEGAS</text>
-   </svg>`,
-);
-
+// ── 4. Composite
 const out = await sharp(roots)
   .composite([
     { input: veil },
