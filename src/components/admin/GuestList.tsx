@@ -62,6 +62,38 @@ export default function GuestList({
   /** Which row is open for edit. Only one at a time — the panel is a
       Guest-shaped form, and two open panels racing is a hazard. */
   const [editingId, setEditingId] = useState<string | null>(null);
+  /**
+   * Which guest we're currently POSTing an invite for. The row-level
+   * busyId spinner already exists for other writes, but sends can take
+   * a couple of seconds — so we surface a per-guest state too.
+   */
+  const [invitingId, setInvitingId] = useState<string | null>(null);
+
+  async function sendInvite(guest: Guest) {
+    const before = guests;
+    setInvitingId(guest.id);
+    setError(null);
+    setFlash(null);
+    // Optimistic: light the Invited pill instantly. Roll back on error.
+    setGuests((gs) =>
+      gs.map((g) => (g.id === guest.id ? { ...g, invitedEmail: true } : g)),
+    );
+    try {
+      const res = await fetch("/api/admin/guests/invite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: guest.id }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error ?? "Couldn't send the invite.");
+      setFlash(`Invite sent to ${guest.name} (${guest.email}).`);
+    } catch (err) {
+      setGuests(before);
+      setError(err instanceof Error ? err.message : "Couldn't send the invite.");
+    } finally {
+      setInvitingId(null);
+    }
+  }
   const [tags, setTags] = useState<Set<TagFilter>>(new Set());
   const [dragId, setDragId] = useState<string | null>(null);
   /** Row currently under the cursor during a drag — for the drop preview. */
@@ -480,6 +512,8 @@ export default function GuestList({
               onToggleInvited={(next) =>
                 mutate(g, { invited: next }, { invited: next })
               }
+              onSendInvite={() => sendInvite(g)}
+              sending={invitingId === g.id}
               onRemove={() => remove(g)}
             />
           ))}
@@ -634,6 +668,8 @@ function GuestRow({
   onToggleChannel,
   onToggleLabel,
   onToggleInvited,
+  onSendInvite,
+  sending,
   onRemove,
 }: {
   guest: Guest;
@@ -654,6 +690,8 @@ function GuestRow({
   onToggleChannel: (ch: Channel, next: boolean) => void;
   onToggleLabel: (label: "staff" | "free" | "discount20", next: boolean) => void;
   onToggleInvited: (next: boolean) => void;
+  onSendInvite: () => void;
+  sending: boolean;
   onRemove: () => void;
 }) {
   const lit = guest.status === "confirmed" || guest.status === "checked-in";
@@ -851,6 +889,20 @@ function GuestRow({
             disabled={busy}
             onClick={() => onToggleInvited(!guest.invited)}
           />
+          {/* Send the "You're invited" email. Only shown for leads with
+              an email, and only when they haven't been emailed yet.
+              Untick the Invited-Email chip on the contact row to
+              resend. */}
+          {guest.status === "lead" && guest.email && !guest.invitedEmail && (
+            <button
+              onClick={onSendInvite}
+              disabled={busy || sending}
+              title={`Send the "You're invited" email to ${guest.email}`}
+              className="rounded-full border border-gold bg-gold/10 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-gold hover:bg-gold hover:text-abyss disabled:opacity-60"
+            >
+              {sending ? "Sending…" : "Send invite"}
+            </button>
+          )}
           {guest.status === "lead" && (
             <button
               onClick={onSecure}
