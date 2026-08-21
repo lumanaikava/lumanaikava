@@ -86,6 +86,11 @@ export async function POST() {
       isStaff: spec.isStaff === true,
       isFree: spec.isFree === true,
       staffTitle: spec.staffTitle ?? "",
+      invited: false,
+      isDiscount20: false,
+      // Sort key runs BACKWARDS through the list so item 0 stays on top —
+      // higher sort = higher on the board.
+      sort: now + (LUNA_STARTER_LIST.length - i) * 1000,
       addedBy: session.name,
       addedAt: new Date(now + i * 1000).toISOString(),
     };

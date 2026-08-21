@@ -57,6 +57,22 @@ export type Guest = {
    * next to the Staff badge, only when isStaff is true.
    */
   staffTitle: string;
+  /**
+   * Master "we reached out" flag, independent of the three per-channel
+   * pills. Zach uses this for the quick pass ("texted them, done")
+   * without needing to specify which channel every time. The channel
+   * pills still exist for the detailed pass.
+   */
+  invited: boolean;
+  /** $20 discount label — the friends-and-family rate as an on-list tag. */
+  isDiscount20: boolean;
+  /**
+   * Manual sort key. Bigger = higher on the list. Drag-and-drop writes
+   * new values between neighbours (fractional indexing), so a reorder
+   * doesn't reshuffle every other row. Zero means "no manual position
+   * set" and the reader falls back to addedAt.
+   */
+  sort: number;
   /** Which crew member added them (manual adds only). */
   addedBy: string;
   addedAt: string;
@@ -92,6 +108,9 @@ export const GUEST_COLUMNS = [
   "Staff",
   "Free",
   "Staff Title",
+  "Invited",
+  "Discount $20",
+  "Sort",
 ] as const;
 
 export const GUEST_STATUSES: GuestStatus[] = ["lead", "confirmed", "checked-in"];
@@ -132,6 +151,9 @@ export function guestToValues(g: Guest): (string | number)[] {
     yn(g.isStaff),
     yn(g.isFree),
     g.staffTitle,
+    yn(g.invited),
+    yn(g.isDiscount20),
+    g.sort || 0,
   ];
 }
 
@@ -157,6 +179,9 @@ export function valuesToGuest(c: (string | number)[]): Guest {
     isStaff: readYn(c[14]),
     isFree: readYn(c[15]),
     staffTitle: s(c[16]),
+    invited: readYn(c[17]),
+    isDiscount20: readYn(c[18]),
+    sort: Number(c[19]) || 0,
   };
 }
 

@@ -48,8 +48,13 @@ export async function loadGuestBoard(): Promise<GuestBoard> {
     }
   }
 
-  // Newest first, same as before.
-  guests.sort((a, b) => (b.addedAt || "").localeCompare(a.addedAt || ""));
+  // Manual sort first (drag-and-drop), addedAt as the tie-breaker for
+  // rows nobody has ever moved. Both keep newest at top by default.
+  guests.sort((a, b) => {
+    const sa = a.sort || Date.parse(a.addedAt || "") || 0;
+    const sb = b.sort || Date.parse(b.addedAt || "") || 0;
+    return sb - sa;
+  });
 
   return {
     guests,

@@ -96,6 +96,11 @@ export async function POST(req: Request) {
     isStaff: b.isStaff === true,
     isFree: b.isFree === true,
     staffTitle: String(b.staffTitle ?? "").trim().slice(0, 60),
+    invited: b.invited === true,
+    isDiscount20: b.isDiscount20 === true,
+    // A fresh row goes to the top: use the current time as its sort key
+    // so it sits above anything that hasn't been dragged.
+    sort: Date.now(),
     addedBy: auth.crew,
     addedAt: new Date().toISOString(),
   };
@@ -166,6 +171,11 @@ export async function PUT(req: Request) {
       if (typeof b.notes === "string") patch.notes = b.notes.trim().slice(0, 400);
       if (typeof b.staffTitle === "string") {
         patch.staffTitle = b.staffTitle.trim().slice(0, 60);
+      }
+      if (typeof b.invited === "boolean") patch.invited = b.invited;
+      if (typeof b.isDiscount20 === "boolean") patch.isDiscount20 = b.isDiscount20;
+      if (typeof b.sort === "number" && Number.isFinite(b.sort)) {
+        patch.sort = b.sort;
       }
       if (Object.keys(patch).length === 0) {
         return NextResponse.json({ error: "Nothing to change." }, { status: 400 });

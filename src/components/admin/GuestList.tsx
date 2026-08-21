@@ -22,11 +22,21 @@ import {
 
 type Filter = "all" | GuestStatus;
 type Channel = "phone" | "email" | "instagram";
+/** Tag filters — ANDed together with the status filter. Toggle to add. */
+type TagFilter = "staff" | "free" | "discount20" | "invited" | "notInvited";
 
 const STATUS_LABEL: Record<GuestStatus, string> = {
   lead: "Lead",
   confirmed: "Secured",
   "checked-in": "Here",
+};
+
+const TAG_LABEL: Record<TagFilter, string> = {
+  staff: "Staff",
+  free: "Free",
+  discount20: "$20",
+  invited: "Invited",
+  notInvited: "Not invited",
 };
 
 export default function GuestList({
@@ -52,21 +62,83 @@ export default function GuestList({
   /** Which row is open for edit. Only one at a time — the panel is a
       Guest-shaped form, and two open panels racing is a hazard. */
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [tags, setTags] = useState<Set<TagFilter>>(new Set());
+  const [dragId, setDragId] = useState<string | null>(null);
+  /** Row currently under the cursor during a drag — for the drop preview. */
+  const [dropTarget, setDropTarget] = useState<string | null>(null);
+
+  const toggleTag = (t: TagFilter) => {
+    setTags((cur) => {
+      const next = new Set(cur);
+      if (next.has(t)) next.delete(t);
+      else {
+        // "Invited" and "Not invited" are opposites — turning one on
+        // clears the other so the filter never contradicts itself.
+        if (t === "invited") next.delete("notInvited");
+        if (t === "notInvited") next.delete("invited");
+        next.add(t);
+      }
+      return next;
+    });
+  };
 
   const totals = useMemo(() => guestTotals(guests), [guests]);
   const listIsEmpty = guests.length === 0;
 
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return guests.filter((g) => {
-      if (filter !== "all" && g.status !== filter) return false;
-      if (!q) return true;
-      return [g.name, g.email, g.phone, g.instagram, g.notes]
-        .join(" ")
-        .toLowerCase()
-        .includes(q);
-    });
-  }, [guests, filter, query]);
+    return guests
+      .filter((g) => {
+        if (filter !== "all" && g.status !== filter) return false;
+        if (tags.has("staff") && !g.isStaff) return false;
+        if (tags.has("free") && !g.isFree) return false;
+        if (tags.has("discount20") && !g.isDiscount20) return false;
+        if (tags.has("invited") && !g.invited) return false;
+        if (tags.has("notInvited") && g.invited) return false;
+        if (!q) return true;
+        return [g.name, g.email, g.phone, g.instagram, g.staffTitle, g.notes]
+          .join(" ")
+          .toLowerCase()
+          .includes(q);
+      })
+      .sort((a, b) => {
+        const sa = a.sort || Date.parse(a.addedAt || "") || 0;
+        const sb = b.sort || Date.parse(b.addedAt || "") || 0;
+        return sb - sa;
+      });
+  }, [guests, filter, query, tags]);
+
+  /**
+   * Compute a new `sort` value that places `movedId` just above
+   * `targetId`, using the current on-screen order.
+   *
+   * Fractional indexing: the new sort is the midpoint between the
+   * target and whatever sat above it, so a reorder writes exactly one
+   * row rather than reshuffling the whole list.
+   */
+  async function reorder(movedId: string, targetId: string) {
+    if (movedId === targetId) return;
+    const list = guests
+      .slice()
+      .sort((a, b) => b.sort - a.sort || (b.addedAt || "").localeCompare(a.addedAt || ""));
+    const moved = list.find((g) => g.id === movedId);
+    const targetIdx = list.findIndex((g) => g.id === targetId);
+    if (!moved || targetIdx === -1) return;
+
+    // Skip the moved row when picking the "above" reference — otherwise
+    // dropping onto the row directly below yourself picks yourself as
+    // the neighbour and the sort value doesn't change.
+    let aboveIdx = targetIdx - 1;
+    if (list[aboveIdx]?.id === movedId) aboveIdx -= 1;
+
+    const targetSort = list[targetIdx].sort || Date.parse(list[targetIdx].addedAt) || 0;
+    const above = list[aboveIdx];
+    const aboveSort = above
+      ? above.sort || Date.parse(above.addedAt) || 0
+      : targetSort + 2000;
+    const newSort = (aboveSort + targetSort) / 2;
+    await mutate(moved, { sort: newSort }, { sort: newSort });
+  }
 
   async function mutate(
     guest: Guest,
@@ -300,7 +372,7 @@ export default function GuestList({
         </form>
       )}
 
-      {/* Filters */}
+      {/* Filters — status on the left, tag filters on the right */}
       <div className="flex flex-wrap items-center gap-1.5">
         {(["all", "lead", "confirmed", "checked-in"] as Filter[]).map((f) => (
           <button
@@ -315,6 +387,34 @@ export default function GuestList({
             {f === "all" ? `All ${guests.length}` : STATUS_LABEL[f]}
           </button>
         ))}
+        <span className="mx-1 h-4 w-px bg-shell/15" aria-hidden />
+        {(["staff", "free", "discount20", "invited", "notInvited"] as TagFilter[]).map(
+          (t) => {
+            const active = tags.has(t);
+            const palette =
+              t === "staff"
+                ? "border-violet-400 bg-violet-400/20 text-violet-200"
+                : t === "free"
+                  ? "border-emerald-400 bg-emerald-400/20 text-emerald-200"
+                  : t === "discount20"
+                    ? "border-amber-400 bg-amber-400/20 text-amber-200"
+                    : "border-gold bg-gold/20 text-gold";
+            return (
+              <button
+                key={t}
+                onClick={() => toggleTag(t)}
+                aria-pressed={active}
+                className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] transition-colors ${
+                  active
+                    ? palette
+                    : "border border-shell/20 text-shell/60 hover:border-gold hover:text-gold"
+                }`}
+              >
+                {TAG_LABEL[t]}
+              </button>
+            );
+          },
+        )}
       </div>
 
       {/* Rows */}
@@ -333,6 +433,21 @@ export default function GuestList({
               busy={busyId === g.id}
               canWrite={canWrite}
               editing={editingId === g.id}
+              isDragging={dragId === g.id}
+              isDropTarget={dropTarget === g.id && dragId !== null && dragId !== g.id}
+              onDragStart={() => setDragId(g.id)}
+              onDragEnter={() => {
+                if (dragId && dragId !== g.id) setDropTarget(g.id);
+              }}
+              onDragEnd={() => {
+                setDragId(null);
+                setDropTarget(null);
+              }}
+              onDropHere={async () => {
+                if (dragId && dragId !== g.id) await reorder(dragId, g.id);
+                setDragId(null);
+                setDropTarget(null);
+              }}
               onEditToggle={() =>
                 setEditingId((cur) => (cur === g.id ? null : g.id))
               }
@@ -354,9 +469,17 @@ export default function GuestList({
                 mutate(g, { [key]: next } as Partial<Guest>, { [key]: next });
               }}
               onToggleLabel={(label, next) => {
-                const key = label === "staff" ? "isStaff" : "isFree";
+                const key =
+                  label === "staff"
+                    ? "isStaff"
+                    : label === "free"
+                      ? "isFree"
+                      : "isDiscount20";
                 mutate(g, { [key]: next } as Partial<Guest>, { [key]: next });
               }}
+              onToggleInvited={(next) =>
+                mutate(g, { invited: next }, { invited: next })
+              }
               onRemove={() => remove(g)}
             />
           ))}
@@ -457,7 +580,7 @@ function LabelPill({
 }: {
   label: string;
   active: boolean;
-  color: "violet" | "emerald";
+  color: "violet" | "emerald" | "amber" | "gold";
   onClick: () => void;
   disabled: boolean;
 }) {
@@ -469,6 +592,14 @@ function LabelPill({
     emerald: {
       on: "border-emerald-400 bg-emerald-400/20 text-emerald-200",
       off: "border-shell/20 text-shell/55 hover:border-emerald-400 hover:text-emerald-300",
+    },
+    amber: {
+      on: "border-amber-400 bg-amber-400/20 text-amber-200",
+      off: "border-shell/20 text-shell/55 hover:border-amber-400 hover:text-amber-300",
+    },
+    gold: {
+      on: "border-gold bg-gold/20 text-gold",
+      off: "border-shell/20 text-shell/55 hover:border-gold hover:text-gold",
     },
   }[color];
   return (
@@ -489,6 +620,12 @@ function GuestRow({
   busy,
   canWrite,
   editing,
+  isDragging,
+  isDropTarget,
+  onDragStart,
+  onDragEnter,
+  onDragEnd,
+  onDropHere,
   onEditToggle,
   onSaveEdit,
   onSecure,
@@ -496,19 +633,27 @@ function GuestRow({
   onUndo,
   onToggleChannel,
   onToggleLabel,
+  onToggleInvited,
   onRemove,
 }: {
   guest: Guest;
   busy: boolean;
   canWrite: boolean;
   editing: boolean;
+  isDragging: boolean;
+  isDropTarget: boolean;
+  onDragStart: () => void;
+  onDragEnter: () => void;
+  onDragEnd: () => void;
+  onDropHere: () => void;
   onEditToggle: () => void;
   onSaveEdit: (patch: Partial<Guest>) => Promise<void>;
   onSecure: () => void;
   onCheckIn: () => void;
   onUndo: () => void;
   onToggleChannel: (ch: Channel, next: boolean) => void;
-  onToggleLabel: (label: "staff" | "free", next: boolean) => void;
+  onToggleLabel: (label: "staff" | "free" | "discount20", next: boolean) => void;
+  onToggleInvited: (next: boolean) => void;
   onRemove: () => void;
 }) {
   const lit = guest.status === "confirmed" || guest.status === "checked-in";
@@ -525,29 +670,84 @@ function GuestRow({
    * label rings sit on top of it rather than fighting.
    */
   const bg = lit ? "bg-gold/[0.08]" : "bg-lagoon/15";
+  // Border colour: staff (violet) beats free (emerald) beats $20 (amber)
+  // beats lit-gold, so the outermost ring reads at a glance.
   const border = guest.isStaff
     ? "border-violet-400/70"
     : guest.isFree
       ? "border-emerald-400/70"
-      : lit
-        ? "border-gold/50"
-        : "border-shell/10";
+      : guest.isDiscount20
+        ? "border-amber-400/70"
+        : lit
+          ? "border-gold/50"
+          : "border-shell/10";
+  /**
+   * Combine multiple labels via inset box-shadows so a row that's Staff
+   * AND Free (the eight house names) shows both — outer border violet,
+   * inner shadow emerald. Inline style (rather than a Tailwind class)
+   * because the shadow list is computed and Tailwind won't tree-shake
+   * dynamic arbitrary values.
+   */
   const shadow = (() => {
+    const inner: string[] = [];
     if (guest.isStaff && guest.isFree) {
-      // Emerald inner box-shadow reads behind the violet border.
-      return "shadow-[inset_0_0_0_2px_rgba(52,211,153,0.55)]";
+      inner.push("inset 0 0 0 2px rgba(52,211,153,0.55)");
     }
-    if (lit) return "shadow-[0_0_0_1px_rgba(212,175,106,0.2)]";
-    return "";
+    if (guest.isStaff && guest.isDiscount20) {
+      inner.push("inset 0 0 0 2px rgba(251,191,36,0.55)");
+    }
+    if (guest.isFree && guest.isDiscount20 && !guest.isStaff) {
+      inner.push("inset 0 0 0 2px rgba(251,191,36,0.55)");
+    }
+    if (isDropTarget) {
+      inner.push("0 -3px 0 rgba(212,175,106,0.9)");
+    } else if (lit && inner.length === 0) {
+      inner.push("0 0 0 1px rgba(212,175,106,0.2)");
+    }
+    return inner.join(", ");
   })();
 
-  const shell = `${bg} ${border} ${shadow}`;
+  const shell = `${bg} ${border}`;
+  const dragOpacity = isDragging ? "opacity-50" : "";
+  const busyOpacity = busy && !isDragging ? "opacity-50" : "";
 
   return (
     <li
-      className={`rounded-xl border px-3 py-2 transition-colors ${shell} ${busy ? "opacity-50" : ""}`}
+      draggable={canWrite}
+      onDragStart={(e) => {
+        onDragStart();
+        e.dataTransfer.effectAllowed = "move";
+        try {
+          e.dataTransfer.setData("text/plain", guest.id);
+        } catch {
+          /* some browsers throw on programmatic drags; the move still works */
+        }
+      }}
+      onDragEnter={onDragEnter}
+      onDragOver={(e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+      }}
+      onDrop={(e) => {
+        e.preventDefault();
+        onDropHere();
+      }}
+      onDragEnd={onDragEnd}
+      style={{ boxShadow: shadow || undefined }}
+      className={`rounded-xl border px-3 py-2 transition-colors ${shell} ${dragOpacity} ${busyOpacity} ${canWrite ? "cursor-grab active:cursor-grabbing" : ""}`}
     >
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+      {/* Drag handle — a decoration inside the row, but the whole row is
+          draggable, so this is really a visual affordance. */}
+      {canWrite && (
+        <span
+          aria-hidden
+          className="hidden text-shell/30 sm:inline-block"
+          title="Drag to reorder"
+        >
+          ⋮⋮
+        </span>
+      )}
       {/* Name + inline badges */}
       <div className="min-w-0 flex-1 basis-40">
         <p className="flex flex-wrap items-center gap-1.5 text-sm font-semibold text-shell">
@@ -565,6 +765,16 @@ function GuestRow({
           {guest.isStaff && guest.staffTitle && (
             <span className="rounded-full bg-violet-400/20 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-violet-200">
               {guest.staffTitle}
+            </span>
+          )}
+          {guest.isDiscount20 && (
+            <span className="rounded-full bg-amber-400/20 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-amber-200">
+              $20
+            </span>
+          )}
+          {guest.invited && (
+            <span className="rounded-full bg-gold/20 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-gold">
+              Invited
             </span>
           )}
           {guest.tickets > 1 && (
@@ -626,6 +836,20 @@ function GuestRow({
             color="emerald"
             disabled={busy}
             onClick={() => onToggleLabel("free", !guest.isFree)}
+          />
+          <LabelPill
+            label="$20"
+            active={guest.isDiscount20}
+            color="amber"
+            disabled={busy}
+            onClick={() => onToggleLabel("discount20", !guest.isDiscount20)}
+          />
+          <LabelPill
+            label="Invited"
+            active={guest.invited}
+            color="gold"
+            disabled={busy}
+            onClick={() => onToggleInvited(!guest.invited)}
           />
           {guest.status === "lead" && (
             <button
