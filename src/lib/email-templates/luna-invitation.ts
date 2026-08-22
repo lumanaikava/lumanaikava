@@ -124,7 +124,7 @@ export function renderInvitation(input: { firstName: string }): {
 
   <tr><td align="center" bgcolor="#0b0b0c" style="background-color:#0b0b0c;padding:26px 34px 0 34px;">
     <a href="https://www.lumanai.com/luna" style="display:inline-block;background-color:#d4af6a;color:#0b0b0c;text-decoration:none;font-family:'Barlow Semi Condensed',Helvetica,Arial,sans-serif;font-size:14px;font-weight:800;letter-spacing:3px;text-transform:uppercase;padding:16px 38px;border-radius:999px;">Secure your spot</a>
-    <p style="margin:16px 0 0 0;font-family:Barlow,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.6;color:#a9a296;">Choose <strong style="color:#f2efe8;">Obsidian</strong>, then enter <strong style="color:#d4af6a;letter-spacing:1px;">BULA828</strong> at checkout &mdash; the friends and family rate, $45 down to <strong style="color:#f2efe8;">$20</strong>.</p>
+    <p style="margin:16px 0 0 0;font-family:Barlow,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.6;color:#a9a296;">Four tiers, fifty seats. The page walks you through them.</p>
   </td></tr>
 
   <tr><td bgcolor="#0b0b0c" style="background-color:#0b0b0c;padding:28px 34px;"><div style="height:1px;background-color:#2a2621;line-height:0;font-size:0;">&nbsp;</div></td></tr>
@@ -176,7 +176,7 @@ export function renderInvitation(input: { firstName: string }): {
     `The word is FUTURE`,
     ``,
     `Secure your spot: https://www.lumanai.com/luna`,
-    `Choose Obsidian, then enter BULA828 at checkout — the friends and family rate, $45 down to $20.`,
+    `Four tiers, fifty seats. The page walks you through them.`,
     ``,
     `Please don't forward this — if someone should be there, tell me and I'll send them their own. Fifty is fifty.`,
     ``,
