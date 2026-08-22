@@ -70,6 +70,17 @@ export default function GuestList({
   const [invitingId, setInvitingId] = useState<string | null>(null);
 
   async function sendInvite(guest: Guest) {
+    // Native confirm — a fast, unmistakable stop-check so nobody sends
+    // an invitation to the wrong row by accident. The dialog names both
+    // the person and their email, so a mismatch surfaces immediately.
+    if (
+      !confirm(
+        `Send the "You're invited" email to ${guest.name} at ${guest.email}?`,
+      )
+    ) {
+      return;
+    }
+
     const before = guests;
     setInvitingId(guest.id);
     setError(null);
@@ -889,18 +900,24 @@ function GuestRow({
             disabled={busy}
             onClick={() => onToggleInvited(!guest.invited)}
           />
-          {/* Send the "You're invited" email. Only shown for leads with
-              an email, and only when they haven't been emailed yet.
-              Untick the Invited-Email chip on the contact row to
-              resend. */}
-          {guest.status === "lead" && guest.email && !guest.invitedEmail && (
+          {/* Send the "You're invited" email. Visible whenever the row
+              has an email — the click flow itself is the confirmation
+              (a native dialog names the guest + email before firing),
+              which was Zach's call so a resend never needs the untick
+              step. If the row is already invited the button stays
+              visible but its label reads "Re-send invite". */}
+          {guest.email && (
             <button
               onClick={onSendInvite}
               disabled={busy || sending}
               title={`Send the "You're invited" email to ${guest.email}`}
               className="rounded-full border border-gold bg-gold/10 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-gold hover:bg-gold hover:text-abyss disabled:opacity-60"
             >
-              {sending ? "Sending…" : "Send invite"}
+              {sending
+                ? "Sending…"
+                : guest.invitedEmail
+                  ? "Re-send invite"
+                  : "Send invite"}
             </button>
           )}
           {guest.status === "lead" && (

@@ -79,15 +79,12 @@ export async function POST(req: Request) {
     );
   }
 
-  if (guest.status !== "lead") {
-    return NextResponse.json(
-      {
-        error: `${guest.name} isn't a lead — an invitation to a ${guest.status} guest reads wrong. Untick the status if you really want to.`,
-      },
-      { status: 409 },
-    );
-  }
-
+  // Server-side gate is deliberately loose — the button shows for any
+  // row with an email, and the click-time confirm dialog is the real
+  // check. A resend to the same guest is meant to work; Resend's own
+  // idempotency window would otherwise block one, so the key rotates
+  // per-attempt via a coarse minute-level bucket.
+  const attemptBucket = Math.floor(Date.now() / 60_000);
   const firstName = guest.name.trim().split(/\s+/)[0] ?? "Friend";
   const { subject, html, text } = renderInvitation({ firstName });
 
@@ -96,7 +93,7 @@ export async function POST(req: Request) {
     subject,
     html,
     text,
-    idempotencyKey: `luna-inv-${guest.id}`,
+    idempotencyKey: `luna-inv-${guest.id}-${attemptBucket}`,
   });
 
   if (!sent.ok) {
