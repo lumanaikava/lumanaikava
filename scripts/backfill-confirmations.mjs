@@ -144,6 +144,13 @@ async function sendOne(buyer) {
       subject: "You're in — LUNA EKLIPTIKA, Friday Aug 28",
       html,
       reply_to: env.CONTACT_EMAIL || "bula@lumanai.com",
+      // Match the runtime send so backfilled emails carry the same
+      // deliverability signals as automated ones.
+      headers: {
+        "List-Unsubscribe":
+          "<mailto:unsubscribe@lumanai.com>, <https://www.lumanai.com/api/unsubscribe>",
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+      },
     }),
   });
   const text = await res.text();

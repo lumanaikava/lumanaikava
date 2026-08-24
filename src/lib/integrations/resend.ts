@@ -65,6 +65,21 @@ export async function sendEmail(
         html: input.html,
         text: input.text,
         replyTo: REPLY_TO,
+        /**
+         * Bulk-sender headers per Gmail's Feb 2024 guidance and
+         * RFC 8058. Both help inbox placement — Gmail's classifier
+         * uses their presence as a strong "this is a legitimate
+         * sender, not spam" signal even for transactional volumes.
+         *
+         * The mailto unsubscribe target is `unsubscribe@lumanai.com` —
+         * Zoho MX is already wired for that address; nothing new to
+         * set up. The URL provides the required one-click endpoint.
+         */
+        headers: {
+          "List-Unsubscribe":
+            "<mailto:unsubscribe@lumanai.com>, <https://www.lumanai.com/api/unsubscribe>",
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
       },
       input.idempotencyKey
         ? { idempotencyKey: input.idempotencyKey }
