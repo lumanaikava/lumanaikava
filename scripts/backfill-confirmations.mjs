@@ -20,39 +20,33 @@ import { createHmac } from "node:crypto";
  */
 
 const BUYERS = [
-  // ── Backfill batch 2 (2026-08-24) — webhook was never registered in
-  //     Shopify Admin, so every LUNA ticket since batch 1 fell through.
-  //     Order #2578 (Karina Estrada) skipped: no email on the order.
-  //     Order #2575 (Zach Grzymala) skipped: not a party ticket.
+  // ── Backfill batch 3 (2026-08-24, evening) — full store-history
+  //     audit turned up three earlier orders that batch 1 missed
+  //     entirely. Everyone else has already been caught by an earlier
+  //     backfill or by this same one, keyed by luna-conf-<order>.
+  //     Skipped for lack of an email on the order:
+  //       #2565 Brandy Graff, #2570 Jordan Handel, #2578 Karina Estrada.
   {
-    order: "#2574",
+    order: "#2564",
+    firstName: "Zach",
+    fullName: "Zach Grzymala",
+    email: "zachgriz5@gmail.com",
+    tier: "Obsidian",
+    seats: 1,
+  },
+  {
+    order: "#2571",
+    firstName: "Cathy",
+    fullName: "Cathy Vongnaraj",
+    email: "cathyv@huntingtonandellis.com",
+    tier: "Meridian",
+    seats: 1,
+  },
+  {
+    order: "#2572",
     firstName: "Olivia",
-    fullName: "Olivia Patton",
-    email: "oliviacampbellpatton@gmail.com",
-    tier: "Obsidian",
-    seats: 1,
-  },
-  {
-    order: "#2576",
-    firstName: "Angelica",
-    fullName: "Angelica Hathaway",
-    email: "hathawayangelica8@gmail.com",
-    tier: "Obsidian",
-    seats: 1,
-  },
-  {
-    order: "#2577",
-    firstName: "Cory",
-    fullName: "Cory McCormack",
-    email: "liquidzen528@gmail.com",
-    tier: "Obsidian",
-    seats: 1,
-  },
-  {
-    order: "#2579",
-    firstName: "Etienne",
-    fullName: "Etienne Asher",
-    email: "ash@lumanai.com",
+    fullName: "Olivia Pillow",
+    email: "olivia.pillow@icloud.com",
     tier: "Obsidian",
     seats: 1,
   },
