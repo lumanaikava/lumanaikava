@@ -20,20 +20,40 @@ import { createHmac } from "node:crypto";
  */
 
 const BUYERS = [
+  // ── Backfill batch 2 (2026-08-24) — webhook was never registered in
+  //     Shopify Admin, so every LUNA ticket since batch 1 fell through.
+  //     Order #2578 (Karina Estrada) skipped: no email on the order.
+  //     Order #2575 (Zach Grzymala) skipped: not a party ticket.
   {
-    order: "#2568",
-    firstName: "Michael",
-    fullName: "Michael Alvarez",
-    email: "Ceo@perfitnesspt.com",
-    tier: "Meridian",
+    order: "#2574",
+    firstName: "Olivia",
+    fullName: "Olivia Patton",
+    email: "oliviacampbellpatton@gmail.com",
+    tier: "Obsidian",
     seats: 1,
   },
   {
-    order: "#2569",
-    firstName: "Laura",
-    fullName: "Laura Wand",
-    email: "law3c14@gmail.com",
-    tier: "Perihelion",
+    order: "#2576",
+    firstName: "Angelica",
+    fullName: "Angelica Hathaway",
+    email: "hathawayangelica8@gmail.com",
+    tier: "Obsidian",
+    seats: 1,
+  },
+  {
+    order: "#2577",
+    firstName: "Cory",
+    fullName: "Cory McCormack",
+    email: "liquidzen528@gmail.com",
+    tier: "Obsidian",
+    seats: 1,
+  },
+  {
+    order: "#2579",
+    firstName: "Etienne",
+    fullName: "Etienne Asher",
+    email: "ash@lumanai.com",
+    tier: "Obsidian",
     seats: 1,
   },
 ];
