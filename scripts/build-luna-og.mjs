@@ -125,7 +125,7 @@ line("YOU'RE INVITED", H * 0.555, {
 }
 
 // Tagline
-line("A sober nightlife experience like no other", H * 0.82, {
+line("A premium nightlife experience like no other", H * 0.82, {
   font: "Barlow Regular",
   size: H * 0.033,
   color: MUTE,

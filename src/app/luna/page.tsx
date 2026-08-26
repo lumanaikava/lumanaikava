@@ -32,7 +32,7 @@ import { tierRank } from "@/lib/party-tiers";
  */
 const OG_TITLE = "You're invited — LUNA EKLIPTIKA";
 const OG_DESCRIPTION =
-  "A sober nightlife experience like no other. Friday, August 28 · Las Vegas.";
+  "A premium nightlife experience like no other. Friday, August 28 · Las Vegas.";
 const OG_IMAGE = "https://www.lumanai.com/images/party/luna-og.jpg";
 
 export const metadata: Metadata = {
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
         url: OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: "LUNA EKLIPTIKA — a sober nightlife experience like no other",
+        alt: "LUNA EKLIPTIKA — a premium nightlife experience like no other",
       },
     ],
   },
@@ -230,6 +230,11 @@ export default async function InvitedPage() {
           <p className="luna-in font-mono text-[11px] uppercase tracking-[0.35em] text-shell/60">
             Lumanai presents
           </p>
+          {/* Fundraiser chip — the whole night is a crowd-fund launch,
+              so donors need to see it up top before they scroll. */}
+          <p className="luna-in mt-2 inline-block rounded-full border border-gold/40 bg-gold/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.28em] text-gold">
+            A crowd-funded launch
+          </p>
           <h1 className="h-sign luna-in luna-d1 mt-4 text-[3.2rem] leading-[0.86] text-shell sm:text-[6.5rem]">
             Luna
             <br />
@@ -239,7 +244,7 @@ export default async function InvitedPage() {
             Friday Night · Aug 28
           </p>
           <p className="luna-in luna-d3 mt-3 max-w-md font-mono text-[11px] uppercase tracking-[0.32em] text-gold/90">
-            A sober nightlife experience like no other
+            A premium nightlife experience like no other
           </p>
           <p className="luna-in luna-d3 mt-3 font-mono text-[11px] uppercase tracking-[0.28em] text-shell/55">
             Dress code — all white
@@ -350,14 +355,12 @@ export default async function InvitedPage() {
       >
         <div className="luna-roots" aria-hidden />
         <div className="relative mx-auto max-w-3xl text-center">
-          <Eyebrow>Admission</Eyebrow>
+          <Eyebrow>Crowd-funded launch · Choose your orbit</Eyebrow>
           <h2 className="h-sign mt-4 text-5xl text-shell sm:text-6xl">
             Choose your orbit.
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-shell/75">
-            Your contribution secures your spot. Confirmation and the
-            full details — including where — arrive by email. Nothing
-            ships.
+            LUNA EKLIPTIKA is a <strong className="text-gold">crowd-funded launch party</strong>. Every ticket is a contribution to Lumanai&rsquo;s launch — the site going live, RUSH shipping, everything that comes next. Confirmation and the full details, including where, arrive by email.
           </p>
 
           <div className="mt-9 rounded-3xl border border-gold/40 bg-abyss/60 p-7 backdrop-blur sm:p-9">

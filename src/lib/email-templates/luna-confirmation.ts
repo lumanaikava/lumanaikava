@@ -220,7 +220,7 @@ export function renderConfirmation(
   <tr><td align="center" bgcolor="${BG}" style="background-color:${BG};padding:44px 32px 4px 32px;">
     <p style="margin:0 0 18px 0;font-family:${HEAD};font-size:11px;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:${GOLD};">You&rsquo;re in</p>
     <h1 style="margin:0;font-family:${HEAD};font-size:36px;line-height:1.02;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:${BONE};">Luna <span style="color:${GOLD};">Ekliptika</span></h1>
-    <p style="margin:14px 0 0 0;font-family:${HEAD};font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:${GOLD};">A sober nightlife experience like no other</p>
+    <p style="margin:14px 0 0 0;font-family:${HEAD};font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:${GOLD};">A premium nightlife experience like no other</p>
   </td></tr>
 
   <tr><td align="center" bgcolor="${BG}" style="background-color:${BG};padding:26px 32px 0 32px;">
@@ -231,7 +231,7 @@ export function renderConfirmation(
 
   <tr><td bgcolor="${BG}" style="background-color:${BG};padding:26px 34px 0 34px;">
     <p style="margin:0 0 14px 0;font-family:${TEXT};font-size:16px;line-height:1.6;color:${BODY};">${escapeHtml(firstName)} &mdash;</p>
-    <p style="margin:0 0 14px 0;font-family:${TEXT};font-size:16px;line-height:1.6;color:${BODY};">Thank you. Your contribution is in and your spot is held. <strong style="color:${BONE};">The QR code below is your entry</strong> &mdash; nothing is printed and nothing ships.</p>
+    <p style="margin:0 0 14px 0;font-family:${TEXT};font-size:16px;line-height:1.6;color:${BODY};">Thank you. <strong style="color:${GOLD};">Your contribution to our crowd-funded launch is in</strong> and your spot is held. <strong style="color:${BONE};">The QR code below is your entry</strong> &mdash; nothing is printed and nothing ships.</p>
     <p style="margin:0;font-family:${TEXT};font-size:16px;line-height:1.6;color:${BODY};">${t.line}</p>
   </td></tr>
 
@@ -334,11 +334,11 @@ ${
   // but Gmail's Priority Inbox occasionally previews the text half).
   const text = [
     `You're in — LUNA EKLIPTIKA`,
-    `A sober nightlife experience like no other`,
+    `A premium nightlife experience like no other`,
     ``,
     `${firstName} —`,
     ``,
-    `Thank you. Your contribution is in and your spot is held. The QR code below is your entry — nothing is printed and nothing ships.`,
+    `Thank you. Your contribution to our crowd-funded launch is in and your spot is held. The QR code below is your entry — nothing is printed and nothing ships.`,
     ``,
     t.line,
     ``,

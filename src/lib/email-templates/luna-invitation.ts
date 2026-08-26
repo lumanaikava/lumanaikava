@@ -46,14 +46,15 @@ export function renderInvitation(input: { firstName: string }): {
     <p style="margin:0 0 20px 0;font-family:'Barlow Semi Condensed',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:#d4af6a;">You&rsquo;re invited</p>
     <p style="margin:0 0 12px 0;font-family:'Barlow Semi Condensed',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:#8a8378;">Lumanai presents</p>
     <h1 style="margin:0;font-family:'Barlow Semi Condensed',Helvetica,Arial,sans-serif;font-size:44px;line-height:0.98;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:#f2efe8;">Luna<br /><span style="color:#d4af6a;">Ekliptika</span></h1>
-    <p style="margin:16px 0 0 0;font-family:'Barlow Semi Condensed',Helvetica,Arial,sans-serif;font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#d4af6a;">A sober nightlife experience like no other</p>
+    <p style="margin:16px 0 0 0;font-family:'Barlow Semi Condensed',Helvetica,Arial,sans-serif;font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#d4af6a;">A premium nightlife experience like no other</p>
   </td></tr>
 
   <tr><td bgcolor="#0b0b0c" style="background-color:#0b0b0c;padding:32px 34px 0 34px;">
     <p style="margin:0 0 16px 0;font-family:Barlow,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#c9c3b8;">${firstName} &mdash;</p>
     <p style="margin:0 0 16px 0;font-family:Barlow,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#c9c3b8;">On the 28th we&rsquo;re throwing our first party. Not a market, not a booth &mdash; a full night at a private residence, built entirely around kava.</p>
     <p style="margin:0 0 16px 0;font-family:Barlow,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#c9c3b8;">It&rsquo;s also the night Lumanai stops being a thing we do on weekends. RUSH launches. The site goes live. And the people who were around before any of it existed get the first pour.</p>
-    <p style="margin:0;font-family:Barlow,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#c9c3b8;">That&rsquo;s you. So this is a real invitation, not a flyer.</p>
+    <p style="margin:0 0 16px 0;font-family:Barlow,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#c9c3b8;">That&rsquo;s you. So this is a real invitation, not a flyer.</p>
+    <p style="margin:0;font-family:Barlow,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#c9c3b8;"><strong style="color:#d4af6a;">This is a crowd-fundraiser.</strong> Every ticket is a contribution to Lumanai&rsquo;s launch, and every tier is a different way to help. You choose your part.</p>
   </td></tr>
 
   <tr><td bgcolor="#0b0b0c" style="background-color:#0b0b0c;padding:28px 34px;"><div style="height:1px;background-color:#2a2621;line-height:0;font-size:0;">&nbsp;</div></td></tr>
@@ -149,7 +150,7 @@ export function renderInvitation(input: { firstName: string }): {
     `Lumanai presents`,
     ``,
     `LUNA EKLIPTIKA`,
-    `A sober nightlife experience like no other`,
+    `A premium nightlife experience like no other`,
     ``,
     `${input.firstName.trim() || "Friend"} —`,
     ``,
@@ -158,6 +159,8 @@ export function renderInvitation(input: { firstName: string }): {
     `It's also the night Lumanai stops being a thing we do on weekends. RUSH launches. The site goes live. And the people who were around before any of it existed get the first pour.`,
     ``,
     `That's you. So this is a real invitation, not a flyer.`,
+    ``,
+    `THIS IS A CROWD-FUNDRAISER. Every ticket is a contribution to Lumanai's launch, and every tier is a different way to help. You choose your part.`,
     ``,
     `THE OFFERINGS`,
     `The bar — Unlimited Traditional Kava shots for everyone, all night. An exclusively crafted menu of low- or no-sugar naktails and functional mocktails. Meridian and above get the full cocktail list plus Ash's signature kanna pour.`,
