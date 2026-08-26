@@ -229,7 +229,7 @@ function build(t) {
       Luna <span style="color:${GOLD};">Ekliptika</span>
     </h1>
     <p style="margin:14px 0 0 0;font-family:${HEAD};font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:${GOLD};">
-      A premium nightlife experience like no other
+      A premium nightlife experience
     </p>
   </td></tr>
 

@@ -220,7 +220,7 @@ export function renderConfirmation(
   <tr><td align="center" bgcolor="${BG}" style="background-color:${BG};padding:44px 32px 4px 32px;">
     <p style="margin:0 0 18px 0;font-family:${HEAD};font-size:11px;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:${GOLD};">You&rsquo;re in</p>
     <h1 style="margin:0;font-family:${HEAD};font-size:36px;line-height:1.02;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:${BONE};">Luna <span style="color:${GOLD};">Ekliptika</span></h1>
-    <p style="margin:14px 0 0 0;font-family:${HEAD};font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:${GOLD};">A premium nightlife experience like no other</p>
+    <p style="margin:14px 0 0 0;font-family:${HEAD};font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:${GOLD};">A premium nightlife experience</p>
   </td></tr>
 
   <tr><td align="center" bgcolor="${BG}" style="background-color:${BG};padding:26px 32px 0 32px;">
@@ -334,7 +334,7 @@ ${
   // but Gmail's Priority Inbox occasionally previews the text half).
   const text = [
     `You're in — LUNA EKLIPTIKA`,
-    `A premium nightlife experience like no other`,
+    `A premium nightlife experience`,
     ``,
     `${firstName} —`,
     ``,

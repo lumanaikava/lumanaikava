@@ -46,7 +46,7 @@ export function renderInvitation(input: { firstName: string }): {
     <p style="margin:0 0 20px 0;font-family:'Barlow Semi Condensed',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:#d4af6a;">You&rsquo;re invited</p>
     <p style="margin:0 0 12px 0;font-family:'Barlow Semi Condensed',Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:#8a8378;">Lumanai presents</p>
     <h1 style="margin:0;font-family:'Barlow Semi Condensed',Helvetica,Arial,sans-serif;font-size:44px;line-height:0.98;font-weight:900;letter-spacing:1px;text-transform:uppercase;color:#f2efe8;">Luna<br /><span style="color:#d4af6a;">Ekliptika</span></h1>
-    <p style="margin:16px 0 0 0;font-family:'Barlow Semi Condensed',Helvetica,Arial,sans-serif;font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#d4af6a;">A premium nightlife experience like no other</p>
+    <p style="margin:16px 0 0 0;font-family:'Barlow Semi Condensed',Helvetica,Arial,sans-serif;font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#d4af6a;">A premium nightlife experience</p>
   </td></tr>
 
   <tr><td bgcolor="#0b0b0c" style="background-color:#0b0b0c;padding:32px 34px 0 34px;">
@@ -150,7 +150,7 @@ export function renderInvitation(input: { firstName: string }): {
     `Lumanai presents`,
     ``,
     `LUNA EKLIPTIKA`,
-    `A premium nightlife experience like no other`,
+    `A premium nightlife experience`,
     ``,
     `${input.firstName.trim() || "Friend"} —`,
     ``,

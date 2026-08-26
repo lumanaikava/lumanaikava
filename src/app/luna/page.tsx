@@ -32,7 +32,7 @@ import { tierRank } from "@/lib/party-tiers";
  */
 const OG_TITLE = "You're invited — LUNA EKLIPTIKA";
 const OG_DESCRIPTION =
-  "A premium nightlife experience like no other. Friday, August 28 · Las Vegas.";
+  "A premium nightlife experience. Friday, August 28 · Las Vegas.";
 const OG_IMAGE = "https://www.lumanai.com/images/party/luna-og.jpg";
 
 export const metadata: Metadata = {
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
         url: OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: "LUNA EKLIPTIKA — a premium nightlife experience like no other",
+        alt: "LUNA EKLIPTIKA — a premium nightlife experience",
       },
     ],
   },
@@ -244,7 +244,7 @@ export default async function InvitedPage() {
             Friday Night · Aug 28
           </p>
           <p className="luna-in luna-d3 mt-3 max-w-md font-mono text-[11px] uppercase tracking-[0.32em] text-gold/90">
-            A premium nightlife experience like no other
+            A premium nightlife experience
           </p>
           <p className="luna-in luna-d3 mt-3 font-mono text-[11px] uppercase tracking-[0.28em] text-shell/55">
             Dress code — all white
