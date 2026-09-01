@@ -53,6 +53,21 @@ export async function shopifyFetch<T>(
 
 /* ── Types ─────────────────────────────────────────────────── */
 
+/**
+ * One "Subscribe & save" option, flattened out of Shopify's
+ * group→plan→priceAdjustment nesting.
+ *
+ * The plans come from Seal Subscriptions, which owns them app-side —
+ * the Admin API won't return them to our token, but the Storefront API
+ * exposes them fully, which is all the shop needs.
+ */
+export type SellingPlan = {
+  id: string;
+  name: string;
+  /** Percent off, when the plan discounts by percentage. */
+  percentOff: number | null;
+};
+
 export type ShopifyProduct = {
   id: string;
   title: string;
@@ -71,7 +86,45 @@ export type ShopifyProduct = {
       };
     }[];
   };
+  sellingPlanGroups?: {
+    edges: {
+      node: {
+        name: string;
+        sellingPlans: {
+          edges: {
+            node: {
+              id: string;
+              name: string;
+              priceAdjustments: {
+                adjustmentValue:
+                  | { adjustmentPercentage?: number }
+                  | Record<string, unknown>;
+              }[];
+            };
+          }[];
+        };
+      };
+    }[];
+  };
 };
+
+/** Flatten a product's selling-plan groups into a simple option list. */
+export function sellingPlansOf(p: ShopifyProduct): SellingPlan[] {
+  const groups = p.sellingPlanGroups?.edges ?? [];
+  return groups.flatMap((g) =>
+    g.node.sellingPlans.edges.map(({ node }) => {
+      const adj = node.priceAdjustments?.[0]?.adjustmentValue as
+        | { adjustmentPercentage?: number }
+        | undefined;
+      const pct = Number(adj?.adjustmentPercentage);
+      return {
+        id: node.id,
+        name: node.name,
+        percentOff: Number.isFinite(pct) && pct > 0 ? pct : null,
+      };
+    }),
+  );
+}
 
 export function formatPrice(amount: string, currencyCode = "USD"): string {
   const n = Number(amount);
@@ -114,6 +167,28 @@ const PRODUCT_FIELDS = /* GraphQL */ `
         }
       }
     }
+    sellingPlanGroups(first: 3) {
+      edges {
+        node {
+          name
+          sellingPlans(first: 6) {
+            edges {
+              node {
+                id
+                name
+                priceAdjustments {
+                  adjustmentValue {
+                    ... on SellingPlanPercentagePriceAdjustment {
+                      adjustmentPercentage
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 `;
 
@@ -152,7 +227,16 @@ export async function getProductByHandle(
   return data.product;
 }
 
-export type CartLine = { variantId: string; quantity: number };
+export type CartLine = {
+  variantId: string;
+  quantity: number;
+  /**
+   * Subscribe & save. When present, Shopify prices the line off the
+   * plan (and its discount) rather than the variant, and the resulting
+   * order becomes a recurring contract in Seal Subscriptions.
+   */
+  sellingPlanId?: string;
+};
 
 export type Checkout = {
   url: string;
@@ -186,6 +270,9 @@ export async function createCheckout(lines: CartLine[]): Promise<Checkout> {
   const input = lines.map((l) => ({
     merchandiseId: l.variantId,
     quantity: Math.min(Math.max(Math.round(l.quantity) || 1, 1), MAX_LINE_QUANTITY),
+    // Omitted entirely for one-time purchases — Shopify rejects a null
+    // sellingPlanId, so the key must be absent rather than empty.
+    ...(l.sellingPlanId ? { sellingPlanId: l.sellingPlanId } : {}),
   }));
   const requested = input.reduce((n, l) => n + l.quantity, 0);
 

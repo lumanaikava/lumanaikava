@@ -59,16 +59,40 @@ function parseLines(payload: {
       ? [{ variantId: payload.variantId, quantity: payload.quantity }]
       : [];
 
-  const merged = new Map<string, number>();
+  // Keyed by variant AND selling plan: the same growler bought once and
+  // bought monthly are two lines at two prices, and merging them would
+  // silently turn a one-time purchase into a recurring charge.
+  const merged = new Map<
+    string,
+    { variantId: string; sellingPlanId?: string; quantity: number }
+  >();
   for (const entry of raw.slice(0, MAX_LINES)) {
-    const line = entry as { variantId?: unknown; quantity?: unknown };
+    const line = entry as {
+      variantId?: unknown;
+      quantity?: unknown;
+      sellingPlanId?: unknown;
+    };
     const variantId =
       typeof line.variantId === "string" ? line.variantId.trim() : "";
     if (!variantId || variantId.length > 255) continue;
+    const rawPlan =
+      typeof line.sellingPlanId === "string" ? line.sellingPlanId.trim() : "";
+    // Only accept a well-formed Shopify SellingPlan GID — this value goes
+    // straight into a cart mutation, and a plan id is not something the
+    // buyer should be able to invent.
+    const sellingPlanId = /^gid:\/\/shopify\/SellingPlan\/\d+$/.test(rawPlan)
+      ? rawPlan
+      : undefined;
     const quantity = Math.min(Math.max(Number(line.quantity) || 1, 1), 20);
-    merged.set(variantId, Math.min((merged.get(variantId) ?? 0) + quantity, 20));
+    const key = sellingPlanId ? `${variantId}::${sellingPlanId}` : variantId;
+    const prev = merged.get(key);
+    merged.set(key, {
+      variantId,
+      sellingPlanId,
+      quantity: Math.min((prev?.quantity ?? 0) + quantity, 20),
+    });
   }
-  return [...merged].map(([variantId, quantity]) => ({ variantId, quantity }));
+  return [...merged.values()];
 }
 
 export async function POST(req: Request) {

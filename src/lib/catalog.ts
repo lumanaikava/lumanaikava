@@ -9,7 +9,8 @@ import {
   getProductByHandle,
   formatPrice,
 } from "@/lib/integrations/shopify";
-import type { ShopifyProduct } from "@/lib/integrations/shopify";
+import type { ShopifyProduct, SellingPlan } from "@/lib/integrations/shopify";
+import { sellingPlansOf } from "@/lib/integrations/shopify";
 import {
   products as staticProducts,
   getProduct as getStaticProduct,
@@ -56,6 +57,12 @@ export type CatalogProduct = {
     priceLabel: string;
     available: boolean;
   }[];
+  /**
+   * Subscribe & save options, when the product has any. Empty for
+   * one-time-only products (RUSH, party tickets), which is what keeps
+   * the selector off pages where it would be meaningless.
+   */
+  sellingPlans: SellingPlan[];
   live: boolean;
 };
 
@@ -115,6 +122,7 @@ function fromShopify(p: ShopifyProduct): CatalogProduct {
         priceLabel: formatPrice(node.price.amount, node.price.currencyCode),
         available: node.availableForSale,
       })),
+    sellingPlans: sellingPlansOf(p),
     live: true,
   };
 }
@@ -130,6 +138,9 @@ function fromStatic(p: (typeof staticProducts)[number]): CatalogProduct {
     image: p.image,
     imageAlt: p.name,
     available: true,
+    // Static fallback data has no Shopify ids, so it can't offer a
+    // subscription — the plan ids only exist on the live product.
+    sellingPlans: [],
     amount: p.price,
     // The static labels read "From $35.00", which would be a lie on a
     // cart line. Nothing static is buyable (no variantId), but the

@@ -72,6 +72,7 @@ export default async function ProductPage({
           singleVariantId={product.variantId}
           singlePriceLabel={product.variantPriceLabel}
           singleAmount={product.amount}
+          sellingPlans={product.sellingPlans}
         />
       </div>
 

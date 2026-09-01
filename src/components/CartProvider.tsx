@@ -31,15 +31,33 @@ export type CartItem = {
   amount: number;
   image?: string;
   quantity: number;
+  /**
+   * Subscribe & save plan, when the buyer chose one. A subscription of
+   * a variant and a one-time of the SAME variant are different lines —
+   * see lineKey — because merging them would silently convert a
+   * one-time purchase into a recurring charge.
+   */
+  sellingPlanId?: string;
+  /** e.g. "Monthly Subscription · 5% off", for the cart drawer. */
+  sellingPlanName?: string;
 };
+
+/**
+ * What makes two cart entries "the same line".
+ *
+ * Variant alone isn't enough once subscriptions exist: the same growler
+ * bought once and bought monthly are two lines at two prices.
+ */
+export const lineKey = (i: Pick<CartItem, "variantId" | "sellingPlanId">) =>
+  i.sellingPlanId ? `${i.variantId}::${i.sellingPlanId}` : i.variantId;
 
 type CartApi = {
   items: CartItem[];
   count: number;
   total: number;
   add: (item: Omit<CartItem, "quantity">, qty?: number) => void;
-  setQuantity: (variantId: string, qty: number) => void;
-  remove: (variantId: string) => void;
+  setQuantity: (key: string, qty: number) => void;
+  remove: (key: string) => void;
   clear: () => void;
   /** False until localStorage has been read, so the badge can't flash. */
   ready: boolean;
@@ -167,14 +185,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
 
   const add = useCallback((item: Omit<CartItem, "quantity">, qty = 1) => {
+    const key = lineKey(item);
     update((prev) => {
-      const found = prev.find((i) => i.variantId === item.variantId);
+      const found = prev.find((i) => lineKey(i) === key);
       if (found) {
         // Take the incoming details over the stored ones — this add came
         // from a page Shopify just rendered, so its price is the fresher
         // of the two if it moved since the line was first added.
         return prev.map((i) =>
-          i.variantId === item.variantId
+          lineKey(i) === key
             ? { ...item, quantity: clampQty(i.quantity + qty) }
             : i,
         );
@@ -183,19 +202,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const setQuantity = useCallback((variantId: string, qty: number) => {
+  const setQuantity = useCallback((key: string, qty: number) => {
     update((prev) =>
       qty <= 0
-        ? prev.filter((i) => i.variantId !== variantId)
+        ? prev.filter((i) => lineKey(i) !== key)
         : prev.map((i) =>
-            i.variantId === variantId ? { ...i, quantity: clampQty(qty) } : i,
+            lineKey(i) === key ? { ...i, quantity: clampQty(qty) } : i,
           ),
     );
   }, []);
 
   const remove = useCallback(
-    (variantId: string) =>
-      update((prev) => prev.filter((i) => i.variantId !== variantId)),
+    (key: string) => update((prev) => prev.filter((i) => lineKey(i) !== key)),
     [],
   );
 

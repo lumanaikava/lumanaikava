@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { SellingPlan } from "@/lib/integrations/shopify";
 import Image from "next/image";
 import AddToCartButton from "@/components/AddToCartButton";
 import { artworkFor, HIDE_PRICES } from "@/lib/shop-display";
@@ -23,6 +24,10 @@ type Variant = {
  *
  * Products with a single variant render no picker at all.
  */
+const money = (n: number) =>
+  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD",
+    minimumFractionDigits: n % 1 === 0 ? 0 : 2 }).format(n);
+
 export default function ProductPurchase({
   handle,
   name,
@@ -33,6 +38,7 @@ export default function ProductPurchase({
   singleVariantId,
   singlePriceLabel,
   singleAmount,
+  sellingPlans = [],
 }: {
   handle: string;
   name: string;
@@ -43,6 +49,7 @@ export default function ProductPurchase({
   singleVariantId?: string;
   singlePriceLabel: string;
   singleAmount: number;
+  sellingPlans?: SellingPlan[];
 }) {
   const hasChoice = variants.length > 1;
   const [selectedId, setSelectedId] = useState(
@@ -55,8 +62,17 @@ export default function ProductPurchase({
   const chosen = variants.find((v) => v.variantId === selectedId);
   const variantId = chosen?.variantId ?? singleVariantId;
   const priceLabel = chosen?.priceLabel ?? singlePriceLabel;
-  const amount = chosen?.amount ?? singleAmount;
+  const amountBase = chosen?.amount ?? singleAmount;
   const inStock = chosen ? chosen.available : available;
+
+  // "" means one-time. Deliberately the default: a recurring charge is
+  // something the buyer opts into, never something they fail to opt out of.
+  const [planId, setPlanId] = useState("");
+  const plan = sellingPlans.find((p) => p.id === planId);
+  const planAmount =
+    plan?.percentOff != null
+      ? Math.round(amountBase * (1 - plan.percentOff / 100) * 100) / 100
+      : amountBase;
 
   const art = artworkFor(handle, chosen?.title) ?? fallbackImage;
 
@@ -121,8 +137,84 @@ export default function ProductPurchase({
           </fieldset>
         )}
 
+        {sellingPlans.length > 0 && (
+          <fieldset className="mt-1">
+            <legend className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/50">
+              Purchase options
+            </legend>
+            <div className="mt-3 space-y-2">
+              <label
+                className={`flex cursor-pointer items-center justify-between gap-3 rounded-2xl border px-4 py-3 transition-colors ${
+                  planId === ""
+                    ? "border-gold bg-gold/10"
+                    : "border-shell/20 hover:border-shell/40"
+                }`}
+              >
+                <span className="flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name="purchase-option"
+                    className="accent-gold"
+                    checked={planId === ""}
+                    onChange={() => setPlanId("")}
+                  />
+                  <span className="text-sm text-shell">One-time purchase</span>
+                </span>
+                <span className="font-mono text-sm text-shell/70">
+                  {money(amountBase)}
+                </span>
+              </label>
+
+              {sellingPlans.map((sp) => {
+                const price =
+                  sp.percentOff != null
+                    ? Math.round(amountBase * (1 - sp.percentOff / 100) * 100) / 100
+                    : amountBase;
+                const active = planId === sp.id;
+                return (
+                  <label
+                    key={sp.id}
+                    className={`flex cursor-pointer items-center justify-between gap-3 rounded-2xl border px-4 py-3 transition-colors ${
+                      active
+                        ? "border-gold bg-gold/10"
+                        : "border-shell/20 hover:border-shell/40"
+                    }`}
+                  >
+                    <span className="flex items-center gap-3">
+                      <input
+                        type="radio"
+                        name="purchase-option"
+                        className="accent-gold"
+                        checked={active}
+                        onChange={() => setPlanId(sp.id)}
+                      />
+                      <span className="text-sm text-shell">
+                        {sp.name}
+                        {sp.percentOff != null && (
+                          <span className="ml-2 rounded-full bg-gold/15 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-gold">
+                            Save {sp.percentOff}%
+                          </span>
+                        )}
+                      </span>
+                    </span>
+                    <span className="font-mono text-sm text-gold">
+                      {money(price)}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+            <p className="mt-2.5 text-[11px] leading-relaxed text-shell/40">
+              Subscriptions renew automatically. Skip, pause or cancel any
+              time from the link in your order confirmation.
+            </p>
+          </fieldset>
+        )}
+
         {!HIDE_PRICES && (
-          <p className="font-mono text-2xl text-gold">{priceLabel}</p>
+          <p className="font-mono text-2xl text-gold">
+            {plan ? money(planAmount) : priceLabel}
+          </p>
         )}
 
         <div className="mt-5">
@@ -134,9 +226,18 @@ export default function ProductPurchase({
                     handle,
                     name,
                     variantName: hasChoice ? chosen?.title : undefined,
-                    priceLabel,
-                    amount,
+                    priceLabel: plan ? money(planAmount) : priceLabel,
+                    amount: planAmount,
                     image: art,
+                    ...(plan
+                      ? {
+                          sellingPlanId: plan.id,
+                          sellingPlanName:
+                            plan.percentOff != null
+                              ? `${plan.name} · ${plan.percentOff}% off`
+                              : plan.name,
+                        }
+                      : {}),
                   }
                 : undefined
             }

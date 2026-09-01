@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import SmsConsent from "@/components/SmsConsent";
-import { MAX_PER_LINE, useCart } from "@/components/CartProvider";
+import { MAX_PER_LINE, lineKey, useCart } from "@/components/CartProvider";
 // One money formatter for the whole site: the line labels came out of
 // this function on the server, so the subtotal has to use it too or the
 // two will eventually disagree on cents.
@@ -41,7 +41,7 @@ export default function CartDrawer() {
     adjusted?: string;
   } | null>(null);
 
-  const signature = items.map((i) => `${i.variantId}x${i.quantity}`).join(",");
+  const signature = items.map((i) => `${lineKey(i)}x${i.quantity}`).join(",");
   const current = result?.cart === signature ? result : null;
   const error = current?.error;
   const adjusted = current?.adjusted;
@@ -95,6 +95,7 @@ export default function CartDrawer() {
         body: JSON.stringify({
           lines: items.map((i) => ({
             variantId: i.variantId,
+            ...(i.sellingPlanId ? { sellingPlanId: i.sellingPlanId } : {}),
             quantity: i.quantity,
           })),
           context: "shop",
@@ -182,7 +183,7 @@ export default function CartDrawer() {
                 ? `${item.name}, ${item.variantName}`
                 : item.name;
               return (
-                <li key={item.variantId} className="flex gap-4 py-5">
+                <li key={lineKey(item)} className="flex gap-4 py-5">
                   <div className="flex h-20 w-14 shrink-0 items-end justify-center">
                     {item.image && (
                       <Image
@@ -203,6 +204,11 @@ export default function CartDrawer() {
                         {item.variantName}
                       </p>
                     )}
+                      {item.sellingPlanName && (
+                        <p className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-gold">
+                          ↻ {item.sellingPlanName}
+                        </p>
+                      )}
                     <p className="mt-1 font-mono text-xs text-gold">
                       {item.priceLabel}
                     </p>
@@ -212,7 +218,7 @@ export default function CartDrawer() {
                         <button
                           type="button"
                           onClick={() =>
-                            setQuantity(item.variantId, item.quantity - 1)
+                            setQuantity(lineKey(item), item.quantity - 1)
                           }
                           aria-label={`Remove one ${label}`}
                           className="px-3 py-1 font-mono text-sm text-shell/70 transition-colors hover:text-gold"
@@ -225,7 +231,7 @@ export default function CartDrawer() {
                         <button
                           type="button"
                           onClick={() =>
-                            setQuantity(item.variantId, item.quantity + 1)
+                            setQuantity(lineKey(item), item.quantity + 1)
                           }
                           disabled={item.quantity >= MAX_PER_LINE}
                           aria-label={`Add one ${label}`}
@@ -236,7 +242,7 @@ export default function CartDrawer() {
                       </div>
                       <button
                         type="button"
-                        onClick={() => remove(item.variantId)}
+                        onClick={() => remove(lineKey(item))}
                         aria-label={`Remove ${label} from cart`}
                         className="font-mono text-[10px] uppercase tracking-[0.15em] text-shell/35 transition-colors hover:text-coconut"
                       >

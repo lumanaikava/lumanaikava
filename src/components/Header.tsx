@@ -6,6 +6,13 @@ import { useState } from "react";
 import { navLinks } from "@/lib/nav";
 import CartButton from "@/components/CartButton";
 
+/**
+ * Shopify's hosted customer accounts. Login, order history and the
+ * Coconuts balance all live there — the headless storefront has no
+ * account system of its own, so this is the door to it.
+ */
+const ACCOUNT_URL = "https://account.lumanai.com";
+
 export default function Header() {
   const [open, setOpen] = useState(false);
 
@@ -57,6 +64,15 @@ export default function Header() {
           >
             Contact
           </Link>
+          {/* Shopify hosts customer accounts (and the Coconuts balance)
+              on account.lumanai.com. Without this link the site
+              advertised a rewards programme with no way to reach it. */}
+          <a
+            href={ACCOUNT_URL}
+            className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/70 transition-colors hover:text-gold"
+          >
+            Account
+          </a>
           <CartButton />
         </div>
 
@@ -93,6 +109,13 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+          <a
+            href={ACCOUNT_URL}
+            onClick={() => setOpen(false)}
+            className="border-b border-shell/10 py-3 font-mono text-xs uppercase tracking-[0.2em] text-shell/80 hover:text-gold"
+          >
+            Account &amp; Coconuts
+          </a>
           <Link
             href="/events#book"
             onClick={() => setOpen(false)}
