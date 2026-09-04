@@ -73,6 +73,7 @@ export type ShopifyProduct = {
   title: string;
   handle: string;
   description: string;
+  descriptionHtml: string;
   availableForSale: boolean;
   featuredImage: { url: string; altText: string | null } | null;
   priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
@@ -143,6 +144,7 @@ const PRODUCT_FIELDS = /* GraphQL */ `
     title
     handle
     description
+    descriptionHtml
     availableForSale
     featuredImage {
       url

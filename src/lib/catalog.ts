@@ -28,6 +28,8 @@ export type CatalogProduct = {
   name: string;
   notes: string;
   description: string;
+  /** Sanitised product copy from Shopify, ready to render. */
+  descriptionHtml: string;
   priceLabel: string;
   category: "premium" | "growler" | "rush";
   image?: string;
@@ -66,6 +68,43 @@ export type CatalogProduct = {
   live: boolean;
 };
 
+
+/**
+ * Turn Shopify's product HTML into something safe to render.
+ *
+ * Most of this copy was migrated from Squarespace and still carries its
+ * debris — <meta charset> tags mid-body, `class="sqsrte-large preFade
+ * fadeIn"`, data-mce-fragment attributes, empty spacer paragraphs. So
+ * this keeps a small set of structural tags and drops EVERY attribute.
+ *
+ * Dropping all attributes is also what makes the result safe to pass to
+ * dangerouslySetInnerHTML: with no attributes there is nowhere for an
+ * onerror or a javascript: href to live, and the tag allowlist has no
+ * script, iframe, style or anchor in it.
+ */
+const ALLOWED_TAGS = new Set([
+  "p", "br", "strong", "b", "em", "i", "u", "ul", "ol", "li", "h3", "h4",
+]);
+
+export function cleanDescriptionHtml(html: string): string {
+  if (!html) return "";
+  return (
+    html
+      // Whole elements whose content should never be shown.
+      .replace(/<(script|style|iframe|noscript)\b[\s\S]*?<\/\1\s*>/gi, "")
+      // Every remaining tag: keep it only if allowed, and always bare.
+      .replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, (_m, raw: string) => {
+        const tag = raw.toLowerCase();
+        if (!ALLOWED_TAGS.has(tag)) return "";
+        return _m.startsWith("</") ? `</${tag}>` : `<${tag}>`;
+      })
+      // Spacer paragraphs left behind by the migration.
+      .replace(/<p>(?:\s|&nbsp;|<br>)*<\/p>/gi, "")
+      .replace(/(?:\s*<br>\s*){3,}/gi, "<br><br>")
+      .trim()
+  );
+}
+
 /** Shopify's name for the lone variant of a single-variant product. */
 const DEFAULT_VARIANT_TITLE = "Default Title";
 
@@ -95,6 +134,7 @@ function fromShopify(p: ShopifyProduct): CatalogProduct {
     name: p.title,
     notes: blurb(p.description),
     description: p.description,
+    descriptionHtml: cleanDescriptionHtml(p.descriptionHtml),
     priceLabel: formatPrice(
       p.priceRange.minVariantPrice.amount,
       p.priceRange.minVariantPrice.currencyCode,
@@ -133,6 +173,7 @@ function fromStatic(p: (typeof staticProducts)[number]): CatalogProduct {
     name: p.name,
     notes: p.notes,
     description: p.description,
+    descriptionHtml: "",
     priceLabel: p.priceLabel,
     category: p.category === "growler" ? "growler" : "premium",
     image: p.image,

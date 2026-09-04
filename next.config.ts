@@ -21,9 +21,37 @@ const nextConfig: NextConfig = {
      * OFF until CANONICAL_HOST_REDIRECT is set. Safe to enable now that
      * lumanai.com is live on Vercel (2026-08-18).
      */
-    if (!process.env.CANONICAL_HOST_REDIRECT) return [];
+    /**
+     * Printed material outlives websites.
+     *
+     * The "SCAN TO SHOP ONLINE" cards in circulation were made for the
+     * old Shopify/Squarespace storefront, so their QR points at
+     * Shopify-shaped paths (/collections/..., /cart, /pages/...). None
+     * of those exist on the headless site — every one of them was a
+     * 404 for anyone scanning a card. These send them to the shop
+     * instead. Cheap to keep, and the cards can't be reprinted.
+     */
+    const legacyStorefront = [
+      { source: "/collections", destination: "/shop" },
+      { source: "/collections/:path*", destination: "/shop" },
+      { source: "/pages/:path*", destination: "/shop" },
+      { source: "/cart", destination: "/shop" },
+      { source: "/cart/:path*", destination: "/shop" },
+      { source: "/shop-online", destination: "/shop" },
+      { source: "/store", destination: "/shop" },
+      { source: "/order", destination: "/shop" },
+      { source: "/order-online", destination: "/shop" },
+      { source: "/shop-all", destination: "/shop" },
+      // Shopify's own account paths, so an old link still reaches the
+      // real account system rather than dead-ending.
+      { source: "/account", destination: "https://account.lumanai.com" },
+      { source: "/account/:path*", destination: "https://account.lumanai.com" },
+    ].map((r) => ({ ...r, permanent: false }));
+
+    if (!process.env.CANONICAL_HOST_REDIRECT) return legacyStorefront;
 
     return [
+      ...legacyStorefront,
       {
         source: "/:path*",
         has: [{ type: "host", value: "lumanaikava.vercel.app" }],

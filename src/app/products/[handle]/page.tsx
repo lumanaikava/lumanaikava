@@ -48,16 +48,20 @@ export default async function ProductPage({
         <h1 className="h-sign mt-2 text-4xl text-shell sm:text-5xl">
           {shortName(product.handle, product.name)}
         </h1>
-        {product.description && (
-          <details className="group mt-4 max-w-xl">
-            <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-shell/55 hover:text-gold">
-              Details
-              <span className="transition-transform group-open:rotate-45">+</span>
-            </summary>
-            <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-shell/70">
+        {/* Open, not behind a toggle. This is the copy that sells the
+            product — hiding it behind "Details" meant most visitors
+            never saw a word of it. */}
+        {product.descriptionHtml ? (
+          <div
+            className="product-copy mt-5 max-w-2xl text-sm leading-relaxed text-shell/75"
+            dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+          />
+        ) : (
+          product.description && (
+            <p className="mt-5 max-w-2xl whitespace-pre-line text-sm leading-relaxed text-shell/75">
               {product.description}
             </p>
-          </details>
+          )
         )}
       </div>
 

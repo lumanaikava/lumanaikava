@@ -832,3 +832,23 @@ body {
   .ether-drift { animation: ether-drift 18s ease-in-out infinite; }
   .ether-glow  { animation: ether-glow 5s ease-in-out infinite; }
 }
+
+/* Shopify product copy, rendered from sanitised HTML. The source has no
+   attributes left on it, so every bit of spacing has to come from here. */
+.product-copy p { margin: 0 0 0.85rem; }
+.product-copy p:last-child { margin-bottom: 0; }
+.product-copy strong,
+.product-copy b { color: rgb(var(--shell) / 0.95); font-weight: 600; }
+.product-copy em, .product-copy i { font-style: italic; }
+.product-copy ul, .product-copy ol { margin: 0 0 0.85rem; padding-left: 1.1rem; }
+.product-copy ul { list-style: disc; }
+.product-copy ol { list-style: decimal; }
+.product-copy li { margin: 0 0 0.3rem; }
+.product-copy h3, .product-copy h4 {
+  margin: 1.2rem 0 0.5rem;
+  font-family: var(--font-mono, ui-monospace), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgb(var(--gold, 212 175 106));
+}
