@@ -28,20 +28,21 @@ const nextConfig: NextConfig = {
      * old Shopify/Squarespace storefront, so their QR points at
      * Shopify-shaped paths (/collections/..., /cart, /pages/...). None
      * of those exist on the headless site — every one of them was a
-     * 404 for anyone scanning a card. These send them to the shop
-     * instead. Cheap to keep, and the cards can't be reprinted.
+     * 404 for anyone scanning a card. These send them to /products,
+     * which IS the shop (/shop is only a redirect to it, so aiming
+     * there would cost every scan a second hop).
      */
     const legacyStorefront = [
-      { source: "/collections", destination: "/shop" },
-      { source: "/collections/:path*", destination: "/shop" },
-      { source: "/pages/:path*", destination: "/shop" },
-      { source: "/cart", destination: "/shop" },
-      { source: "/cart/:path*", destination: "/shop" },
-      { source: "/shop-online", destination: "/shop" },
-      { source: "/store", destination: "/shop" },
-      { source: "/order", destination: "/shop" },
-      { source: "/order-online", destination: "/shop" },
-      { source: "/shop-all", destination: "/shop" },
+      { source: "/collections", destination: "/products" },
+      { source: "/collections/:path*", destination: "/products" },
+      { source: "/pages/:path*", destination: "/products" },
+      { source: "/cart", destination: "/products" },
+      { source: "/cart/:path*", destination: "/products" },
+      { source: "/shop-online", destination: "/products" },
+      { source: "/store", destination: "/products" },
+      { source: "/order", destination: "/products" },
+      { source: "/order-online", destination: "/products" },
+      { source: "/shop-all", destination: "/products" },
       // Shopify's own account paths, so an old link still reaches the
       // real account system rather than dead-ending.
       { source: "/account", destination: "https://account.lumanai.com" },

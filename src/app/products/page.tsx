@@ -14,7 +14,9 @@ import {
 } from "@/lib/shop-display";
 
 export const metadata: Metadata = {
-  title: "Shop — Lumanai Kava",
+  // The root layout appends " — Lumanai Kava"; naming the brand
+  // here too rendered "Shop — Lumanai Kava — Lumanai Kava".
+  title: "Shop",
   description:
     "Lumanai Original Naktails and RUSH instant kava — bottled for one, poured for the table.",
 };
