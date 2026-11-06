@@ -48,23 +48,9 @@ export default async function ProductPage({
         <h1 className="h-sign mt-2 text-4xl text-shell sm:text-5xl">
           {shortName(product.handle, product.name)}
         </h1>
-        {/* Open, not behind a toggle. This is the copy that sells the
-            product — hiding it behind "Details" meant most visitors
-            never saw a word of it. */}
-        {product.descriptionHtml ? (
-          <div
-            className="product-copy mt-5 max-w-2xl text-sm leading-relaxed text-shell/75"
-            dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
-          />
-        ) : (
-          product.description && (
-            <p className="mt-5 max-w-2xl whitespace-pre-line text-sm leading-relaxed text-shell/75">
-              {product.description}
-            </p>
-          )
-        )}
       </div>
 
+      {/* Image and buy box first, so shoppers see the product before the copy. */}
       <div className="mt-6">
         <ProductPurchase
           handle={product.handle}
@@ -79,6 +65,22 @@ export default async function ProductPage({
           sellingPlans={product.sellingPlans}
         />
       </div>
+
+      {/* Open, not behind a toggle. This is the copy that sells the
+          product — hiding it behind "Details" meant most visitors
+          never saw a word of it. */}
+      {product.descriptionHtml ? (
+        <div
+          className="product-copy mt-8 max-w-2xl text-sm leading-relaxed text-shell/75"
+          dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+        />
+      ) : (
+        product.description && (
+          <p className="mt-8 max-w-2xl whitespace-pre-line text-sm leading-relaxed text-shell/75">
+            {product.description}
+          </p>
+        )
+      )}
 
       <div>
           <dl className="mt-12 grid grid-cols-2 gap-6 border-t border-shell/10 pt-8 text-sm sm:grid-cols-4">
