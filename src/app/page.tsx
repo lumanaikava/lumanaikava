@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import Archipelago from "@/components/Archipelago";
-import { currentMenu } from "@/lib/menu";
 import { galleryImages } from "@/lib/images";
 import { upcomingEventsSynced, formatEventDate } from "@/lib/calendar";
 
@@ -44,64 +43,6 @@ export default async function Home() {
           <p className="mx-auto mt-4 max-w-xl text-sm text-shell/50">
             Coined behind the bar at LUMANAI.
           </p>
-        </div>
-      </section>
-
-      {/* Pouring now — one tight band */}
-      <section className="border-b border-shell/10">
-        <div className="mx-auto max-w-6xl px-6 py-12">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <h2 className="h-sign text-3xl text-shell sm:text-4xl">
-              Pouring <span className="text-coconut">now</span>
-            </h2>
-            <Link
-              href="/menu"
-              className="-my-2 shrink-0 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-gold hover:text-shell"
-            >
-              Full menu →
-            </Link>
-          </div>
-          <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            {currentMenu.sections
-              .flatMap((s) => s.drinks.map((d) => ({ ...d, price: s.price })))
-              .map((d) => (
-                <Link
-                  key={d.name}
-                  href="/menu"
-                  className="group flex items-center gap-4 rounded-2xl border border-shell/10 bg-lagoon/30 p-4 transition-colors hover:border-gold"
-                >
-                  {d.image && (
-                    <Image
-                      src={d.image}
-                      alt=""
-                      width={64}
-                      height={80}
-                      className="h-16 w-auto shrink-0 object-contain"
-                    />
-                  )}
-                  <span>
-                    <span className="h-sign-med block text-xl text-shell group-hover:text-gold">
-                      {d.name}
-                    </span>
-                    <span className="font-mono text-xs text-gold">
-                      ${d.price}
-                    </span>
-                    {d.effects && (
-                      <span className="mt-1 flex gap-1.5">
-                        {d.effects.map((fx) => (
-                          <span
-                            key={fx}
-                            className="rounded-full border border-shell/25 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-shell/60"
-                          >
-                            {fx}
-                          </span>
-                        ))}
-                      </span>
-                    )}
-                  </span>
-                </Link>
-              ))}
-          </div>
         </div>
       </section>
 
