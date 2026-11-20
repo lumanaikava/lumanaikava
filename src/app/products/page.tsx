@@ -108,6 +108,44 @@ export default async function ProductsPage() {
         </p>
       )}
 
+      {/* The Small Batch Difference — carried over from the old
+          Shopify products page. Below the grid so the bottles keep
+          the first screen. */}
+      <div className="mx-auto mt-14 max-w-3xl text-center sm:mt-20">
+        <h2 className="h-sign text-4xl leading-[0.95] text-shell sm:text-5xl">
+          The small batch <span className="text-coconut">difference.</span>
+        </h2>
+        <p className="h-sign-med mt-4 text-lg text-gold sm:text-xl">
+          You&apos;ve never tried ready-to-drink kava like this.
+        </p>
+        <p className="mt-6 leading-relaxed text-shell/75">
+          We spent years formulating these delicious, hand-crafted
+          non-alcoholic cocktails using advanced craft cocktail and culinary
+          techniques. Each 8 oz bottle is roughly the same strength as 8 oz of
+          your average kava bar kava, with the exception of our Basic Batch,
+          which is nearly twice as strong.{" "}
+          <strong className="font-semibold text-shell">
+            Our premium noble kava is hand-pressed without the use of CO2 or
+            solvents and is third party tested for purity.
+          </strong>{" "}
+          Read more about our process{" "}
+          <Link href="/our-process" className="prose-link text-gold">
+            here
+          </Link>
+          .
+        </p>
+        <p className="mt-4 leading-relaxed text-shell/75">
+          We only use high-quality, all-natural ingredients and reverse
+          osmosis water.
+        </p>
+        <p className="mt-8 font-mono text-xs uppercase tracking-[0.22em] text-gold">
+          Bundle and subscription discounts available
+        </p>
+        <p className="mt-3 font-mono text-xs uppercase tracking-[0.22em] text-gold">
+          4 bottle order minimum
+        </p>
+      </div>
+
       {/* Lifestyle band — below the lineup so the bottles still own the
           first screen. */}
       <div className="mt-12 grid items-center gap-6 overflow-hidden rounded-3xl border border-shell/10 bg-lagoon/30 sm:mt-16 sm:grid-cols-2">

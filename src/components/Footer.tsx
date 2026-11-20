@@ -61,12 +61,23 @@ export default function Footer() {
             <ul className="mt-2 space-y-0.5">
               {footerLinks.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="block py-1.5 text-sm text-shell/80 transition-colors hover:text-gold"
-                  >
-                    {link.label}
-                  </Link>
+                  {/* /a/* leaves the site for Shopify — a plain anchor,
+                      so the router doesn't try to render it. */}
+                  {link.href.startsWith("/a/") ? (
+                    <a
+                      href={link.href}
+                      className="block py-1.5 text-sm text-shell/80 transition-colors hover:text-gold"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className="block py-1.5 text-sm text-shell/80 transition-colors hover:text-gold"
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

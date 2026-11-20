@@ -116,6 +116,13 @@ export default function Header() {
           >
             Account &amp; Coconuts
           </a>
+          <a
+            href="/a/subscriptions"
+            onClick={() => setOpen(false)}
+            className="border-b border-shell/10 py-3 font-mono text-xs uppercase tracking-[0.2em] text-shell/80 hover:text-gold"
+          >
+            Manage Subscription
+          </a>
           <Link
             href="/events#book"
             onClick={() => setOpen(false)}

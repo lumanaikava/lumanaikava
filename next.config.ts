@@ -1,11 +1,34 @@
 import type { NextConfig } from "next";
 
+const SHOPIFY_STOREFRONT = `https://${
+  process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN?.trim() ||
+  "lumanai-kava.myshopify.com"
+}`.replace(/^https:\/\/https?:\/\//, "https://");
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       // Shopify product images
       { protocol: "https", hostname: "cdn.shopify.com" },
     ],
+  },
+
+  async rewrites() {
+    /**
+     * events.lumanai.com — the events business gets its own front door.
+     * Same site underneath; the subdomain's home page IS the booking
+     * page, so event leads never land on the shop. Every other path on
+     * that host serves the normal site.
+     */
+    return {
+      beforeFiles: [
+        {
+          source: "/",
+          has: [{ type: "host", value: "events.lumanai.com" }],
+          destination: "/events",
+        },
+      ],
+    };
   },
 
   async redirects() {
@@ -47,6 +70,15 @@ const nextConfig: NextConfig = {
       // real account system rather than dead-ending.
       { source: "/account", destination: "https://account.lumanai.com" },
       { source: "/account/:path*", destination: "https://account.lumanai.com" },
+      // Shopify app proxies. Seal Subscriptions' customer portal (and
+      // the "manage subscription" links in every Seal email) live at
+      // /a/subscriptions; Joy and other apps use /apps/*. These only
+      // exist on Shopify's storefront, so since the DNS cutover they
+      // 404'd here and subscribers couldn't manage their plans. Send
+      // them to the myshopify host, which still answers them. Query
+      // strings (Seal's signed links) carry through.
+      { source: "/a/:path*", destination: `${SHOPIFY_STOREFRONT}/a/:path*` },
+      { source: "/apps/:path*", destination: `${SHOPIFY_STOREFRONT}/apps/:path*` },
     ].map((r) => ({ ...r, permanent: false }));
 
     if (!process.env.CANONICAL_HOST_REDIRECT) return legacyStorefront;

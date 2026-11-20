@@ -12,6 +12,8 @@ export const navLinks = [
 
 export const footerLinks = [
   { label: "Contact", href: "/contact" },
+  // Seal Subscriptions portal — redirected to Shopify in next.config.
+  { label: "Manage Subscription", href: "/a/subscriptions" },
   { label: "Our Kava", href: "/about-kava" },
   { label: "Our Craft", href: "/our-craft" },
   { label: "Our Story", href: "/our-story" },
