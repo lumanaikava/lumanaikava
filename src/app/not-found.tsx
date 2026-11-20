@@ -27,10 +27,10 @@ export default function NotFound() {
             Back Home
           </Link>
           <Link
-            href="/menu"
+            href="/events"
             className="rounded-full border border-shell/30 px-8 py-4 font-mono text-xs uppercase tracking-[0.2em] text-shell hover:border-gold hover:text-gold"
           >
-            See the Menu
+            Book the Bar
           </Link>
         </div>
       </div>

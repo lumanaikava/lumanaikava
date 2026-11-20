@@ -96,10 +96,10 @@ export default function AboutKavaPage() {
           </h2>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
-              href="/menu"
+              href="/products"
               className="rounded-full bg-gold px-8 py-4 font-mono text-xs font-bold uppercase tracking-[0.2em] text-abyss hover:bg-shell"
             >
-              See The Menu
+              Shop Kava
             </Link>
             <Link
               href="/events#book"

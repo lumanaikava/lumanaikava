@@ -2,7 +2,6 @@ export const navLinks = [
   // Book is covered by the gold "Book the Bar" button. Labels match the
   // drink icons on the home page — two names for the same page reads as
   // two pages.
-  { label: "Drinks", href: "/menu" },
   { label: "Shop", href: "/products" },
   { label: "Schedule", href: "/find-us" },
   { label: "Our Story", href: "/our-story" },

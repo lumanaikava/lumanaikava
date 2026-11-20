@@ -31,13 +31,6 @@ type DrinkNav = {
 
 const nav: DrinkNav[] = [
   {
-    href: "/menu",
-    label: "Drinks",
-    img: "/images/drinks/icons/hive-gold.png",
-    accent: "#ffbb00",
-    delay: "0s",
-  },
-  {
     href: "/products",
     label: "Shop",
     img: "/images/drinks/icons/crimson.png",

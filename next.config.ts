@@ -55,6 +55,14 @@ const nextConfig: NextConfig = {
      * which IS the shop (/shop is only a redirect to it, so aiming
      * there would cost every scan a second hop).
      */
+    // The public drinks menu was taken down (Nov 2026) — Ash doesn't
+    // want drinks or prices on the site. Old links and search results
+    // land on the booking page instead. Per-event menus (/menu/<event>)
+    // are untouched.
+    const removedPages = [
+      { source: "/menu", destination: "/events", permanent: false },
+    ];
+
     const legacyStorefront = [
       { source: "/collections", destination: "/products" },
       { source: "/collections/:path*", destination: "/products" },
@@ -81,9 +89,11 @@ const nextConfig: NextConfig = {
       { source: "/apps/:path*", destination: `${SHOPIFY_STOREFRONT}/apps/:path*` },
     ].map((r) => ({ ...r, permanent: false }));
 
-    if (!process.env.CANONICAL_HOST_REDIRECT) return legacyStorefront;
+    if (!process.env.CANONICAL_HOST_REDIRECT)
+      return [...removedPages, ...legacyStorefront];
 
     return [
+      ...removedPages,
       ...legacyStorefront,
       {
         source: "/:path*",

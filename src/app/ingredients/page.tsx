@@ -6,7 +6,6 @@ import {
   categoryLabels,
   type Ingredient,
 } from "@/lib/ingredients";
-import { drinksWithIngredient } from "@/lib/drinks-db";
 
 export const metadata: Metadata = {
   title: "Ingredients",
@@ -67,7 +66,6 @@ export default function IngredientsPage() {
                 </h2>
                 <ul className="mt-3 divide-y divide-shell/10 border-y border-shell/10">
                   {rows.map((ing) => {
-                    const pouredIn = drinksWithIngredient(ing.slug);
                     return (
                       <li key={ing.slug}>
                         <details className="group">
@@ -94,26 +92,6 @@ export default function IngredientsPage() {
                             <p className="max-w-xl text-sm leading-relaxed text-shell/75">
                               {ing.claim}
                             </p>
-                            {pouredIn.length > 0 && (
-                              <p className="mt-3 flex flex-wrap items-center gap-2">
-                                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-shell/45">
-                                  Found in
-                                </span>
-                                {pouredIn.map((d) => (
-                                  <Link
-                                    key={d.slug}
-                                    href="/menu"
-                                    className="rounded-full border px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.15em] transition-colors hover:border-gold hover:text-gold"
-                                    style={{
-                                      borderColor: `${d.accent}66`,
-                                      color: d.accent,
-                                    }}
-                                  >
-                                    {d.name}
-                                  </Link>
-                                ))}
-                              </p>
-                            )}
                           </div>
                         </details>
                       </li>
@@ -131,10 +109,10 @@ export default function IngredientsPage() {
         <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-8 px-6 py-10">
           <p className="h-sign text-2xl text-shell">Ready to taste it?</p>
           <Link
-            href="/menu"
+            href="/events"
             className="btn-brush font-mono text-xs font-bold uppercase tracking-[0.2em] text-shell"
           >
-            See the Menu
+            Book the Bar
           </Link>
         </div>
       </section>
