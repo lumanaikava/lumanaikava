@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import ExperienceBuilder from "@/components/ExperienceBuilder";
 import { team } from "@/lib/team";
+import { eventImages } from "@/lib/images";
 
 export const metadata: Metadata = {
   title: "Build an Experience",
@@ -42,10 +43,62 @@ export default function EventsPage() {
             room.
           </p>
         </div>
+        {/* Hero photo: the bar mid-pour with guests leaning in — sells the
+            night before a word of copy does. */}
+        <div className="relative mx-auto max-w-5xl px-6 pb-9 sm:pb-14">
+          <div className="relative aspect-[3/2] overflow-hidden rounded-3xl border border-shell/10">
+            <Image
+              src={eventImages.nightPour}
+              alt="Lumanai bartender pouring kava for guests under lantern light, Las Vegas Strip behind"
+              fill
+              priority
+              sizes="(min-width: 1024px) 976px, 100vw"
+              className="object-cover"
+            />
+          </div>
+        </div>
       </section>
 
       <section className="mx-auto max-w-5xl px-6 py-9 sm:py-14">
         <ExperienceBuilder />
+      </section>
+
+      {/* The room — social proof: real guests, real nights. */}
+      <section className="border-t border-shell/10">
+        <div className="mx-auto max-w-5xl px-6 py-9 sm:py-14">
+          <h2 className="h-sign text-4xl text-shell sm:text-5xl">
+            What the night <span className="text-coconut">looks like.</span>
+          </h2>
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            {[
+              {
+                src: eventImages.rooftopDusk,
+                alt: "Lumanai bartenders serving a guest at a rooftop private event at dusk",
+              },
+              {
+                src: eventImages.nightCrowd,
+                alt: "A crowd gathered around the Lumanai kava bar at night",
+              },
+              {
+                src: eventImages.guestsTasting,
+                alt: "Three guests smiling as they taste kava at the Lumanai bar",
+              },
+            ].map((img) => (
+              <div
+                key={img.src}
+                className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-shell/10"
+              >
+                <Image
+                  src={img.src}
+                  alt={img.alt}
+                  fill
+                  sizes="(min-width: 640px) 320px, 100vw"
+                  className="object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Meet your bartenders */}

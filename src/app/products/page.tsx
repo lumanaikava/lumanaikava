@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getCatalog } from "@/lib/catalog";
+import { lifestyleImages } from "@/lib/images";
 import {
   isHiddenFromShop,
   shopRank,
@@ -106,6 +107,28 @@ export default async function ProductsPage() {
           The shop is restocking — check back shortly.
         </p>
       )}
+
+      {/* Lifestyle band — below the lineup so the bottles still own the
+          first screen. */}
+      <div className="mt-12 grid items-center gap-6 overflow-hidden rounded-3xl border border-shell/10 bg-lagoon/30 sm:mt-16 sm:grid-cols-2">
+        <div className="relative aspect-[3/4] sm:aspect-[4/5]">
+          <Image
+            src={lifestyleImages.trailSip}
+            alt="Sipping Lumanai kava on a boulder in the mountains outside Las Vegas"
+            fill
+            sizes="(min-width: 640px) 560px, 100vw"
+            className="object-cover"
+          />
+        </div>
+        <div className="px-6 pb-8 sm:px-8 sm:pb-0">
+          <h2 className="h-sign text-4xl text-shell sm:text-5xl">
+            Take it <span className="text-coconut">out.</span>
+          </h2>
+          <p className="mt-4 max-w-sm text-shell/70">
+            The bar, bottled. Trailhead, rooftop, your couch.
+          </p>
+        </div>
+      </div>
     </section>
   );
 }

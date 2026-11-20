@@ -25,6 +25,14 @@ export const eventImages = {
   boothWide: "/images/events/692cd34db8afbcaf1fedd7d2__DSC6440.jpg",
   poolside: "/images/events/692cd3830ac6251eea5e2120__DSC6807.jpg",
   poolside2: "/images/events/692cd383fb3e5fef5345d316__DSC6819.jpg",
+  nightPour: "/images/events/night-pour.jpg",
+  nightCrowd: "/images/events/night-crowd.jpg",
+  rooftopDusk: "/images/events/rooftop-dusk.jpg",
+  guestsTasting: "/images/events/guests-tasting.jpg",
+} as const;
+
+export const lifestyleImages = {
+  trailSip: "/images/lifestyle/trail-sip.jpg",
 } as const;
 
 export const galleryImages = [
