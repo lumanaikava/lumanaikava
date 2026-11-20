@@ -128,8 +128,11 @@ function PalmTree({
 
 export default function Archipelago({
   events,
+  tagline,
 }: {
   events: { date: string; label: string; kind?: string }[];
+  /** One plain line under the slogan saying what the business is. */
+  tagline?: string;
 }) {
 
   /**
@@ -232,6 +235,11 @@ export default function Archipelago({
         <h1 className="h-sign mt-6 text-2xl text-shell sm:text-4xl">
           All the buzz <span className="text-coconut">without the booze</span>
         </h1>
+        {tagline && (
+          <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.22em] text-shell/70 sm:text-xs">
+            {tagline}
+          </p>
+        )}
         <div className="mt-8">
           <Link
             href="/events"

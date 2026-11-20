@@ -16,8 +16,8 @@ const nextConfig: NextConfig = {
   async rewrites() {
     /**
      * events.lumanai.com — the events business gets its own front door.
-     * Same site underneath; the subdomain's home page IS the booking
-     * page, so event leads never land on the shop. Every other path on
+     * Same site underneath; the subdomain's home page is the bar landing
+     * page (src/app/bar), so event leads never land on the shop. Every other path on
      * that host serves the normal site.
      */
     return {
@@ -25,7 +25,7 @@ const nextConfig: NextConfig = {
         {
           source: "/",
           has: [{ type: "host", value: "events.lumanai.com" }],
-          destination: "/events",
+          destination: "/bar",
         },
       ],
     };
