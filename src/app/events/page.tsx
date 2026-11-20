@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import ExperienceBuilder from "@/components/ExperienceBuilder";
-import { team } from "@/lib/team";
 import { eventImages } from "@/lib/images";
 
 export const metadata: Metadata = {
@@ -95,52 +94,6 @@ export default function EventsPage() {
                   sizes="(min-width: 640px) 320px, 100vw"
                   className="object-cover"
                 />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Meet your bartenders */}
-      <section className="border-t border-shell/10">
-        <div className="mx-auto max-w-4xl px-6 py-9 sm:py-14">
-          <h2 className="h-sign text-4xl text-shell sm:text-5xl">
-            Meet your <span className="text-coconut">bartenders.</span>
-          </h2>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2">
-            {team.map((t) => (
-              <div
-                key={t.name}
-                className="flex gap-5 overflow-hidden rounded-3xl border border-shell/10 bg-lagoon/30"
-              >
-                <div className="relative aspect-[3/4] w-36 shrink-0 bg-abyss/50 sm:w-44">
-                  {t.photo ? (
-                    <Image
-                      src={t.photo}
-                      alt={`${t.name} behind the Lumanai bar`}
-                      fill
-                      sizes="176px"
-                      // The source files are already cropped 3:4 around
-                      // the face, so this frame matches them exactly.
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center">
-                      <span className="h-sign text-6xl text-shell/20">
-                        {t.name[0]}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <div className="py-6 pr-5">
-                  <h3 className="h-sign text-2xl text-shell">{t.name}</h3>
-                  <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-gold">
-                    {t.role}
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-shell/65">
-                    {t.bio}
-                  </p>
-                </div>
               </div>
             ))}
           </div>

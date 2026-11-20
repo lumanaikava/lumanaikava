@@ -132,7 +132,7 @@ export default function ExperienceBuilder() {
           We&apos;ve got it.
         </h2>
         <p className="mt-4 text-shell/70">
-          Ash or Zach will reach out personally — usually within a day — to
+          Ash will reach out personally — usually within a day — to
           talk through what you&apos;re imagining and put real numbers to
           it. Nothing is locked in until you say so.
         </p>

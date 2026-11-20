@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import CoconutSecret from "./CoconutSecret";
-import NewsletterForm from "./NewsletterForm";
 import Ripple from "./Ripple";
 import { navLinks, footerLinks } from "@/lib/nav";
 import { CONTACT_EMAIL, CONTACT_MAILTO } from "@/lib/contact";
@@ -15,24 +14,6 @@ export default function Footer() {
         animated={false}
       />
       <div className="pointer-events-none absolute -left-40 top-1/3 h-96 w-96 rounded-full bg-amethyst/20 blur-3xl" />
-
-      {/* Waitlist / list capture */}
-      <div
-        id="waitlist"
-        className="relative border-b border-shell/10 bg-lagoon/30"
-      >
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-3.5 px-6 py-7 text-center lg:flex-row lg:justify-between lg:py-8 lg:text-left">
-          <div>
-            <p className="h-sign-med text-xl text-shell lg:text-2xl">
-              The Lounge is coming to Las Vegas.
-            </p>
-            <p className="mt-1 text-sm text-shell/60">
-              First pours, first invites, secret menu drops — get on the list.
-            </p>
-          </div>
-          <NewsletterForm source="footer-waitlist" />
-        </div>
-      </div>
 
       {/* Two columns on a phone, not four stacked ones. Stacked, this
           block alone ran to two full screens on every page of the site —
