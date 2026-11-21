@@ -5,7 +5,39 @@ const SHOPIFY_STOREFRONT = `https://${
   "lumanai-kava.myshopify.com"
 }`.replace(/^https:\/\/https?:\/\//, "https://");
 
+/**
+ * SEO: which site each page belongs to (see src/lib/canonical.ts).
+ *
+ * A Link rel=canonical response header on every page names its home, so
+ * the copies on the other hosts (www, events, the vercel.app test
+ * address) don't compete with it. Later rules override earlier ones for
+ * the same header key, so the default comes first.
+ */
+const WWW_ORIGIN = "https://www.lumanai.com";
+const EVENTS_ORIGIN = "https://events.lumanai.com";
+const EVENTS_HOST = "events.lumanai.com";
+const canonical = (url: string) => [
+  { key: "Link", value: `<${url}>; rel="canonical"` },
+];
+
 const nextConfig: NextConfig = {
+  async headers() {
+    return [
+      // Default: every page's home is www (assets and API excluded).
+      {
+        source: "/:path((?!_next/|api/).*)",
+        headers: canonical(`${WWW_ORIGIN}/:path`),
+      },
+      // The booking page is the events site's home page, on any host.
+      { source: "/events", headers: canonical(`${EVENTS_ORIGIN}/`) },
+      {
+        source: "/",
+        has: [{ type: "host", value: EVENTS_HOST }],
+        headers: canonical(`${EVENTS_ORIGIN}/`),
+      },
+    ];
+  },
+
   images: {
     remotePatterns: [
       // Shopify product images
@@ -22,6 +54,18 @@ const nextConfig: NextConfig = {
      */
     return {
       beforeFiles: [
+        // The events site gets its own robots.txt and sitemap, listing
+        // only its own pages (src/app/events-robots.txt, events-sitemap.xml).
+        {
+          source: "/robots.txt",
+          has: [{ type: "host", value: EVENTS_HOST }],
+          destination: "/events-robots.txt",
+        },
+        {
+          source: "/sitemap.xml",
+          has: [{ type: "host", value: EVENTS_HOST }],
+          destination: "/events-sitemap.xml",
+        },
         {
           source: "/",
           has: [{ type: "host", value: "events.lumanai.com" }],

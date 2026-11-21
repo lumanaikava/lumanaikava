@@ -1,6 +1,6 @@
 import { CONTACT_EMAIL, CONTACT_MAILTO } from "@/lib/contact";
 
-export const metadata = { title: "Privacy Policy — Lumanai Kava" };
+export const metadata = { title: "Privacy Policy" };
 
 /**
  * Real privacy policy — not a stub.

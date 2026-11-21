@@ -20,7 +20,7 @@ export async function generateMetadata({
 }) {
   const { handle } = await params;
   const product = await getCatalogProduct(handle);
-  return { title: product ? `${product.name} — Lumanai Kava` : "Lumanai Kava" };
+  return { title: product ? product.name : "Shop" };
 }
 
 export default async function ProductPage({

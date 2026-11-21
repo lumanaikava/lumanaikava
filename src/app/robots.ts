@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
-import { SITE_ORIGIN } from "@/lib/site-origin";
+import { WWW_ORIGIN } from "@/lib/canonical";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: "*", allow: "/" },
-    sitemap: `${SITE_ORIGIN}/sitemap.xml`,
+    rules: { userAgent: "*", allow: "/", disallow: ["/admin", "/api/"] },
+    sitemap: `${WWW_ORIGIN}/sitemap.xml`,
   };
 }
