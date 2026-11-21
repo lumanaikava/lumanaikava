@@ -1,13 +1,14 @@
 import type { MetadataRoute } from "next";
 import { getCatalog } from "@/lib/catalog";
-import { SITE_ORIGIN } from "@/lib/site-origin";
+import { WWW_ORIGIN } from "@/lib/canonical";
 
-const base = SITE_ORIGIN;
+// Pages whose canonical home is www. The booking page (/events) belongs
+// to the events site and is listed in its own sitemap.
+const base = WWW_ORIGIN;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = [
     "",
-    "/events",
     "/find-us",
     "/products",
     "/ingredients",
@@ -19,7 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ].map((path) => ({
     url: `${base}${path}`,
     changeFrequency: "weekly" as const,
-    priority: path === "" ? 1 : path === "/events" ? 0.9 : 0.7,
+    priority: path === "" ? 1 : 0.7,
   }));
 
   const { items } = await getCatalog();

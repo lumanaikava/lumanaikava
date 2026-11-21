@@ -4,7 +4,11 @@ import Image from "next/image";
 import Ripple from "@/components/Ripple";
 import { eventImages } from "@/lib/images";
 
-export const metadata: Metadata = { title: "Our Kava — Lumanai Kava" };
+export const metadata: Metadata = {
+  title: "Our Kava",
+  description:
+    "What kava is, where the tradition comes from, and the kava Lumanai pours at its Las Vegas bar.",
+};
 
 export default function AboutKavaPage() {
   return (

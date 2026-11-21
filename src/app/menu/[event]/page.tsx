@@ -24,7 +24,7 @@ export async function generateMetadata({
   const { event } = await params;
   const found = await findEvent(event);
   return {
-    title: found ? `${found.title} — Menu` : "Menu — Lumanai Kava",
+    title: found ? `${found.title} — Menu` : "Menu",
   };
 }
 

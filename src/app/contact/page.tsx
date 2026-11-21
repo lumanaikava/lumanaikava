@@ -3,7 +3,11 @@ import ContactForm from "@/components/ContactForm";
 import Ripple from "@/components/Ripple";
 import { CONTACT_EMAIL, CONTACT_MAILTO } from "@/lib/contact";
 
-export const metadata: Metadata = { title: "Contact — Lumanai Kava" };
+export const metadata: Metadata = {
+  title: "Contact",
+  description:
+    "Reach Lumanai Kava by phone, email or Instagram about booking the bar, orders and pickup in Las Vegas.",
+};
 
 export default function ContactPage() {
   return (

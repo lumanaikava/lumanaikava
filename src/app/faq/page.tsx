@@ -6,7 +6,11 @@ import {
   contentSheetConfigured,
 } from "@/lib/integrations/content-sheet";
 
-export const metadata: Metadata = { title: "FAQ — Lumanai Kava" };
+export const metadata: Metadata = {
+  title: "FAQ",
+  description:
+    "Straight answers about kava: how much to drink, side effects, what to avoid mixing it with, and how it compares to kratom and kombucha.",
+};
 
 export const revalidate = 60;
 
