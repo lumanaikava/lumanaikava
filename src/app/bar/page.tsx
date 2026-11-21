@@ -15,9 +15,9 @@ export const revalidate = 60;
  * lumanai.com itself is now the product brand's landing page.
  */
 export const metadata: Metadata = {
-  title: { absolute: "Lumanai — Craft Kava & Functional Mocktail Bar for Events" },
+  title: { absolute: "Lumanai — Mobile Craft Kava & Functional Mocktail Bar" },
   description:
-    "Premium craft kava and functional mocktail bar for events across Las Vegas. All the buzz — without the booze.",
+    "A mobile craft kava and functional mocktail bar for events across Las Vegas. All the buzz — without the booze.",
 };
 
 export default async function BarHome() {
@@ -37,7 +37,7 @@ export default async function BarHome() {
       {/* Everything important in one viewport: logo, slogan, drinks, dates */}
       <Archipelago
         events={tickerEvents}
-        tagline="Premium craft kava & functional mocktail bar for events"
+        tagline="A mobile craft kava & functional mocktail bar for your event"
       />
 
       {/* The word we own — dictionary entry, wording set by Ash */}

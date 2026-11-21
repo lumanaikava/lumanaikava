@@ -236,7 +236,7 @@ export default function Archipelago({
           All the buzz <span className="text-coconut">without the booze</span>
         </h1>
         {tagline && (
-          <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.22em] text-shell/70 sm:text-xs">
+          <p className="mx-auto mt-4 max-w-xl text-base leading-snug text-shell/85 sm:text-xl">
             {tagline}
           </p>
         )}
