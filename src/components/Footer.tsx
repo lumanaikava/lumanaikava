@@ -125,13 +125,11 @@ export default function Footer() {
           </p>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 lg:flex-nowrap lg:gap-x-6">
             {[
-              "Etho Wellness Club",
               "Discoflow",
               "Sweat Equity",
               "Ritual Collective",
               "Reshape Body Bar",
               "My Health Matrix",
-              "Grizzly Health",
             ].map((name) => (
               <span
                 key={name}

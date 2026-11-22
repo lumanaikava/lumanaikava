@@ -3,11 +3,57 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import ExperienceBuilder from "@/components/ExperienceBuilder";
 import { eventImages } from "@/lib/images";
+import { EVENTS_ORIGIN } from "@/lib/canonical";
 
+const TITLE = "Mobile Kava & Mocktail Bar for Las Vegas Events";
+const DESCRIPTION =
+  "Book Lumanai's alcohol-free craft kava and functional mocktail bar for your private event in Las Vegas. Pick the format, the size and the add-ons, and we'll reach out to plan it.";
+
+// This page is the events site's home: events.lumanai.com/ is rewritten
+// here, so its canonical is that root, whichever host serves it.
 export const metadata: Metadata = {
-  title: "Build an Experience",
-  description:
-    "Build your own kava bar experience — choose the format, the room, and the add-ons, and we'll reach out to talk it through. Las Vegas.",
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: `${EVENTS_ORIGIN}/` },
+  openGraph: {
+    title: `${TITLE} — Lumanai Kava`,
+    description: DESCRIPTION,
+    url: `${EVENTS_ORIGIN}/`,
+    siteName: "Lumanai Kava",
+    locale: "en_US",
+    type: "website",
+  },
+};
+
+// The bar as a bookable service, so search engines read this page as the
+// events business rather than the shop. Same details as the business
+// schema in the root layout.
+const serviceJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "Lumanai mobile kava and functional mocktail bar",
+  serviceType: "Mobile alcohol-free bar for private events",
+  description: DESCRIPTION,
+  url: `${EVENTS_ORIGIN}/`,
+  areaServed: [
+    { "@type": "City", name: "Las Vegas" },
+    { "@type": "City", name: "North Las Vegas" },
+  ],
+  provider: {
+    "@type": "LocalBusiness",
+    name: "Lumanai Kava",
+    url: `${EVENTS_ORIGIN}/`,
+    telephone: "+17026260858",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "1370 W Cheyenne Ave",
+      addressLocality: "North Las Vegas",
+      addressRegion: "NV",
+      postalCode: "89030",
+      addressCountry: "US",
+    },
+    sameAs: ["https://www.instagram.com/lumanaikava"],
+  },
 };
 
 /**
@@ -22,6 +68,10 @@ export const metadata: Metadata = {
 export default function EventsPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+      />
       <section className="relative overflow-hidden border-b border-shell/10">
         <div
           className="ether-drift pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-amethyst/20 blur-3xl"

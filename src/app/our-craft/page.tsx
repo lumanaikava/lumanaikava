@@ -4,7 +4,7 @@ import Ripple from "@/components/Ripple";
 import { eventImages } from "@/lib/images";
 
 export const metadata: Metadata = {
-  title: "Our Craft — Lumanai Kava",
+  title: "Our Craft",
   description:
     "Every ingredient in a Lumanai drink was chosen on purpose — from Fijian kava root to sugar-free vanilla to the water we use.",
 };

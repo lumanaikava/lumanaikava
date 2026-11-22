@@ -7,7 +7,11 @@ import {
   contentSheetConfigured,
 } from "@/lib/integrations/content-sheet";
 
-export const metadata: Metadata = { title: "Our Story — Lumanai Kava" };
+export const metadata: Metadata = {
+  title: "Our Story",
+  description:
+    "The story behind Lumanai Kava, a Las Vegas craft kava and functional mocktail bar, and why we set out to make kava a mainstream drink.",
+};
 
 export const revalidate = 60;
 
