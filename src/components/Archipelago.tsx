@@ -9,7 +9,8 @@ import { flashFrom } from "@/components/FlashOverlay";
 /**
  * The Lumanai hero: a craft kava tropical bar at the shoreline, at
  * night. Silhouetted palm trees sway behind a moonlit body of water;
- * the six site sections are drinks standing at the water's edge. Hover
+ * the site sections are drinks standing at the water's edge (booking
+ * has its own Build Your Event button, so it isn't one of them). Hover
  * a glass: it sloshes and throws droplets. Click: a golden light-burst
  * carries you to the page. A ticker of upcoming dates streams across
  * the bottom, forever. Palette stays navy/purple.
@@ -31,27 +32,6 @@ type DrinkNav = {
 
 const nav: DrinkNav[] = [
   {
-    href: "/products",
-    label: "Shop",
-    img: "/images/drinks/icons/crimson.png",
-    accent: "#ee1144",
-    delay: "1.6s",
-  },
-  {
-    href: "/events",
-    label: "Book",
-    img: "/images/drinks/icons/kolada.png",
-    accent: "#ffdd77",
-    delay: "0.9s",
-  },
-  {
-    href: "/find-us",
-    label: "Schedule",
-    img: "/images/drinks/icons/violet.png",
-    accent: "#a855e8",
-    delay: "2.3s",
-  },
-  {
     href: "/ingredients",
     label: "Ingredients",
     img: "/images/drinks/icons/matcha.png",
@@ -64,6 +44,27 @@ const nav: DrinkNav[] = [
     img: "/images/drinks/icons/ros.png",
     accent: "#ff6a2b",
     delay: "2.9s",
+  },
+  {
+    href: "/faq",
+    label: "FAQ",
+    img: "/images/drinks/icons/violet.png",
+    accent: "#a855e8",
+    delay: "2.3s",
+  },
+  {
+    href: "/find-us",
+    label: "Schedule",
+    img: "/images/drinks/icons/kolada.png",
+    accent: "#ffdd77",
+    delay: "0.9s",
+  },
+  {
+    href: "/products",
+    label: "Shop",
+    img: "/images/drinks/icons/crimson.png",
+    accent: "#ee1144",
+    delay: "1.6s",
   },
 ];
 

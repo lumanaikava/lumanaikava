@@ -40,7 +40,7 @@ export default async function BarHome() {
       {/* Everything important in one viewport: logo, slogan, drinks, dates */}
       <Archipelago
         events={tickerEvents}
-        tagline="Las Vegas’s craft kava & functional mocktail bar, brought to your event."
+        tagline="Las Vegas’s only mobile kava bar, pouring craft naktails and functional mocktails."
       />
 
       {/* The word we own — dictionary entry, wording set by Ash */}
