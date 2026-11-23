@@ -70,6 +70,22 @@ export default async function OurStoryPage() {
 
       <section className="border-t border-shell/10">
         <div className="mx-auto max-w-2xl px-6 py-9 sm:py-14">
+          {/* The founder, at the market. */}
+          <figure className="mx-auto mb-10 max-w-sm sm:mb-14">
+            <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-shell/10">
+              <Image
+                src="/images/team/ash-market.jpg"
+                alt="Ash, founder of Lumanai, holding a growler of kava at a farmers market"
+                fill
+                sizes="(min-width: 640px) 384px, 90vw"
+                className="object-cover object-[50%_20%]"
+              />
+            </div>
+            <figcaption className="mt-3 text-center font-mono text-[11px] uppercase tracking-[0.16em] text-shell/45">
+              {STORY_SIGNOFF.name} · Founder
+            </figcaption>
+          </figure>
+
           <div className="space-y-8 sm:space-y-11">
             {blocks.map((b) => (
               <div key={b.id}>

@@ -211,20 +211,20 @@ export function formatEventDate(iso: string): {
  *
  * The wording matters: DTS IS booked for some August Saturdays, so
  * "Returns in September" beside an August DTS date on the same page
- * reads as a contradiction. "Weekly again from September" says the
- * standing slot is what's paused, not the market.
+ * reads as a contradiction. The cards now simply name the day (Ash,
+ * Nov 2026: "Saturdays" / "Sundays", not "Weekly again from September").
  */
 export const residenciesPaused = true;
 
 export const weeklyResidencies = [
   {
-    day: residenciesPaused ? "Weekly again from September" : "Every Saturday",
+    day: "Saturdays",
     title: "Downtown Summerlin Farmers Market",
     location: "Downtown Summerlin",
     time: "9am–2pm",
   },
   {
-    day: residenciesPaused ? "Weekly again from September" : "Every Sunday",
+    day: "Sundays",
     title: "UnCommons Farmers Market",
     location: "UnCommons, Las Vegas",
     time: "10am–2pm",

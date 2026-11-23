@@ -32,6 +32,9 @@ export default function SignupPopup() {
 
   useEffect(() => {
     if (window.location.pathname.startsWith("/admin")) return;
+    // The events site is for booking the bar, not the shop's email and
+    // SMS list, so the popup never shows there (Ash, Nov 2026).
+    if (window.location.hostname === "events.lumanai.com") return;
 
     const params = new URLSearchParams(window.location.search);
     if (params.has("join")) {
