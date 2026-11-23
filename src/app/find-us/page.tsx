@@ -55,16 +55,11 @@ export default function FindUsPage() {
                 aria-hidden
               />
               <div className="relative">
-                {r.day && (
-                  <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-gold">
-                    {r.day}
-                  </p>
-                )}
-                <h2 className="h-sign-med mt-2 text-2xl text-shell md:mt-3 md:text-3xl">
+                <h2 className="h-sign-med text-2xl text-shell md:text-3xl">
                   {r.title}
                 </h2>
                 <p className="mt-2 font-mono text-sm text-shell/70 md:mt-3">
-                  {r.location} · {r.time}
+                  {r.location} · {r.day} {r.time}
                 </p>
               </div>
             </div>
