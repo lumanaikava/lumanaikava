@@ -13,7 +13,7 @@ const principles = [
   {
     kicker: "Water only",
     title: "No solvents. No CO₂.",
-    copy: "Every batch is water-extracted from whole Fijian and Vanuatu kava root. Alcohol and CO₂ pull compounds that don't belong in your drink — so we don't use them.",
+    copy: "Every batch is water-extracted from whole Fijian kava root. Alcohol and CO₂ pull compounds that don't belong in your drink — so we don't use them.",
   },
   {
     kicker: "Small-batch",
@@ -33,7 +33,7 @@ const principles = [
 ];
 
 const specs = [
-  { label: "Kava source", value: "Fiji + Vanuatu noble cultivars" },
+  { label: "Kava source", value: "Noble kava from Fiji" },
   { label: "Extraction", value: "Water only — no solvents, no CO₂" },
   { label: "Testing", value: "Third-party lab, every batch" },
   { label: "Sweeteners", value: "House-made sugar-free syrups" },

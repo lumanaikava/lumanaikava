@@ -83,13 +83,13 @@ export default async function ProductPage({
       )}
 
       <div>
-          <dl className="mt-12 grid grid-cols-2 gap-6 border-t border-shell/10 pt-8 text-sm sm:grid-cols-4">
+          <dl className="mt-12 grid grid-cols-2 gap-6 border-t border-shell/10 pt-8 text-sm sm:grid-cols-3">
             <div>
               <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/40">
                 Source
               </dt>
               <dd className="mt-1 text-shell/80">
-                Fiji &amp; Vanuatu cultivars
+                Noble kava from Fiji
               </dd>
             </div>
             <div>
@@ -98,14 +98,6 @@ export default async function ProductPage({
               </dt>
               <dd className="mt-1 text-shell/80">
                 Water only — no solvents, no CO₂
-              </dd>
-            </div>
-            <div>
-              <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/40">
-                Impact
-              </dt>
-              <dd className="mt-1 text-shell/80">
-                1% to South Pacific Islander Org.
               </dd>
             </div>
             <div>

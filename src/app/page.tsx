@@ -3,7 +3,7 @@ import Link from "next/link";
 import ProductGrid from "@/components/ProductGrid";
 import { getCatalog } from "@/lib/catalog";
 import { galleryImages, lifestyleImages } from "@/lib/images";
-import { isHiddenFromShop, shopRank } from "@/lib/shop-display";
+import { artworkFor, isHiddenFromShop, shopRank } from "@/lib/shop-display";
 
 // Catalog comes from Shopify with 60s revalidation.
 export const dynamic = "force-dynamic";
@@ -18,8 +18,9 @@ const EVENTS_SITE = "https://events.lumanai.com";
  * one lifestyle photo, the slogan, the lineup, and why it's different.
  *
  * The hero photo is portrait, so on desktop it takes the right half of
- * a split layout; on a phone it fills the screen with the words laid
- * over the bottom — the same composition as the handout card.
+ * a split layout; on a phone it sits on top with the words beneath.
+ * "Drink Different" rides the bottom of the photo on a torn strip of
+ * the root pattern, the way it does on the handout card.
  */
 export default async function Home() {
   const { items } = await getCatalog();
@@ -30,29 +31,38 @@ export default async function Home() {
   return (
     <>
       {/* ---------- Hero ---------- */}
-      <section className="relative overflow-hidden bg-abyss md:grid md:min-h-[calc(100svh_-_5.5rem)] md:grid-cols-2">
-        {/* Words — overlaid on the photo on a phone, their own column
-            on desktop. */}
-        <div className="absolute inset-x-0 bottom-0 z-10 px-6 pb-10 md:relative md:flex md:flex-col md:justify-center md:px-12 md:pb-0 lg:px-20">
+      <section className="relative flex flex-col overflow-hidden bg-abyss md:grid md:min-h-[calc(100svh_-_5.5rem)] md:grid-cols-2">
+        {/* Words + the bottles. Under the photo on a phone, their own
+            column on desktop. */}
+        <div className="relative order-2 px-6 pb-12 pt-8 md:order-1 md:flex md:flex-col md:justify-center md:px-12 md:py-10 lg:px-20">
           <div
-            className="pointer-events-none absolute inset-0 hidden bg-cover bg-center opacity-25 md:block"
+            className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-25"
             style={{ backgroundImage: "url(/images/roots-texture.webp)" }}
             aria-hidden
           />
           <div className="relative">
-            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold">
+            <p className="rise-in font-mono text-[11px] uppercase tracking-[0.25em] text-gold">
               Craft kava · Zero proof
             </p>
-            <h1 className="h-sign mt-3 text-5xl leading-[0.92] text-shell sm:text-6xl lg:text-7xl">
+            <h1
+              className="h-sign rise-in mt-3 text-5xl leading-[0.92] text-shell sm:text-6xl lg:text-7xl"
+              style={{ "--delay": "120ms" } as React.CSSProperties}
+            >
               All the buzz
               <br />
               <span className="text-coconut">without the booze.</span>
             </h1>
-            <p className="mt-5 max-w-md text-base leading-relaxed text-shell/80 sm:text-lg">
+            <p
+              className="rise-in mt-5 max-w-md text-base leading-relaxed text-shell/80 sm:text-lg"
+              style={{ "--delay": "240ms" } as React.CSSProperties}
+            >
               Hand-pressed noble kava, crafted into ready-to-drink naktails
               and instant kava. No alcohol, no hangover, no compromise.
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-4">
+            <div
+              className="rise-in mt-8 flex flex-wrap items-center gap-4"
+              style={{ "--delay": "360ms" } as React.CSSProperties}
+            >
               <Link
                 href="/products"
                 className="btn-brush text-xs font-bold uppercase tracking-[0.2em] text-shell"
@@ -66,41 +76,33 @@ export default async function Home() {
                 Book the Bar
               </a>
             </div>
+            <HeroLineup />
           </div>
         </div>
 
-        {/* Photo */}
-        <div className="relative h-[calc(100svh_-_5.5rem)] min-h-[560px] md:h-auto md:min-h-0">
+        {/* Photo, with the torn "Drink Different" strip from the card. */}
+        <div className="relative order-1 h-[52svh] min-h-[380px] overflow-hidden md:order-2 md:h-auto md:min-h-0">
           <Image
             src={lifestyleImages.trailSip}
             alt="Sipping Lumanai kava on a boulder in the mountains outside Las Vegas"
             fill
             priority
             sizes="(min-width: 768px) 50vw, 100vw"
-            className="object-cover object-[50%_30%]"
+            className="hero-settle object-cover object-[50%_18%] md:object-[50%_30%]"
           />
-          {/* Darkens the lower half on a phone so the words stay legible;
-              a soft edge into the text column on desktop. */}
-          <div className="absolute inset-0 bg-gradient-to-t from-abyss via-abyss/60 to-transparent md:bg-gradient-to-r md:from-abyss/70 md:via-transparent" />
+          {/* A soft edge into the text column on desktop. */}
+          <div className="absolute inset-0 hidden bg-gradient-to-r from-abyss/70 via-transparent md:block" />
+          <div className="torn-strip px-4 pb-5 pt-9 sm:pb-7 sm:pt-12">
+            <p className="h-sign text-center text-4xl tracking-wide text-shell drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] sm:text-5xl lg:text-6xl">
+              Drink Different
+            </p>
+          </div>
         </div>
-      </section>
-
-      {/* ---------- Drink Different band (from the card) ---------- */}
-      <section className="relative overflow-hidden border-y border-shell/10">
-        <div
-          className="pointer-events-none absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url(/images/root-pattern.jpg)" }}
-          aria-hidden
-        />
-        <div className="absolute inset-0 bg-abyss/35" aria-hidden />
-        <p className="h-sign relative py-8 text-center text-4xl tracking-wide text-shell sm:py-10 sm:text-6xl">
-          Drink Different
-        </p>
       </section>
 
       {/* ---------- The lineup ---------- */}
       <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
-        <div className="mb-10 text-center">
+        <div className="reveal mb-10 text-center">
           <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold">
             The lineup
           </p>
@@ -130,26 +132,22 @@ export default async function Home() {
           <h2 className="h-sign text-center text-4xl text-shell sm:text-5xl">
             The small batch <span className="text-coconut">difference.</span>
           </h2>
-          <dl className="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="mt-12 grid gap-10 sm:grid-cols-3">
             {[
               {
                 t: "Hand-pressed",
                 d: "Water extraction only — no CO₂, no solvents. Just the root, the way it's been done for centuries.",
               },
               {
-                t: "Noble kava",
-                d: "Premium noble cultivars from Fiji and Vanuatu, third-party tested for purity.",
+                t: "Fiji's finest",
+                d: "Top-grade noble kava, sourced only from Fiji. The best of an already premium root, third-party tested for purity.",
               },
               {
                 t: "Real craft",
-                d: "Formulated with craft cocktail and culinary technique. All-natural ingredients, reverse osmosis water.",
-              },
-              {
-                t: "Gives back",
-                d: "1% of every sale goes to a South Pacific Islander organization.",
+                d: "Formulated with craft cocktail and culinary techniques. All-natural ingredients, reverse osmosis water.",
               },
             ].map((f) => (
-              <div key={f.t} className="text-center sm:text-left">
+              <div key={f.t} className="reveal text-center sm:text-left">
                 <dt className="h-sign-med text-xl text-gold">{f.t}</dt>
                 <dd className="mt-2 text-sm leading-relaxed text-shell/75">
                   {f.d}
@@ -167,7 +165,7 @@ export default async function Home() {
 
       {/* ---------- The bar (cross-link to the events site) ---------- */}
       <section className="mx-auto max-w-6xl px-6 py-14 sm:py-20">
-        <div className="grid items-center gap-8 md:grid-cols-2 md:gap-12">
+        <div className="reveal grid items-center gap-8 md:grid-cols-2 md:gap-12">
           <div className="brush-mask relative aspect-[4/3] overflow-hidden">
             <Image
               src={galleryImages[0]}
@@ -201,5 +199,70 @@ export default async function Home() {
         </div>
       </section>
     </>
+  );
+}
+
+/**
+ * The bottles and RUSH, fanned out under the hero words. They rise in
+ * one after another from the middle outward, then drift gently. Each
+ * one is a link to its product page. Handles are Shopify's (RUSH's is
+ * still the auto-generated one) — see src/lib/shop-display.ts.
+ */
+const LINEUP = [
+  { handle: "basic-batch", name: "Basic Batch", tilt: -7, delay: 760 },
+  { handle: "the-kolada", name: "The Kolada", tilt: -3, delay: 620 },
+  { handle: "untitled-may21_11-42-27", name: "Lumanai Rush", tilt: 0, delay: 480 },
+  { handle: "raspberry-orange-spice", name: "Raspberry Orange Spice", tilt: 3, delay: 620 },
+  { handle: "ginger-honey-lemon", name: "Ginger Honey Lemon", tilt: 7, delay: 760 },
+];
+
+function HeroLineup() {
+  return (
+    <div className="relative mt-10 md:mt-12">
+      <div
+        className="lineup-glow pointer-events-none absolute inset-x-0 -bottom-4 h-24"
+        aria-hidden
+      />
+      <ul className="relative flex items-end justify-center md:justify-start">
+        {LINEUP.map((b, i) => {
+          const art = artworkFor(b.handle);
+          if (!art) return null;
+          const rush = b.tilt === 0;
+          return (
+            <li key={b.handle} className={rush ? "z-10 -mx-1" : "-mx-1.5 sm:-mx-1"}>
+              <Link
+                href={`/products/${b.handle}`}
+                aria-label={b.name}
+                className="lineup-item block"
+                style={
+                  {
+                    "--tilt": `${b.tilt}deg`,
+                    "--delay": `${b.delay}ms`,
+                  } as React.CSSProperties
+                }
+              >
+                <span
+                  className="lineup-float block"
+                  style={{ "--float-delay": `${i * -1.2}s` } as React.CSSProperties}
+                >
+                  <Image
+                    src={art}
+                    alt={b.name}
+                    width={rush ? 627 : 339}
+                    height={900}
+                    sizes="(min-width: 1024px) 12vw, 22vw"
+                    className={`w-auto object-contain drop-shadow-[0_14px_22px_rgba(0,0,0,0.55)] ${
+                      rush
+                        ? "h-32 sm:h-40 lg:h-48"
+                        : "h-36 sm:h-44 lg:h-52"
+                    }`}
+                  />
+                </span>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }

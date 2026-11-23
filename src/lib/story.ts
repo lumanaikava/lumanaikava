@@ -51,7 +51,6 @@ export const storyBlocks: StoryBlock[] = [
     heading: "Rooted in tradition",
     body: [
       "Everything we do at Lumanai is rooted in tradition, even as we innovate to make kava more approachable and enjoyable for a mass audience. If it wasn't for the 3,000 years of cultivation, we wouldn't be able to do what we do; so it's with the utmost respect for the culture of the South Pacific that we bring you the future of alcohol replacement. Our deepest gratitude goes to those who've spent their lives working with this incredible plant medicine.",
-      "In the spirit of this, we donate a portion of the proceeds from every online sale to the South Pacific Islander Organization, a nonprofit creating opportunities for Pacific Islanders to create, navigate and attain higher education. As our profit margin grows, so will the percentage of our donations. As of now it's 1% but we hope to increase that very soon.",
     ],
   },
 ];
