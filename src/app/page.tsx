@@ -19,8 +19,6 @@ const EVENTS_SITE = "https://events.lumanai.com";
  *
  * The hero photo is portrait, so on desktop it takes the right half of
  * a split layout; on a phone it sits on top with the words beneath.
- * "Drink Different" rides the bottom of the photo on a torn strip of
- * the root pattern, the way it does on the handout card.
  */
 export default async function Home() {
   const { items } = await getCatalog();
@@ -56,8 +54,9 @@ export default async function Home() {
               className="rise-in mt-5 max-w-md text-base leading-relaxed text-shell/80 sm:text-lg"
               style={{ "--delay": "240ms" } as React.CSSProperties}
             >
-              Hand-pressed noble kava, crafted into ready-to-drink naktails
-              and instant kava. No alcohol, no hangover, no compromise.
+              Hand-pressed traditional kava, seriously strong and
+              surprisingly smooth. Handcrafted zero-proof kava cocktails.
+              Ceremonial-grade instant kava, ready in seconds.
             </p>
             <div
               className="rise-in mt-8 flex flex-wrap items-center gap-4"
@@ -80,7 +79,7 @@ export default async function Home() {
           </div>
         </div>
 
-        {/* Photo, with the torn "Drink Different" strip from the card. */}
+        {/* Photo */}
         <div className="relative order-1 h-[52svh] min-h-[380px] overflow-hidden md:order-2 md:h-auto md:min-h-0">
           <Image
             src={lifestyleImages.trailSip}
@@ -92,10 +91,68 @@ export default async function Home() {
           />
           {/* A soft edge into the text column on desktop. */}
           <div className="absolute inset-0 hidden bg-gradient-to-r from-abyss/70 via-transparent md:block" />
-          <div className="torn-strip px-4 pb-5 pt-9 sm:pb-7 sm:pt-12">
-            <p className="h-sign text-center text-4xl tracking-wide text-shell drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] sm:text-5xl lg:text-6xl">
-              Drink Different
+        </div>
+      </section>
+
+      {/* ---------- Growlers ---------- */}
+      <section className="relative overflow-hidden border-y border-shell/10 bg-abyss">
+        <div
+          className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-20"
+          style={{ backgroundImage: "url(/images/root-pattern.jpg)" }}
+          aria-hidden
+        />
+        <div className="reveal relative mx-auto grid max-w-6xl items-center gap-8 px-6 py-12 sm:py-16 md:grid-cols-2 md:gap-12">
+          <div className="relative">
+            <div
+              className="lineup-glow pointer-events-none absolute inset-x-0 -bottom-4 h-28"
+              aria-hidden
+            />
+            <ul className="relative flex items-end justify-center">
+              {GROWLERS.map((g, i) => (
+                <li key={g.handle} className="-mx-1">
+                  <Link
+                    href={`/products/${g.handle}`}
+                    aria-label={g.name}
+                    className="lineup-item block"
+                    style={{ "--tilt": `${g.tilt}deg` } as React.CSSProperties}
+                  >
+                    <span
+                      className="lineup-float block"
+                      style={{ "--float-delay": `${i * -1.7}s` } as React.CSSProperties}
+                    >
+                      <Image
+                        src={g.art}
+                        alt={g.name}
+                        width={387}
+                        height={900}
+                        sizes="(min-width: 768px) 14vw, 28vw"
+                        className={`w-auto object-contain drop-shadow-[0_16px_24px_rgba(0,0,0,0.55)] ${g.size}`}
+                      />
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="text-center md:text-left">
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold">
+              Growlers · Las Vegas pickup
             </p>
+            <h2 className="h-sign mt-2 text-4xl leading-[1.02] text-shell sm:text-5xl">
+              Go big.
+              <br />
+              <span className="text-coconut">Fill the growler.</span>
+            </h2>
+            <p className="mx-auto mt-4 max-w-md text-shell/75 md:mx-0">
+              Every flavor comes in a 64 or 32 oz reusable glass growler.
+              The $6 bottle deposit is refunded when you bring it back.
+            </p>
+            <Link
+              href="/products"
+              className="btn-brush mt-7 inline-block text-xs font-bold uppercase tracking-[0.2em] text-shell"
+            >
+              Shop Growlers
+            </Link>
           </div>
         </div>
       </section>
@@ -135,12 +192,12 @@ export default async function Home() {
           <dl className="mt-12 grid gap-10 sm:grid-cols-3">
             {[
               {
-                t: "Hand-pressed",
-                d: "Water extraction only — no CO₂, no solvents. Just the root, the way it's been done for centuries.",
+                t: "No solvents. Ever.",
+                d: "Water extraction only, no CO₂ and no solvents. Our traditional Basic Batch is still pressed by hand, the way it's been done for centuries.",
               },
               {
-                t: "Fiji's finest",
-                d: "Top-grade noble kava, sourced only from Fiji. The best of an already premium root, third-party tested for purity.",
+                t: "Premium noble kava",
+                d: "Only the highest grade of premium noble kava, grown in Fiji and third-party tested for purity.",
               },
               {
                 t: "Real craft",
@@ -203,17 +260,18 @@ export default async function Home() {
 }
 
 /**
- * The bottles and RUSH, fanned out under the hero words. They rise in
+ * The bottles in market-table order with RUSH in the middle, fanned out
+ * under the hero words. They rise in
  * one after another from the middle outward, then drift gently. Each
  * one is a link to its product page. Handles are Shopify's (RUSH's is
  * still the auto-generated one) — see src/lib/shop-display.ts.
  */
 const LINEUP = [
   { handle: "basic-batch", name: "Basic Batch", tilt: -7, delay: 760 },
-  { handle: "the-kolada", name: "The Kolada", tilt: -3, delay: 620 },
+  { handle: "ginger-honey-lemon", name: "Ginger Honey Lemon", tilt: -3, delay: 620 },
   { handle: "untitled-may21_11-42-27", name: "Lumanai Rush", tilt: 0, delay: 480 },
-  { handle: "raspberry-orange-spice", name: "Raspberry Orange Spice", tilt: 3, delay: 620 },
-  { handle: "ginger-honey-lemon", name: "Ginger Honey Lemon", tilt: 7, delay: 760 },
+  { handle: "the-kolada", name: "The Kolada", tilt: 3, delay: 620 },
+  { handle: "raspberry-orange-spice", name: "Raspberry Orange Spice", tilt: 7, delay: 760 },
 ];
 
 function HeroLineup() {
@@ -266,3 +324,33 @@ function HeroLineup() {
     </div>
   );
 }
+
+/**
+ * Growler callout. The growlers are unlabelled glass, so three cover
+ * it: Basic Batch and the red Raspberry Orange Spice at 64 oz, and a
+ * smaller 32 oz standing in for The Kolada (same cream colour — the
+ * shop already borrows this cutout for it).
+ */
+const GROWLERS = [
+  {
+    handle: "64-oz-growler",
+    name: "Basic Batch Growler",
+    art: "/images/products/growler-basic-batch.png",
+    size: "h-44 sm:h-56 lg:h-64",
+    tilt: -5,
+  },
+  {
+    handle: "raspberry-orange-spice-32-oz-growler",
+    name: "Raspberry Orange Spice Growler",
+    art: "/images/products/growler-raspberry-orange-spice.png",
+    size: "h-44 sm:h-56 lg:h-64",
+    tilt: 0,
+  },
+  {
+    handle: "copy-of-raspberry-orange-spice-32-oz-growler",
+    name: "The Kolada Growler",
+    art: "/images/products/growler-basic-batch-32.png",
+    size: "h-32 sm:h-40 lg:h-48",
+    tilt: 5,
+  },
+];

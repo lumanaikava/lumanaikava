@@ -854,37 +854,8 @@ body {
 }
 
 /* ── Product homepage ──────────────────────────────────────────
-   Torn-paper "Drink Different" strip (from the handout card), the
-   hero bottle lineup, and gentle scroll reveals. All motion sits
+   The hero bottle lineup and gentle scroll reveals. All motion sits
    behind prefers-reduced-motion. */
-
-.torn-strip {
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  isolation: isolate;
-}
-/* The pale ripped-paper fibre showing above the printed pattern. */
-.torn-strip::before {
-  content: "";
-  position: absolute;
-  inset: -7px 0 0;
-  z-index: -2;
-  background: var(--shell);
-  -webkit-mask: url("/brush/torn-b.svg") center / 100% 100% no-repeat;
-  mask: url("/brush/torn-b.svg") center / 100% 100% no-repeat;
-}
-.torn-strip::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    linear-gradient(rgba(5, 16, 42, 0.2), rgba(5, 16, 42, 0.2)),
-    url("/images/root-pattern.jpg") center / cover;
-  -webkit-mask: url("/brush/torn-a.svg") center / 100% 100% no-repeat;
-  mask: url("/brush/torn-a.svg") center / 100% 100% no-repeat;
-}
 
 .lineup-glow {
   background: radial-gradient(
@@ -947,17 +918,6 @@ body {
     transform: scale(1);
   }
 }
-@keyframes torn-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 40%, 0);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
 @media (prefers-reduced-motion: no-preference) {
   .lineup-item {
     animation: lineup-rise 1s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -973,9 +933,6 @@ body {
   }
   .hero-settle {
     animation: hero-settle 2.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
-  .torn-strip {
-    animation: torn-in 1s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
   }
   /* Sections ease up into place as they scroll into view. Browsers
      without scroll-driven animations simply show them. */

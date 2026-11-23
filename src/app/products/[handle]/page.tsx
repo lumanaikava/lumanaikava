@@ -8,7 +8,7 @@ import { shortName } from "@/lib/shop-display";
 export const dynamic = "force-dynamic";
 
 const categoryLabel = {
-  premium: "Original Naktail",
+  premium: "Kava Cocktail",
   growler: "Growler",
   rush: "Instant Kava",
 } as const;
