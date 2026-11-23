@@ -174,3 +174,36 @@ export function priceRangeLabel(
   // En dash, not a hyphen — this is a range, not a compound word.
   return `${low.priceLabel}–${high.priceLabel}`;
 }
+
+/**
+ * Growlers carry a $6 refundable bottle deposit inside their Shopify
+ * price. The grid shows the price of the kava itself with the deposit
+ * called out beside it, so nobody is surprised at checkout and nobody
+ * thinks the drink costs $6 more than it does.
+ */
+export const GROWLER_DEPOSIT = 6;
+
+export function isGrowler(handle: string, name: string): boolean {
+  return /growler/i.test(handle) || /growler/i.test(name);
+}
+
+function dollars(n: number): string {
+  return Number.isInteger(n) ? `$${n}` : `$${n.toFixed(2)}`;
+}
+
+export function gridPriceLabel(product: {
+  handle: string;
+  name: string;
+  priceLabel: string;
+  variants: { amount: number; priceLabel: string }[];
+}): string {
+  if (!isGrowler(product.handle, product.name)) return priceRangeLabel(product);
+  const amounts = product.variants
+    .map((v) => v.amount)
+    .filter((a) => a > GROWLER_DEPOSIT);
+  if (amounts.length === 0) return priceRangeLabel(product);
+  const low = Math.min(...amounts) - GROWLER_DEPOSIT;
+  const high = Math.max(...amounts) - GROWLER_DEPOSIT;
+  const range = low === high ? dollars(low) : `${dollars(low)}–${dollars(high)}`;
+  return `${range} + $${GROWLER_DEPOSIT} deposit`;
+}

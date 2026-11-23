@@ -7,7 +7,7 @@ import {
   subtitleFor,
   isNew,
   HIDE_PRICES,
-  priceRangeLabel,
+  gridPriceLabel,
 } from "@/lib/shop-display";
 
 /**
@@ -68,7 +68,7 @@ export default function ProductGrid({
             )}
             {!HIDE_PRICES && (
               <p className="mt-1 font-mono text-xs text-gold">
-                {priceRangeLabel(p)}
+                {gridPriceLabel(p)}
               </p>
             )}
           </Link>

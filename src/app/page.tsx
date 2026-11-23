@@ -54,9 +54,10 @@ export default async function Home() {
               className="rise-in mt-5 max-w-md text-base leading-relaxed text-shell/80 sm:text-lg"
               style={{ "--delay": "240ms" } as React.CSSProperties}
             >
-              Hand-pressed traditional kava, seriously strong and
-              surprisingly smooth. Handcrafted zero-proof kava cocktails.
-              Ceremonial-grade instant kava, ready in seconds.
+              Not your average traditional kava. Ours is hand-pressed,
+              seriously strong and surprisingly smooth. Plus handcrafted
+              zero-proof kava cocktails and ceremonial-grade instant kava,
+              ready in seconds.
             </p>
             <div
               className="rise-in mt-8 flex flex-wrap items-center gap-4"
@@ -94,77 +95,14 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ---------- Growlers ---------- */}
-      <section className="relative overflow-hidden border-y border-shell/10 bg-abyss">
-        <div
-          className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: "url(/images/root-pattern.jpg)" }}
-          aria-hidden
-        />
-        <div className="reveal relative mx-auto grid max-w-6xl items-center gap-8 px-6 py-12 sm:py-16 md:grid-cols-2 md:gap-12">
-          <div className="relative">
-            <div
-              className="lineup-glow pointer-events-none absolute inset-x-0 -bottom-4 h-28"
-              aria-hidden
-            />
-            <ul className="relative flex items-end justify-center">
-              {GROWLERS.map((g, i) => (
-                <li key={g.handle} className="-mx-1">
-                  <Link
-                    href={`/products/${g.handle}`}
-                    aria-label={g.name}
-                    className="lineup-item block"
-                    style={{ "--tilt": `${g.tilt}deg` } as React.CSSProperties}
-                  >
-                    <span
-                      className="lineup-float block"
-                      style={{ "--float-delay": `${i * -1.7}s` } as React.CSSProperties}
-                    >
-                      <Image
-                        src={g.art}
-                        alt={g.name}
-                        width={387}
-                        height={900}
-                        sizes="(min-width: 768px) 14vw, 28vw"
-                        className={`w-auto object-contain drop-shadow-[0_16px_24px_rgba(0,0,0,0.55)] ${g.size}`}
-                      />
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="text-center md:text-left">
-            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold">
-              Growlers · Las Vegas pickup
-            </p>
-            <h2 className="h-sign mt-2 text-4xl leading-[1.02] text-shell sm:text-5xl">
-              Go big.
-              <br />
-              <span className="text-coconut">Fill the growler.</span>
-            </h2>
-            <p className="mx-auto mt-4 max-w-md text-shell/75 md:mx-0">
-              Every flavor comes in a 64 or 32 oz reusable glass growler.
-              The $6 bottle deposit is refunded when you bring it back.
-            </p>
-            <Link
-              href="/products"
-              className="btn-brush mt-7 inline-block text-xs font-bold uppercase tracking-[0.2em] text-shell"
-            >
-              Shop Growlers
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* ---------- The lineup ---------- */}
       <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
         <div className="reveal mb-10 text-center">
           <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold">
-            The lineup
+            Bottles · Growlers · Instant
           </p>
           <h2 className="h-sign mt-2 text-4xl text-shell sm:text-5xl">
-            Bottled for one. <span className="text-coconut">Poured for the table.</span>
+            Shop the <span className="text-coconut">lineup.</span>
           </h2>
         </div>
         <ProductGrid products={products} />
@@ -260,18 +198,35 @@ export default async function Home() {
 }
 
 /**
- * The bottles in market-table order with RUSH in the middle, fanned out
- * under the hero words. They rise in
- * one after another from the middle outward, then drift gently. Each
- * one is a link to its product page. Handles are Shopify's (RUSH's is
- * still the auto-generated one) — see src/lib/shop-display.ts.
+ * The whole range, fanned out under the hero words: a growler at each
+ * end, the four bottles in market-table order, RUSH in the middle.
+ * They rise in one after another from the middle outward, then drift
+ * gently. Each one links to its product page.
+ *
+ * `w` is each item's share of the row's width, so the row always fits
+ * its column whatever the screen size; heights follow from the art.
+ * Handles are Shopify's (RUSH's is still the auto-generated one) — see
+ * src/lib/shop-display.ts. The growlers are unlabelled glass: the red
+ * 64 oz is Raspberry Orange Spice, the cream 32 oz stands for Kolada.
  */
 const LINEUP = [
-  { handle: "basic-batch", name: "Basic Batch", tilt: -7, delay: 760 },
-  { handle: "ginger-honey-lemon", name: "Ginger Honey Lemon", tilt: -3, delay: 620 },
-  { handle: "untitled-may21_11-42-27", name: "Lumanai Rush", tilt: 0, delay: 480 },
-  { handle: "the-kolada", name: "The Kolada", tilt: 3, delay: 620 },
-  { handle: "raspberry-orange-spice", name: "Raspberry Orange Spice", tilt: 7, delay: 760 },
+  {
+    handle: "raspberry-orange-spice-32-oz-growler",
+    name: "Raspberry Orange Spice Growler",
+    art: "/images/products/growler-raspberry-orange-spice.png",
+    w: 0.5, ar: 387 / 900, tilt: -8, delay: 900,
+  },
+  { handle: "basic-batch", name: "Basic Batch", w: 0.377, ar: 339 / 900, tilt: -5, delay: 760 },
+  { handle: "ginger-honey-lemon", name: "Ginger Honey Lemon", w: 0.377, ar: 339 / 900, tilt: -2, delay: 620 },
+  { handle: "untitled-may21_11-42-27", name: "Lumanai Rush", w: 0.64, ar: 627 / 900, tilt: 0, delay: 480 },
+  { handle: "the-kolada", name: "The Kolada", w: 0.377, ar: 339 / 900, tilt: 2, delay: 620 },
+  { handle: "raspberry-orange-spice", name: "Raspberry Orange Spice", w: 0.377, ar: 339 / 900, tilt: 5, delay: 760 },
+  {
+    handle: "copy-of-raspberry-orange-spice-32-oz-growler",
+    name: "The Kolada Growler",
+    art: "/images/products/growler-basic-batch-32.png",
+    w: 0.42, ar: 381 / 900, tilt: 8, delay: 900,
+  },
 ];
 
 function HeroLineup() {
@@ -281,13 +236,16 @@ function HeroLineup() {
         className="lineup-glow pointer-events-none absolute inset-x-0 -bottom-4 h-24"
         aria-hidden
       />
-      <ul className="relative flex items-end justify-center md:justify-start">
+      <ul className="relative mx-auto flex max-w-[600px] items-end md:mx-0">
         {LINEUP.map((b, i) => {
-          const art = artworkFor(b.handle);
+          const art = b.art ?? artworkFor(b.handle);
           if (!art) return null;
-          const rush = b.tilt === 0;
           return (
-            <li key={b.handle} className={rush ? "z-10 -mx-1" : "-mx-1.5 sm:-mx-1"}>
+            <li
+              key={b.handle}
+              className={`-mx-[1%] min-w-0 ${b.tilt === 0 ? "z-10" : ""}`}
+              style={{ flex: `${b.w} 1 0%` }}
+            >
               <Link
                 href={`/products/${b.handle}`}
                 aria-label={b.name}
@@ -301,19 +259,15 @@ function HeroLineup() {
               >
                 <span
                   className="lineup-float block"
-                  style={{ "--float-delay": `${i * -1.2}s` } as React.CSSProperties}
+                  style={{ "--float-delay": `${i * -0.9}s` } as React.CSSProperties}
                 >
                   <Image
                     src={art}
                     alt={b.name}
-                    width={rush ? 627 : 339}
+                    width={Math.round(900 * b.ar)}
                     height={900}
-                    sizes="(min-width: 1024px) 12vw, 22vw"
-                    className={`w-auto object-contain drop-shadow-[0_14px_22px_rgba(0,0,0,0.55)] ${
-                      rush
-                        ? "h-32 sm:h-40 lg:h-48"
-                        : "h-36 sm:h-44 lg:h-52"
-                    }`}
+                    sizes="(min-width: 768px) 9vw, 18vw"
+                    className="h-auto w-full object-contain drop-shadow-[0_14px_22px_rgba(0,0,0,0.55)]"
                   />
                 </span>
               </Link>
@@ -324,33 +278,3 @@ function HeroLineup() {
     </div>
   );
 }
-
-/**
- * Growler callout. The growlers are unlabelled glass, so three cover
- * it: Basic Batch and the red Raspberry Orange Spice at 64 oz, and a
- * smaller 32 oz standing in for The Kolada (same cream colour — the
- * shop already borrows this cutout for it).
- */
-const GROWLERS = [
-  {
-    handle: "64-oz-growler",
-    name: "Basic Batch Growler",
-    art: "/images/products/growler-basic-batch.png",
-    size: "h-44 sm:h-56 lg:h-64",
-    tilt: -5,
-  },
-  {
-    handle: "raspberry-orange-spice-32-oz-growler",
-    name: "Raspberry Orange Spice Growler",
-    art: "/images/products/growler-raspberry-orange-spice.png",
-    size: "h-44 sm:h-56 lg:h-64",
-    tilt: 0,
-  },
-  {
-    handle: "copy-of-raspberry-orange-spice-32-oz-growler",
-    name: "The Kolada Growler",
-    art: "/images/products/growler-basic-batch-32.png",
-    size: "h-32 sm:h-40 lg:h-48",
-    tilt: 5,
-  },
-];

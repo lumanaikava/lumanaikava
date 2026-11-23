@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   // here too rendered "Shop — Lumanai Kava — Lumanai Kava".
   title: "Shop",
   description:
-    "Lumanai kava cocktails, growlers and RUSH instant kava — bottled for one, poured for the table.",
+    "Lumanai kava cocktails, growlers and RUSH instant kava.",
 };
 
 // Catalog comes from Shopify with 60s revalidation.
