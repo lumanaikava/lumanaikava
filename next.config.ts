@@ -28,8 +28,10 @@ const nextConfig: NextConfig = {
         source: "/:path((?!_next/|api/).*)",
         headers: canonical(`${WWW_ORIGIN}/:path`),
       },
-      // The booking page is the events site's home page, on any host.
-      { source: "/events", headers: canonical(`${EVENTS_ORIGIN}/`) },
+      // The bar landing page is the events site's home page, and the
+      // booking page lives under it, on any host.
+      { source: "/bar", headers: canonical(`${EVENTS_ORIGIN}/`) },
+      { source: "/events", headers: canonical(`${EVENTS_ORIGIN}/events`) },
       {
         source: "/",
         has: [{ type: "host", value: EVENTS_HOST }],
@@ -48,8 +50,8 @@ const nextConfig: NextConfig = {
   async rewrites() {
     /**
      * events.lumanai.com — the events business gets its own front door.
-     * Same site underneath; the subdomain's home page IS the booking
-     * page, so event leads never land on the shop. Every other path on
+     * Same site underneath; the subdomain's home page is the bar landing
+     * page (src/app/bar), so event leads never land on the shop. Every other path on
      * that host serves the normal site.
      */
     return {
@@ -69,7 +71,7 @@ const nextConfig: NextConfig = {
         {
           source: "/",
           has: [{ type: "host", value: "events.lumanai.com" }],
-          destination: "/events",
+          destination: "/bar",
         },
       ],
     };

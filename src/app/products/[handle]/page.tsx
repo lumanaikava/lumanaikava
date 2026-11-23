@@ -2,13 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ProductPurchase from "@/components/ProductPurchase";
 import { getCatalogProduct } from "@/lib/catalog";
-import { shortName } from "@/lib/shop-display";
+import { GROWLER_DEPOSIT, shortName } from "@/lib/shop-display";
 
 // Fetched from Shopify with 60s revalidation; falls back to static data.
 export const dynamic = "force-dynamic";
 
 const categoryLabel = {
-  premium: "Original Naktail",
+  premium: "Kava Cocktail",
   growler: "Growler",
   rush: "Instant Kava",
 } as const;
@@ -50,6 +50,31 @@ export default async function ProductPage({
         </h1>
       </div>
 
+      {/* Growlers: the two things people miss in the description, said
+          loudly before the buy box. */}
+      {product.category === "growler" && (
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-xl border-2 border-gold bg-gold/10 px-5 py-4">
+            <p className="h-sign-med text-xl text-gold sm:text-2xl">
+              Las Vegas pickup only
+            </p>
+            <p className="mt-1 text-sm text-shell/85 sm:text-base">
+              Growlers are glass and cannot be shipped. Please don&apos;t
+              order if you&apos;re not in Las Vegas.
+            </p>
+          </div>
+          <div className="rounded-xl border-2 border-gold bg-gold/10 px-5 py-4">
+            <p className="h-sign-med text-xl text-gold sm:text-2xl">
+              ${GROWLER_DEPOSIT} bottle deposit included
+            </p>
+            <p className="mt-1 text-sm text-shell/85 sm:text-base">
+              The price below includes a ${GROWLER_DEPOSIT} deposit. Bring
+              the bottle back and you get it refunded.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Image and buy box first, so shoppers see the product before the copy. */}
       <div className="mt-6">
         <ProductPurchase
@@ -83,13 +108,13 @@ export default async function ProductPage({
       )}
 
       <div>
-          <dl className="mt-12 grid grid-cols-2 gap-6 border-t border-shell/10 pt-8 text-sm sm:grid-cols-4">
+          <dl className="mt-12 grid grid-cols-2 gap-6 border-t border-shell/10 pt-8 text-sm sm:grid-cols-3">
             <div>
               <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/40">
                 Source
               </dt>
               <dd className="mt-1 text-shell/80">
-                Fiji &amp; Vanuatu cultivars
+                Noble kava from Fiji
               </dd>
             </div>
             <div>
@@ -98,14 +123,6 @@ export default async function ProductPage({
               </dt>
               <dd className="mt-1 text-shell/80">
                 Water only — no solvents, no CO₂
-              </dd>
-            </div>
-            <div>
-              <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/40">
-                Impact
-              </dt>
-              <dd className="mt-1 text-shell/80">
-                1% to South Pacific Islander Org.
               </dd>
             </div>
             <div>

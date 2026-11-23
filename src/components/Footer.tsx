@@ -147,7 +147,6 @@ export default function Footer() {
             <CoconutSecret />
           </p>
           <p className="flex items-center gap-4">
-            1% of every order supports the South Pacific Islander Organization.
             <Link
               href="/admin"
               className="font-mono text-[10px] uppercase tracking-[0.2em] text-shell/35 transition-colors hover:text-gold"

@@ -9,16 +9,17 @@ const TITLE = "Mobile Kava & Mocktail Bar for Las Vegas Events";
 const DESCRIPTION =
   "Book Lumanai's alcohol-free craft kava and functional mocktail bar for your private event in Las Vegas. Pick the format, the size and the add-ons, and we'll reach out to plan it.";
 
-// This page is the events site's home: events.lumanai.com/ is rewritten
-// here, so its canonical is that root, whichever host serves it.
+// The booking page of the events site. Its home page is the bar landing
+// page (src/app/bar, served at events.lumanai.com/), so this one's
+// canonical is events.lumanai.com/events, whichever host serves it.
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  alternates: { canonical: `${EVENTS_ORIGIN}/` },
+  alternates: { canonical: `${EVENTS_ORIGIN}/events` },
   openGraph: {
     title: `${TITLE} — Lumanai Kava`,
     description: DESCRIPTION,
-    url: `${EVENTS_ORIGIN}/`,
+    url: `${EVENTS_ORIGIN}/events`,
     siteName: "Lumanai Kava",
     locale: "en_US",
     type: "website",
@@ -34,7 +35,7 @@ const serviceJsonLd = {
   name: "Lumanai mobile kava and functional mocktail bar",
   serviceType: "Mobile alcohol-free bar for private events",
   description: DESCRIPTION,
-  url: `${EVENTS_ORIGIN}/`,
+  url: `${EVENTS_ORIGIN}/events`,
   areaServed: [
     { "@type": "City", name: "Las Vegas" },
     { "@type": "City", name: "North Las Vegas" },
