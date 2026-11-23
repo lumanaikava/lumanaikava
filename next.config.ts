@@ -28,8 +28,10 @@ const nextConfig: NextConfig = {
         source: "/:path((?!_next/|api/).*)",
         headers: canonical(`${WWW_ORIGIN}/:path`),
       },
-      // The booking page is the events site's home page, on any host.
-      { source: "/events", headers: canonical(`${EVENTS_ORIGIN}/`) },
+      // The bar landing page is the events site's home page, and the
+      // booking page lives under it, on any host.
+      { source: "/bar", headers: canonical(`${EVENTS_ORIGIN}/`) },
+      { source: "/events", headers: canonical(`${EVENTS_ORIGIN}/events`) },
       {
         source: "/",
         has: [{ type: "host", value: EVENTS_HOST }],

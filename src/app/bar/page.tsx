@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Archipelago from "@/components/Archipelago";
 import { galleryImages } from "@/lib/images";
+import { EVENTS_ORIGIN } from "@/lib/canonical";
 import { upcomingEventsSynced, formatEventDate } from "@/lib/calendar";
 
 // The appearances ticker rolls forward — refresh hourly.
@@ -18,6 +19,8 @@ export const metadata: Metadata = {
   title: { absolute: "Lumanai — Mobile Craft Kava & Functional Mocktail Bar" },
   description:
     "A mobile craft kava and functional mocktail bar for events across Las Vegas. All the buzz — without the booze.",
+  // The events site's home page, whichever host serves it.
+  alternates: { canonical: `${EVENTS_ORIGIN}/` },
 };
 
 export default async function BarHome() {

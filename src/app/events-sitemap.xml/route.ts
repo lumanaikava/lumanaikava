@@ -4,7 +4,10 @@ import { EVENTS_ORIGIN } from "@/lib/canonical";
 // Lists only the pages whose canonical home is the events site.
 export const dynamic = "force-static";
 
-const pages = [{ path: "/", priority: "1.0" }];
+const pages = [
+  { path: "/", priority: "1.0" },
+  { path: "/events", priority: "0.9" },
+];
 
 export function GET() {
   const urls = pages
