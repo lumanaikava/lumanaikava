@@ -84,6 +84,7 @@ export type ShopifyProduct = {
         title: string;
         availableForSale: boolean;
         price: { amount: string; currencyCode: string };
+        compareAtPrice?: { amount: string; currencyCode: string } | null;
       };
     }[];
   };
@@ -163,6 +164,10 @@ const PRODUCT_FIELDS = /* GraphQL */ `
           title
           availableForSale
           price {
+            amount
+            currencyCode
+          }
+          compareAtPrice {
             amount
             currencyCode
           }

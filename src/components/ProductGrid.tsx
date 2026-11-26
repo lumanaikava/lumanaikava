@@ -96,6 +96,9 @@ export default function ProductGrid({
                 }`}
               >
                 {gridPriceLabel(p)}
+                {p.compareAtLabel && p.variants.length <= 1 && (
+                  <s className="ml-2 text-shell/45">{p.compareAtLabel}</s>
+                )}
               </p>
             )}
           </Link>

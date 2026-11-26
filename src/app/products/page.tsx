@@ -96,6 +96,11 @@ export default async function ProductsPage() {
             {!HIDE_PRICES && (
               <p className="mt-5 font-mono text-lg text-gold">
                 {gridPriceLabel(rush)}
+                {rush.compareAtLabel && (
+                  <s className="ml-3 text-base text-shell/45">
+                    {rush.compareAtLabel}
+                  </s>
+                )}
               </p>
             )}
             <span className="btn-brush mt-6 inline-block text-xs font-bold uppercase tracking-[0.2em] text-shell">

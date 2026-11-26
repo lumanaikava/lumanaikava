@@ -91,6 +91,7 @@ export default async function ProductPage({
           available={product.available && product.live}
           singleVariantId={product.variantId}
           singlePriceLabel={product.variantPriceLabel}
+          singleCompareAtLabel={product.compareAtLabel}
           singleAmount={product.amount}
           sellingPlans={product.sellingPlans}
         />
