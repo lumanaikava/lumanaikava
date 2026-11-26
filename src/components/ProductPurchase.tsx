@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { SellingPlan } from "@/lib/integrations/shopify";
 import Image from "next/image";
 import AddToCartButton from "@/components/AddToCartButton";
-import { artworkFor, HIDE_PRICES } from "@/lib/shop-display";
+import { artworkFor, HIDE_PRICES, kavalactoneLabel } from "@/lib/shop-display";
 
 type Variant = {
   variantId: string;
@@ -214,6 +214,11 @@ export default function ProductPurchase({
         {!HIDE_PRICES && (
           <p className="font-mono text-2xl text-gold">
             {plan ? money(planAmount) : priceLabel}
+          </p>
+        )}
+        {kavalactoneLabel(handle, chosen?.title) && (
+          <p className="mt-1.5 font-mono text-xs uppercase tracking-[0.14em] text-shell/70">
+            {kavalactoneLabel(handle, chosen?.title)}
           </p>
         )}
 

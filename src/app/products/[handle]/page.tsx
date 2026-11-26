@@ -2,7 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ProductPurchase from "@/components/ProductPurchase";
 import { getCatalogProduct } from "@/lib/catalog";
-import { GROWLER_DEPOSIT, shortName } from "@/lib/shop-display";
+import {
+  GROWLER_DEPOSIT,
+  isGrowler,
+  kavalactonesMg,
+  shortName,
+} from "@/lib/shop-display";
 
 // Fetched from Shopify with 60s revalidation; falls back to static data.
 export const dynamic = "force-dynamic";
@@ -117,6 +122,18 @@ export default async function ProductPage({
                 Noble kava from Fiji
               </dd>
             </div>
+            {kavalactonesMg(product.handle, 8) !== undefined && (
+              <div>
+                <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/40">
+                  Kavalactones
+                </dt>
+                <dd className="mt-1 text-shell/80">
+                  {isGrowler(product.handle, product.name)
+                    ? `${kavalactonesMg(product.handle, 64)!.toLocaleString("en-US")} mg (64 oz) · ${kavalactonesMg(product.handle, 32)!.toLocaleString("en-US")} mg (32 oz)`
+                    : `${kavalactonesMg(product.handle, 8)} mg per 8 oz bottle`}
+                </dd>
+              </div>
+            )}
             <div>
               <dt className="font-mono text-[11px] uppercase tracking-[0.2em] text-shell/40">
                 Extraction
