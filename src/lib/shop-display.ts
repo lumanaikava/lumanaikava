@@ -207,3 +207,46 @@ export function gridPriceLabel(product: {
   const range = low === high ? dollars(low) : `${dollars(low)}–${dollars(high)}`;
   return `${range} + $${GROWLER_DEPOSIT} deposit`;
 }
+
+/**
+ * Kavalactone content (Ash, Nov 2026): an 8 oz Basic Batch has 500 mg
+ * and an 8 oz flavor 275 mg. Growlers scale by volume from those, so a
+ * 64 oz Basic Batch is 4,000 mg and a 64 oz flavor 2,200 mg. RUSH and
+ * anything else returns undefined and shows nothing.
+ */
+const MG_PER_8_OZ = { basic: 500, flavor: 275 } as const;
+const FLAVOR_HANDLES = new Set([
+  "the-kolada",
+  "raspberry-orange-spice",
+  "ginger-honey-lemon",
+  "raspberry-orange-spice-32-oz-growler",
+  "copy-of-raspberry-orange-spice-32-oz-growler",
+  "copy-of-raspberry-orange-spice-32-oz-growler-1",
+]);
+const BASIC_HANDLES = new Set(["basic-batch", "64-oz-growler"]);
+
+/** The ounces a variant title names ("32 oz"), if any. */
+function ouncesIn(title?: string): number | undefined {
+  const m = title?.match(/(\d+)\s*oz/i);
+  return m ? Number(m[1]) : undefined;
+}
+
+export function kavalactonesMg(handle: string, ounces: number): number | undefined {
+  const per8 = BASIC_HANDLES.has(handle)
+    ? MG_PER_8_OZ.basic
+    : FLAVOR_HANDLES.has(handle)
+      ? MG_PER_8_OZ.flavor
+      : undefined;
+  return per8 === undefined ? undefined : Math.round((per8 * ounces) / 8);
+}
+
+/** "275 mg kavalactones per bottle" / "4,000 mg kavalactones per 64 oz growler". */
+export function kavalactoneLabel(handle: string, variantTitle?: string): string | undefined {
+  const growler = isGrowler(handle, "");
+  const oz = growler ? ouncesIn(variantTitle) ?? 64 : 8;
+  const mg = kavalactonesMg(handle, oz);
+  if (mg === undefined) return undefined;
+  return `${mg.toLocaleString("en-US")} mg kavalactones per ${
+    growler ? `${oz} oz growler` : "bottle"
+  }`;
+}

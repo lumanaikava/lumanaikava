@@ -4,13 +4,14 @@ import { useState } from "react";
 import type { SellingPlan } from "@/lib/integrations/shopify";
 import Image from "next/image";
 import AddToCartButton from "@/components/AddToCartButton";
-import { artworkFor, HIDE_PRICES } from "@/lib/shop-display";
+import { artworkFor, HIDE_PRICES, kavalactoneLabel } from "@/lib/shop-display";
 
 type Variant = {
   variantId: string;
   title: string;
   amount: number;
   priceLabel: string;
+  compareAtLabel?: string;
   available: boolean;
 };
 
@@ -37,6 +38,7 @@ export default function ProductPurchase({
   available,
   singleVariantId,
   singlePriceLabel,
+  singleCompareAtLabel,
   singleAmount,
   sellingPlans = [],
 }: {
@@ -48,6 +50,7 @@ export default function ProductPurchase({
   available: boolean;
   singleVariantId?: string;
   singlePriceLabel: string;
+  singleCompareAtLabel?: string;
   singleAmount: number;
   sellingPlans?: SellingPlan[];
 }) {
@@ -62,6 +65,7 @@ export default function ProductPurchase({
   const chosen = variants.find((v) => v.variantId === selectedId);
   const variantId = chosen?.variantId ?? singleVariantId;
   const priceLabel = chosen?.priceLabel ?? singlePriceLabel;
+  const compareAtLabel = chosen ? chosen.compareAtLabel : singleCompareAtLabel;
   const amountBase = chosen?.amount ?? singleAmount;
   const inStock = chosen ? chosen.available : available;
 
@@ -214,6 +218,14 @@ export default function ProductPurchase({
         {!HIDE_PRICES && (
           <p className="font-mono text-2xl text-gold">
             {plan ? money(planAmount) : priceLabel}
+            {!plan && compareAtLabel && (
+              <s className="ml-3 text-lg text-shell/45">{compareAtLabel}</s>
+            )}
+          </p>
+        )}
+        {kavalactoneLabel(handle, chosen?.title) && (
+          <p className="mt-1.5 font-mono text-xs uppercase tracking-[0.14em] text-shell/70">
+            {kavalactoneLabel(handle, chosen?.title)}
           </p>
         )}
 

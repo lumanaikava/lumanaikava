@@ -46,6 +46,9 @@ export type CatalogProduct = {
    */
   amount: number;
   variantPriceLabel: string;
+  /** Shopify's compare-at price for that variant, shown struck through
+   *  beside the price. Only set when it's higher than the price. */
+  compareAtLabel?: string;
   /** Variant title, when the product has a real one to show. */
   variantName?: string;
   /**
@@ -57,6 +60,7 @@ export type CatalogProduct = {
     title: string;
     amount: number;
     priceLabel: string;
+    compareAtLabel?: string;
     available: boolean;
   }[];
   /**
@@ -123,6 +127,16 @@ function blurb(text: string, max = 90): string {
   return `${cut.slice(0, cut.lastIndexOf(" "))}…`;
 }
 
+/** The compare-at label, only when it's really higher than the price. */
+function compareAt(node?: {
+  price: { amount: string };
+  compareAtPrice?: { amount: string; currencyCode: string } | null;
+}): string | undefined {
+  const c = node?.compareAtPrice;
+  if (!c || Number(c.amount) <= Number(node!.price.amount)) return undefined;
+  return formatPrice(c.amount, c.currencyCode);
+}
+
 function fromShopify(p: ShopifyProduct): CatalogProduct {
   const firstAvailable =
     p.variants.edges.find((v) => v.node.availableForSale)?.node ??
@@ -149,6 +163,7 @@ function fromShopify(p: ShopifyProduct): CatalogProduct {
       variantPrice.amount,
       variantPrice.currencyCode,
     ),
+    compareAtLabel: compareAt(firstAvailable),
     variantName:
       firstAvailable && firstAvailable.title !== DEFAULT_VARIANT_TITLE
         ? firstAvailable.title
@@ -160,6 +175,7 @@ function fromShopify(p: ShopifyProduct): CatalogProduct {
         title: node.title,
         amount: Number(node.price.amount),
         priceLabel: formatPrice(node.price.amount, node.price.currencyCode),
+        compareAtLabel: compareAt(node),
         available: node.availableForSale,
       })),
     sellingPlans: sellingPlansOf(p),
