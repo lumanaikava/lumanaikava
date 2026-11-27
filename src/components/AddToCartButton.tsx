@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { CartItem } from "@/components/CartProvider";
 import { useCart } from "@/components/CartProvider";
+import RestockNotify from "@/components/RestockNotify";
 
 type Props = {
   /** Absent when the product isn't live in Shopify, so nothing can be added. */
@@ -32,28 +33,20 @@ export default function AddToCartButton({
         <button
           type="button"
           disabled
-          className="cursor-not-allowed rounded-full border border-shell/20 px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-shell/40"
+          className="cursor-not-allowed rounded-full border border-shell/20 px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-shell/50"
         >
-          Sold Out
+          Back soon
         </button>
-        <p className="mt-3 text-sm text-shell/60">
-          Fresh batches drop often — catch us at an{" "}
+        <RestockNotify productName={productName} />
+        <p className="mt-4 text-sm text-shell/60">
+          Can&apos;t wait?{" "}
           <a
-            href="/events#calendar"
+            href="/products/untitled-may21_11-42-27"
             className="prose-link text-shell hover:text-gold"
           >
-            upcoming event
+            RUSH instant kava
           </a>{" "}
-          or follow{" "}
-          <a
-            href="https://www.instagram.com/lumanaikava"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="prose-link text-shell hover:text-gold"
-          >
-            @lumanaikava
-          </a>{" "}
-          for restocks.
+          is in stock and ready to ship.
         </p>
       </div>
     );

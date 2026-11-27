@@ -72,7 +72,7 @@ export default function ProductGrid({
               )}
               {!p.available && (
                 <span className="absolute left-1/2 top-0 -translate-x-1/2 rounded-full bg-abyss/85 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-shell/80">
-                  Sold out
+                  Back soon
                 </span>
               )}
             </div>
